@@ -7,7 +7,22 @@ import doctest
 import os
 
 dirname = os.path.dirname(__file__)
-path_to_html_file = open(os.path.join(dirname, 'test.html'))
+path_to_html_file = os.path.join(dirname, 'test.html')
+
+
+class DocTest(doctest.DocFileCase):
+
+    path = os.path.join(dirname, 'README.txt')
+
+    def __init__(self, *args, **kwargs):
+        parser = doctest.DocTestParser()
+        doc = open(self.path).read()
+        test = parser.get_doctest(doc, globals(), '', self.path, 0)
+        doctest.DocFileCase.__init__(self, test, optionflags=doctest.ELLIPSIS)
+
+    def setUp(self):
+        test = self._dt_test
+        test.globs.update(globals())
 
 def test_docs():
     doctest.testfile('README.txt', globs=globals(),
