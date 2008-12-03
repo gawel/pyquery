@@ -3,10 +3,15 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
+import doctest
+import os
 
-def test():
-    import doctest
-    doctest.testfile('README.txt', optionflags=doctest.ELLIPSIS)
+dirname = os.path.dirname(__file__)
+path_to_html_file = open(os.path.join(dirname, 'test.html'))
+
+def test_docs():
+    doctest.testfile('README.txt', globs=globals(),
+                     optionflags=doctest.ELLIPSIS)
 
 if __name__ == '__main__':
-    test()
+    test_docs()

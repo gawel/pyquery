@@ -18,7 +18,7 @@ file or from an url::
     >>> from pyquery import PyQuery
     >>> d = PyQuery(html="<html></html>")
     >>> d = PyQuery(url='http://w3c.org/')
-    >>> d = PyQuery(filename="test.html")
+    >>> d = PyQuery(filename=path_to_html_file)
 
 Now d is like the $ in jquery::
 
