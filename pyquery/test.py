@@ -24,7 +24,7 @@ class DocTest(doctest.DocFileCase):
         test = self._dt_test
         test.globs.update(globals())
 
-def test_docs():
+def main():
     doctest.testfile('README.txt', globs=globals(),
                      optionflags=doctest.ELLIPSIS)
     fails, total = doctest.testfile('README.txt', optionflags=doctest.ELLIPSIS)
@@ -32,4 +32,4 @@ def test_docs():
         print 'OK'
 
 if __name__ == '__main__':
-    test_docs()
+    main()

@@ -4,4 +4,4 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 
-from pyquery import PyQuery, PyQueryResults
+from pyquery import PyQuery

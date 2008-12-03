@@ -16,43 +16,50 @@ def selector_to_xpath(selector):
     return css_to_xpath(selector)
 
 
-class PyQuery(object):
+class PyQuery(list):
     '''See the pyquery module docstring.
     '''
-    def __init__(self, html=None, filename=None, url=None):
-        if html:
-            pass
-        elif filename:
-            html = file(filename).read()
-        elif url:
+    def __init__(self, *args, **kwargs):
+        list.__init__(self)
+        html = None
+        if 'filename' in kwargs:
+            html = file(kwargs['filename']).read()
+        elif 'url' in kwargs:
             from urllib2 import urlopen
-            html = urlopen(url).read()
-        self.root = etree.fromstring(html)
+            html = urlopen(kwargs['url']).read()
+        if html is None:
+            selector = content = None
+
+            length = len(args)
+            if len(args) == 1:
+                content = args[0]
+            if isinstance(content, self.__class__):
+                self = content
+            elif isinstance(content, basestring):
+                html = content
+            elif isinstance(content, list):
+                self.extend(content)
+        if html is not None:
+            self.root = etree.fromstring(html)
 
     def __call__(self, selector='', context=None):
         if context == None:
-            context = PyQueryResults([self.root])
+            context = self.__class__([self.root])
         if not selector:
             return context
-        results = PyQueryResults()
+        results = self.__class__()
         xpath = selector_to_xpath(selector)
-        results = [tag.xpath(xpath) for tag in context]
+        results.extend([tag.xpath(xpath) for tag in context])
 
         # Flatten the results
         result = []
         for r in results:
             result.extend(r)
-        return PyQueryResults(result)
+        return self.__class__(result)
 
     def __str__(self):
         return etree.tostring(self.root)
 
-
-class PyQueryResults(list):
-    '''Class returned when calling an instance of PyQuery.
-
-    See the pyquery module docstring for more details.
-    '''
     def __repr__(self):
         r = []
         for el in self:
@@ -224,7 +231,7 @@ class PyQueryResults(list):
     ################
 
     def _get_root(self, value):
-        is_pyquery_results = isinstance(value, PyQueryResults)
+        is_pyquery_results = isinstance(value, self.__class__)
         is_string = isinstance(value, basestring)
         assert is_string or is_pyquery_results
         if is_string:
