@@ -96,6 +96,11 @@ Insert an element after another::
     >>> d('#test').html()
     '<a href="http://python.org">python</a> !...
 
+Doing something for each elements::
+
+    >>> p.each(lambda e: e.addClass('hello2'))
+    [<p#hello.hello2.hello>]
+
 And you can get back the modified html::
 
     >>> print d

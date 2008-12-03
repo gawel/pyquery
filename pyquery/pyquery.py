@@ -64,6 +64,19 @@ class PyQueryResults(list):
         return '[' + (', '.join(r)) + ']'
 
     ##############
+    # Traversing #
+    ##############
+
+    def each(self, func):
+        for e in self:
+            func(self.__class__([e]))
+        return self
+
+    @property
+    def length(self):
+        return len(self)
+
+    ##############
     # Attributes #
     ##############
     def attr(self, name, value=None):
