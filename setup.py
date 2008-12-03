@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 import sys, os
 
-import pyquery
+long_description = open(os.path.join('pyquery', 'README.txt')).read()
 
 version = '0.1'
 
 setup(name='pyquery',
       version=version,
       description='A jquery-like library for manipulating html and xml documents',
-      long_description=pyquery.__doc__,
+      long_description=long_description,
       classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords='jquery html xml',
       author='Olivier Lauzanne',
