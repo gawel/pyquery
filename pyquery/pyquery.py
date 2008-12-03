@@ -20,31 +20,36 @@ class PyQuery(list):
     '''See the pyquery module docstring.
     '''
     def __init__(self, *args, **kwargs):
-        list.__init__(self)
         html = None
+        elements = []
         if 'filename' in kwargs:
             html = file(kwargs['filename']).read()
         elif 'url' in kwargs:
             from urllib2 import urlopen
             html = urlopen(kwargs['url']).read()
-        if html is None:
+        else:
             selector = content = None
 
             length = len(args)
             if len(args) == 1:
                 content = args[0]
             if isinstance(content, self.__class__):
-                self = content
+                elements = content[:]
             elif isinstance(content, basestring):
                 html = content
             elif isinstance(content, list):
-                self.extend(content)
+                elements = content
+            elif isinstance(content, etree._Element):
+                elements = [content]
+
         if html is not None:
-            self.root = etree.fromstring(html)
+            elements = [etree.fromstring(html)]
+
+        list.__init__(self, elements)
 
     def __call__(self, selector='', context=None):
         if context == None:
-            context = self.__class__([self.root])
+            context = self
         if not selector:
             return context
         results = self.__class__()
@@ -58,7 +63,7 @@ class PyQuery(list):
         return self.__class__(result)
 
     def __str__(self):
-        return etree.tostring(self.root)
+        return ''.join([etree.tostring(e) for e in self])
 
     def __repr__(self):
         r = []
@@ -233,7 +238,7 @@ class PyQuery(list):
     def _get_root(self, value):
         is_pyquery_results = isinstance(value, self.__class__)
         is_string = isinstance(value, basestring)
-        assert is_string or is_pyquery_results
+        assert is_string or is_pyquery_results, value
         if is_string:
             root = etree.fromstring('<root>' + value + '</root>')
         elif is_pyquery_results:
