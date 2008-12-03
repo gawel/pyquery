@@ -94,7 +94,15 @@ Insert an element after another::
     >>> p.insertAfter(d('#test'))
     [<p#hello.hello>]
     >>> d('#test').html()
-    '<a href="http://python.org">python</a> !...
+    '<a href="http://python.org">python</a> !...'
+
+Or before::
+
+    >>> p.insertBefore(d('#test'))
+    [<p#hello.hello>]
+    >>> d('body').html()
+    '\n<p class="hello" id="hello" style="font-size: 17px">...'
+
 
 And you can get back the modified html::
 

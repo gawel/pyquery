@@ -276,7 +276,7 @@ class PyQueryResults(list):
                 root = deepcopy(list(root))
             parent = tag.getparent()
             index = parent.index(tag) + 1
-            parent[index:index-1] = root
+            parent[index:index] = root
             root = parent[index:len(root)]
         return self
 
@@ -285,15 +285,46 @@ class PyQueryResults(list):
         return self
 
     def before(self, value):
-        return self #TODO
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
-            if not tag.tail:
-                tag.previous()
+            previous = tag.getprevious()
+            if previous != None:
+                if not previous.tail:
+                    previous.tail = ''
+                previous.tail += root_text
+            else:
+                parent = tag.getparent()
+                if not parent.text:
+                    parent.text = ''
+                parent.text += root_text
             if i > 0:
                 root = deepcopy(list(root))
             parent = tag.getparent()
-            index = parent.index(tag) + 1
-            parent[index:index-1] = root
+            index = parent.index(tag)
+            parent[index:index] = root
             root = parent[index:len(root)]
+        return self
+
+    def insertBefore(self, value):
+        value.before(self)
+        return self
+
+    def clone(self):
+        self[:] = [deepcopy(tag) for tag in self]
+        return self
+
+    def empty(self):
+        for tag in self:
+            tag.text = None
+            tag[:] = []
+        return self
+
+    def remove(expr=None):
+        if expr == None:
+            for tag in self:
+                parent = tag.getparent()
+                parent.remove(tag)
+        if expr != None:
+            results = PyQuery(expr, self)
+            results.remove()
         return self
