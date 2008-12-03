@@ -16,7 +16,7 @@ You can use the PyQuery class to load an xml document from a string, from a
 file or from an url::
 
     >>> from pyquery import PyQuery
-    >>> d = PyQuery(html="<html></html>")
+    >>> d = PyQuery("<html></html>")
     >>> d = PyQuery(url='http://w3c.org/')
     >>> d = PyQuery(filename=path_to_html_file)
 
@@ -94,7 +94,15 @@ Insert an element after another::
     >>> p.insertAfter(d('#test'))
     [<p#hello.hello>]
     >>> d('#test').html()
-    '<a href="http://python.org">python</a> !...
+    '<a href="http://python.org">python</a> !...'
+
+Or before::
+
+    >>> p.insertBefore(d('#test'))
+    [<p#hello.hello>]
+    >>> d('body').html()
+    '\n<p class="hello" id="hello" style="font-size: 17px">...'
+
 
 Doing something for each elements::
 

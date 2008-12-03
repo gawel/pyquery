@@ -22,45 +22,54 @@ class PyQuery(list):
     def __init__(self, *args, **kwargs):
         html = None
         elements = []
-        if 'filename' in kwargs:
-            html = file(kwargs['filename']).read()
-        elif 'url' in kwargs:
-            from urllib2 import urlopen
-            html = urlopen(kwargs['url']).read()
+        if kwargs:
+            # specific case to get the dom
+            if 'filename' in kwargs:
+                html = file(kwargs['filename']).read()
+            elif 'url' in kwargs:
+                from urllib2 import urlopen
+                html = urlopen(kwargs['url']).read()
+            else:
+                raise ValueError('Invalid keyword arguments %s' % kwargs)
+            elements = [etree.fromstring(html)]
         else:
-            selector = content = None
+            # get nodes
 
+            # determine context and selector if any
+            selector = context = None
             length = len(args)
             if len(args) == 1:
-                content = args[0]
-            if isinstance(content, self.__class__):
-                elements = content[:]
-            elif isinstance(content, basestring):
-                html = content
-            elif isinstance(content, list):
-                elements = content
-            elif isinstance(content, etree._Element):
-                elements = [content]
+                context = args[0]
+            elif len(args) == 2:
+                selector, context = args
 
-        if html is not None:
-            elements = [etree.fromstring(html)]
+            # get context
+            if isinstance(context, basestring):
+                elements = [etree.fromstring(context)]
+            elif isinstance(context, self.__class__):
+                # copy
+                elements = context[:]
+            elif isinstance(context, list):
+                elements = context
+            elif isinstance(context, etree._Element):
+                elements = [context]
+
+            # select nodes
+            if elements and selector is not None:
+                xpath = selector_to_xpath(selector)
+                results = [tag.xpath(xpath) for tag in elements]
+                # Flatten the results
+                elements = []
+                for r in results:
+                    elements.extend(r)
 
         list.__init__(self, elements)
 
-    def __call__(self, selector='', context=None):
-        if context == None:
-            context = self
-        if not selector:
-            return context
-        results = self.__class__()
-        xpath = selector_to_xpath(selector)
-        results.extend([tag.xpath(xpath) for tag in context])
-
-        # Flatten the results
-        result = []
-        for r in results:
-            result.extend(r)
-        return self.__class__(result)
+    def __call__(self, *args):
+        # just return a new instance
+        if len(args) == 1:
+            args += (self,)
+        return self.__class__(*args)
 
     def __str__(self):
         return ''.join([etree.tostring(e) for e in self])
@@ -301,7 +310,7 @@ class PyQuery(list):
                 root = deepcopy(list(root))
             parent = tag.getparent()
             index = parent.index(tag) + 1
-            parent[index:index-1] = root
+            parent[index:index] = root
             root = parent[index:len(root)]
         return self
 
@@ -310,15 +319,46 @@ class PyQuery(list):
         return self
 
     def before(self, value):
-        return self #TODO
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
-            if not tag.tail:
-                tag.previous()
+            previous = tag.getprevious()
+            if previous != None:
+                if not previous.tail:
+                    previous.tail = ''
+                previous.tail += root_text
+            else:
+                parent = tag.getparent()
+                if not parent.text:
+                    parent.text = ''
+                parent.text += root_text
             if i > 0:
                 root = deepcopy(list(root))
             parent = tag.getparent()
-            index = parent.index(tag) + 1
-            parent[index:index-1] = root
+            index = parent.index(tag)
+            parent[index:index] = root
             root = parent[index:len(root)]
+        return self
+
+    def insertBefore(self, value):
+        value.before(self)
+        return self
+
+    def clone(self):
+        self[:] = [deepcopy(tag) for tag in self]
+        return self
+
+    def empty(self):
+        for tag in self:
+            tag.text = None
+            tag[:] = []
+        return self
+
+    def remove(expr=None):
+        if expr == None:
+            for tag in self:
+                parent = tag.getparent()
+                parent.remove(tag)
+        if expr != None:
+            results = self.__class__(expr, self)
+            results.remove()
         return self
