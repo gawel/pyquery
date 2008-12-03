@@ -210,7 +210,7 @@ class PyQueryResults(list):
     # Manipulating #
     ################
 
-    def append(self, value):
+    def _get_root(self, value):
         is_pyquery_results = isinstance(value, PyQueryResults)
         is_string = isinstance(value, basestring)
         assert is_string or is_pyquery_results
@@ -222,6 +222,10 @@ class PyQueryResults(list):
             root_text = root.text
         else:
             root_text = ''
+        return root, root_text
+
+    def append(self, value):
+        root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
             if len(tag) > 0: # if the tag has children
                 last_child = tag[-1]
@@ -236,7 +240,6 @@ class PyQueryResults(list):
                 root = deepcopy(list(root))
             tag.extend(root)
             root = tag[-len(root):]
-
         return self
 
     def appendTo(self, value):
@@ -244,17 +247,7 @@ class PyQueryResults(list):
         return self
 
     def prepend(self, value):
-        is_pyquery_results = isinstance(value, PyQueryResults)
-        is_string = isinstance(value, basestring)
-        assert is_string or is_pyquery_results
-        if is_string:
-            root = etree.fromstring('<root>' + value + '</root>')
-        elif is_pyquery_results:
-            root = value
-        if hasattr(root, 'text') and isinstance(root.text, basestring):
-            root_text = root.text
-        else:
-            root_text = ''
+        root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
             if not tag.text:
                 tag.text = ''
@@ -267,9 +260,40 @@ class PyQueryResults(list):
                 root = deepcopy(list(root))
             tag[:0] = root
             root = tag[:len(root)]
-
         return self
 
     def prependTo(self, value):
         value.prepend(self)
+        return self
+
+    def after(self, value):
+        root, root_text = self._get_root(value)
+        for i, tag in enumerate(self):
+            if not tag.tail:
+                tag.tail = ''
+            tag.tail += root_text
+            if i > 0:
+                root = deepcopy(list(root))
+            parent = tag.getparent()
+            index = parent.index(tag) + 1
+            parent[index:index-1] = root
+            root = parent[index:len(root)]
+        return self
+
+    def insertAfter(self, value):
+        value.after(self)
+        return self
+
+    def before(self, value):
+        return self #TODO
+        root, root_text = self._get_root(value)
+        for i, tag in enumerate(self):
+            if not tag.tail:
+                tag.previous()
+            if i > 0:
+                root = deepcopy(list(root))
+            parent = tag.getparent()
+            index = parent.index(tag) + 1
+            parent[index:index-1] = root
+            root = parent[index:len(root)]
         return self
