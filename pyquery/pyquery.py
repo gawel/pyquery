@@ -132,10 +132,19 @@ class PyQuery(list):
                 tag.set(name, value)
         return self
 
+    def __setattr__(self, name, value):
+        return self.attr(name, value)
+
+    def __getattr__(self, name):
+        return self.attr(name)
+
     def removeAttr(self, name):
         for tag in self:
             del tag.attrib[name]
         return self
+
+    def __delattr__(self, name):
+        self.removeAttr(name)
 
     #######
     # CSS #

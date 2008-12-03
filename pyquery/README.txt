@@ -45,6 +45,15 @@ You can play with the attributes::
     >>> p.attr("id", "hello")
     [<p#hello.hello>]
 
+Or the pythonic way::    
+
+    >>> p.id
+    'hello'
+    >>> p.id = "plop"
+    >>> p.id
+    'plop'
+    >>> p.id = "hello"
+
 And the class::
 
     >>> p.addClass("toto")
