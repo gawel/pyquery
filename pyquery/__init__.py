@@ -21,7 +21,6 @@ use it for templating with pure http templates that you modify using pyquery.
 You can use the PyQuery class to load an xml document from a string, from a
 file or from an url.
 
-    >>> from pyquery import PyQuery
     >>> d = PyQuery(html="<html></html>")
     >>> d = PyQuery(url='http://w3c.org/')
     >>> d = PyQuery(filename="test.html")
@@ -69,12 +68,27 @@ Or the style
     >>> p.attr("style")
     'font-size: 17px'
 
+You can also add content to the end of a tag
+
+    >>> p.append("hey there !")
+    [<p#hello.hello>]
+    >>> p.text()
+    'you know Python rocks'
+    >>> p.html("")
+    [<p#hello.hello>]
+    >>> p.append("hey there !")
+    [<p#hello.hello>]
+    >>> p.text()
+    ''
+
 And you can get back the modified html
 
     >>> print d
     <html>
     ...style="font-size: 17px"...
     </html>
+
+
 
 For more documentation about the API use the jquery website http://jquery.com/
 
@@ -278,6 +292,7 @@ class PyQueryResults(list):
             if children:
                 tag.extend(children)
             tag.text = root.text
+            tag.tail = root.tail
         return self
 
     def text(self, value=None):
@@ -300,6 +315,22 @@ class PyQueryResults(list):
             for child in tag.getchildren():
                 tag.remove(child)
             tag.text = value
+        return self
+
+    ################
+    # Manipulating #
+    ################
+
+    def append(self, value):
+        root = etree.fromstring('<root>' + value + '</root>')
+        children = root.getchildren()
+        for tag in self:
+            tag.text += root.text
+            tag.extend(children)
+            if tag.tail and root.tail:
+                tag.tail += root.tail
+            elif root.tail:
+                tag.tail = root.tail
         return self
 
 
