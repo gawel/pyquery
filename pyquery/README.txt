@@ -89,6 +89,13 @@ Prepend or append an element into an other::
     >>> d('#test').html()
     '<p class="hello" ...</p>...hello...python...'
 
+Insert an element after another::
+
+    >>> p.insertAfter(d('#test'))
+    [<p#hello.hello>]
+    >>> d('#test').html()
+    '<a href="http://python.org">python</a> !...
+
 And you can get back the modified html::
 
     >>> print d

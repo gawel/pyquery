@@ -6,7 +6,9 @@
 
 def test():
     import doctest
-    doctest.testfile('README.txt', optionflags=doctest.ELLIPSIS)
+    fails, total = doctest.testfile('README.txt', optionflags=doctest.ELLIPSIS)
+    if fails == 0:
+        print 'OK'
 
 if __name__ == '__main__':
     test()
