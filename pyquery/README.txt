@@ -18,7 +18,7 @@ file or from an url::
     >>> from pyquery import PyQuery
     >>> d = PyQuery(html="<html></html>")
     >>> d = PyQuery(url='http://w3c.org/')
-    >>> d = PyQuery(filename="pyquery/test.html")
+    >>> d = PyQuery(filename="test.html")
 
 Now d is like the $ in jquery::
 
@@ -91,7 +91,7 @@ Prepend or append an element into an other::
 
 And you can get back the modified html::
 
-    >>> print d #doctest: +ELLIPSIS
+    >>> print d
     <html>
     ...style="font-size: 17px"...
     </html>
@@ -103,6 +103,10 @@ running "$ python pyquery.py" in the pyquery source folder.
 
 The reference I'm using for the API now is ... the color cheat sheet
 http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
+
+To run the tests go into the pyquery folder and do::
+
+    $ python test.py
 
 - SELECTORS: it works fine but missing all the :xxx (:first, :last, ...) can be
   done by patching lxml.cssselect

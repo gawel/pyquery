@@ -4,4 +4,9 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 
-from pyquery import PyQuery, PyQueryResults
+def test():
+    import doctest
+    doctest.testfile('README.txt', optionflags=doctest.ELLIPSIS)
+
+if __name__ == '__main__':
+    test()
