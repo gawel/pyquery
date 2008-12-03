@@ -74,6 +74,19 @@ class PyQuery(list):
             args += (self,)
         return self.__class__(*args)
 
+    # keep original list api prefixed with _
+    _append = list.append
+    _extend = list.extend
+
+    # improve pythonic api
+    def __add__(self, other):
+        assert isinstance(other, self.__class__)
+        return self.__class__(self[:] + other[:])
+
+    def extend(self, other):
+        assert isinstance(other, self.__class__)
+        self._extend(other[:])
+
     def __str__(self):
         return ''.join([etree.tostring(e) for e in self])
 

@@ -118,6 +118,12 @@ And you can get back the modified html::
     ...style="font-size: 17px"...
     </html>
 
+You can generate html stuff::
+
+    >>> from pyquery import PyQuery as pq
+    >>> print pq('<div>Yeah !</div>').addClass('myclass') + pq('<b>cool</b>')
+    <div class="myclass">Yeah !</div><b>cool</b>
+
 For more documentation about the API use the jquery website http://jquery.com/
 
 You can run the doctests that you just read by running the test function or by
