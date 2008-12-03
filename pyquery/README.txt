@@ -12,11 +12,13 @@ told myself "Hey let's make jquery in python". This is the result.
 It can be used for many purposes, one idea that I might try in the future is to
 use it for templating with pure http templates that you modify using pyquery.
 
-You can use the PyQuery class to load an xml document from a string, from a
-file or from an url::
+You can use the PyQuery class to load an xml document from a string, a lxml
+document, from a file or from an url::
 
     >>> from pyquery import PyQuery
+    >>> from lxml import etree
     >>> d = PyQuery("<html></html>")
+    >>> d = PyQuery(etree.fromstring("<html></html>"))
     >>> d = PyQuery(url='http://w3c.org/')
     >>> d = PyQuery(filename=path_to_html_file)
 

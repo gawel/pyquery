@@ -67,6 +67,9 @@ class PyQuery(list):
 
     def __call__(self, *args):
         # just return a new instance
+        length = len(args)
+        if length == 0:
+            raise ValueError('You must provide at least a selector')
         if len(args) == 1:
             args += (self,)
         return self.__class__(*args)
