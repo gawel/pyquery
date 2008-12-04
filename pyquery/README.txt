@@ -45,16 +45,16 @@ You can play with the attributes::
     >>> p.attr("id", "hello")
     [<p#hello.hello>]
 
-Or the pythonic way::    
+Same thing the pythonic way::    
 
-    >>> p.id
-    'hello'
-    >>> p.id = "plop"
-    >>> p.id
+    >>> p.attr.id = "plop"
+    >>> p.attr.id
     'plop'
-    >>> p.id = "hello"
+    >>> p.attr["id"] = "hello"
+    >>> p.attr["id"]
+    'hello'
 
-And the class::
+You can also play with css classes::
 
     >>> p.addClass("toto")
     [<p#hello.toto.hello>]
@@ -63,7 +63,7 @@ And the class::
     >>> p.removeClass("titi")
     [<p#hello.hello>]
 
-Or the style::
+Or the css style::
 
     >>> p.css("font-size", "15px")
     [<p#hello.hello>]
@@ -72,6 +72,18 @@ Or the style::
     >>> p.css({"font-size": "17px"})
     [<p#hello.hello>]
     >>> p.attr("style")
+    'font-size: 17px'
+
+Same thing the pythonic way ('_' characters are translated to '-')::    
+
+    >>> p.css.font_size = "16px"
+    >>> p.attr.style
+    'font-size: 16px'
+    >>> p.css['font-size'] = "15px"
+    >>> p.attr.style
+    'font-size: 15px'
+    >>> p.css = {"font-size": "17px"}
+    >>> p.attr.style
     'font-size: 17px'
 
 You can also add content to the end of tags::

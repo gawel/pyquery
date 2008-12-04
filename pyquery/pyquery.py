@@ -15,6 +15,38 @@ def selector_to_xpath(selector):
     selector = selector.replace('[@', '[')
     return css_to_xpath(selector)
 
+NoDefault = object()
+
+class flexible_element(object):
+    """property to allow a flexible api"""
+    def __init__(self, pget, pset=NoDefault, pdel=NoDefault):
+        self.pget = pget
+        self.pset = pset
+        self.pdel = pdel
+    def __get__(self, instance, klass):
+        class _element(object):
+            """real element to support set/get/del attr and item and js call
+            style"""
+            def __call__(prop, name, value=NoDefault):
+                if isinstance(name, basestring):
+                    # this is to set css attr
+                    name = name.replace('_', '-')
+                return self.pget(instance, name, value)
+            __getattr__ = __getitem__ = __setattr__ = __setitem__ = __call__
+            def __delitem__(prop, name):
+                if self.pdel is not NoDefault:
+                    return self.pdel(instance, name)
+                else:
+                    raise NotImplementedError()
+            __delattr__ = __delitem__
+            def __repr__(prop):
+                return '<flexible_element %s>' % self.pget.func_name
+        return _element()
+    def __set__(self, instance, value):
+        if self.pset is not NoDefault:
+            self.pset(instance, value)
+        else:
+            raise NotImplementedError()
 
 class PyQuery(list):
     '''See the pyquery module docstring.
@@ -116,12 +148,12 @@ class PyQuery(list):
     ##############
     # Attributes #
     ##############
-    def attr(self, name, value=None):
+    def attr(self, name, value=NoDefault):
         if not self:
             return None
-        if value == None:
+        if value is NoDefault:
             return self[0].get(name)
-        elif value == '':
+        elif value is None or value == '':
             return self.removeAttr(name)
         elif type(name) == dict:
             for tag in self:
@@ -132,27 +164,20 @@ class PyQuery(list):
                 tag.set(name, value)
         return self
 
-    def __setattr__(self, name, value):
-        return self.attr(name, value)
-
-    def __getattr__(self, name):
-        return self.attr(name)
-
     def removeAttr(self, name):
         for tag in self:
             del tag.attrib[name]
         return self
 
-    def __delattr__(self, name):
-        self.removeAttr(name)
+    attr = flexible_element(pget=attr, pdel=removeAttr)
 
     #######
     # CSS #
     #######
-    def height(self, value=None):
+    def height(self, value=NoDefault):
         return self.attr('height', value)
 
-    def width(self, value=None):
+    def width(self, value=NoDefault):
         return self.attr('width', value)
 
     def addClass(self, value):
@@ -184,8 +209,8 @@ class PyQuery(list):
             tag.set('class', ' '.join(classes))
         return self
 
-    def css(self, attr, value=None):
-        if type(attr) == dict:
+    def css(self, attr, value=NoDefault):
+        if isinstance(attr, dict):
             for tag in self:
                 stripped_keys = [key.strip() for key in attr.keys()]
                 current = [el.strip()
@@ -195,7 +220,7 @@ class PyQuery(list):
                 for key, value in attr.items():
                     current.append('%s: %s' % (key, value))
                 tag.set('style', '; '.join(current))
-        else:
+        elif isinstance(value, basestring):
             for tag in self:
                 current = [el.strip()
                            for el in (tag.get('style') or '').split(';')
@@ -204,6 +229,8 @@ class PyQuery(list):
                 current.append('%s: %s' % (attr, value))
                 tag.set('style', '; '.join(current))
         return self
+
+    css = flexible_element(pget=css, pset=css)
 
     ###################
     # CORE UI EFFECTS #
@@ -217,11 +244,11 @@ class PyQuery(list):
     ########
     # HTML #
     ########
-    def val(self, value=None):
+    def val(self, value=NoDefault):
         return self.attr('value', value)
 
-    def html(self, value=None):
-        if value == None:
+    def html(self, value=NoDefault):
+        if value is NoDefault:
             if not self:
                 return None
             tag = self[0]
@@ -231,19 +258,24 @@ class PyQuery(list):
             html = tag.text or ''
             html += ''.join(map(etree.tostring, children))
             return html
+        else:
+            if isinstance(value, self.__class__):
+                new_html = str(value)
+            elif isinstance(value, basestring):
+                new_html = value
 
-        for tag in self:
-            for child in tag.getchildren():
-                tag.remove(child)
-            root = etree.fromstring('<root>' + value + '</root>')
-            children = root.getchildren()
-            if children:
-                tag.extend(children)
-            tag.text = root.text
-            tag.tail = root.tail
+            for tag in self:
+                for child in tag.getchildren():
+                    tag.remove(child)
+                root = etree.fromstring('<root>' + new_html + '</root>')
+                children = root.getchildren()
+                if children:
+                    tag.extend(children)
+                tag.text = root.text
+                tag.tail = root.tail
         return self
 
-    def text(self, value=None):
+    def text(self, value=NoDefault):
         def get_text(tag):
             text = []
             if tag.text:
@@ -254,7 +286,7 @@ class PyQuery(list):
                 text.append(tag.tail)
             return text
 
-        if value == None:
+        if value is NoDefault:
             if not self:
                 return None
             return ' '.join([''.join(get_text(tag)).strip() for tag in self])
@@ -378,12 +410,12 @@ class PyQuery(list):
             tag[:] = []
         return self
 
-    def remove(expr=None):
-        if expr == None:
+    def remove(expr=NoDefault):
+        if expr is NoDefault:
             for tag in self:
                 parent = tag.getparent()
                 parent.remove(tag)
-        if expr != None:
+        else:
             results = self.__class__(expr, self)
             results.remove()
         return self
