@@ -155,12 +155,17 @@ Or the other way around::
     >>> d('h1')
     [<h1>, <h1>]
 
+Remove what's inside the selection::
+
+    >>> d('h1').empty()
+    [<h1>, <h1>]
+
 And you can get back the modified html::
 
     >>> print d
     <html>
     <body>
-    <h1>arya stark</h1><h1>arya stark</h1></body>
+    <h1/><h1/></body>
     </html>
 
 You can generate html stuff::
