@@ -51,9 +51,14 @@ Same thing the pythonic way::
     >>> p.attr.id = "plop"
     >>> p.attr.id
     'plop'
-    >>> p.attr["id"] = "hello"
+    >>> p.attr["id"] = "ola"
     >>> p.attr["id"]
-    'hello'
+    'ola'
+    >>> p.attr(id='hello', class_='hello2')
+    [<p#hello.hello2>]
+    >>> p.attr.class_
+    'hello2'
+    >>> p.attr.class_ = 'hello'
 
 You can also play with css classes::
 
@@ -83,6 +88,10 @@ Same thing the pythonic way ('_' characters are translated to '-')::
     >>> p.css['font-size'] = "15px"
     >>> p.attr.style
     'font-size: 15px'
+    >>> p.css(font_size="16px")
+    [<p#hello.hello>]
+    >>> p.attr.style
+    'font-size: 16px'
     >>> p.css = {"font-size": "17px"}
     >>> p.attr.style
     'font-size: 17px'
