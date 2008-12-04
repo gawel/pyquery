@@ -1,9 +1,15 @@
+#-*- coding:utf-8 -*-
+#
+# Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
+#
+# Distributed under the BSD license, see LICENSE.txt
+
 from setuptools import setup, find_packages
 import sys, os
 
 long_description = open(os.path.join('pyquery', 'README.txt')).read()
 
-version = '0.1'
+version = '0.2'
 
 setup(name='pyquery',
       version=version,
@@ -14,7 +20,7 @@ setup(name='pyquery',
       author='Olivier Lauzanne',
       author_email='olauzanne@gmail.com',
       url='http://libreamoi.com/index.php/pyquery',
-      license='MIT',
+      license='BSD',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,

@@ -1,5 +1,5 @@
-pyquery: a jquery-like library
-====================================
+pyquery: a jquery-like library for python
+=========================================
 
 pyquery allows you to make jquery queries on xml documents.
 The API is as much as possible the similar to jquery. PyQuery use lxml for fast
@@ -191,9 +191,15 @@ running "$ python pyquery.py" in the pyquery source folder.
 The reference I'm using for the API now is ... the color cheat sheet
 http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
 
-To run the tests go into the pyquery folder and do::
+If you want to run the tests you should do::
 
-    $ python test.py
+    $ python bootstrap.py
+    $ bin/buildout
+    $ bin/test
+
+
+TODO
+----
 
 - SELECTORS: it works fine but missing all the :xxx (:first, :last, ...) can be
   done by patching lxml.cssselect
