@@ -9,9 +9,9 @@ from lxml import etree
 from copy import deepcopy
 
 def selector_to_xpath(selector):
-    '''JQuery selector to xpath.
+    """JQuery selector to xpath.
     TODO: patch cssselect to add :first, :last, ...
-    '''
+    """
     selector = selector.replace('[@', '[')
     return css_to_xpath(selector)
 
@@ -49,8 +49,7 @@ class flexible_element(object):
             raise NotImplementedError()
 
 class PyQuery(list):
-    '''See the pyquery module docstring.
-    '''
+    """See the README.txt"""
     def __init__(self, *args, **kwargs):
         html = None
         elements = []
@@ -102,10 +101,11 @@ class PyQuery(list):
         length = len(args)
         if length == 0:
             raise ValueError('You must provide at least a selector')
-        if len(args) == 1:
+        if len(args) == 1 and not args[0].startswith('<'):
             args += (self,)
-        return self.__class__(*args)
-
+        result = self.__class__(*args)
+        object.__setattr__(result, '_parent', self)
+        return result
     # keep original list api prefixed with _
     _append = list.append
     _extend = list.extend
@@ -143,6 +143,9 @@ class PyQuery(list):
 
     @property
     def length(self):
+        return len(self)
+
+    def size():
         return len(self)
 
     ##############
@@ -400,6 +403,17 @@ class PyQuery(list):
         value.before(self)
         return self
 
+    def replaceWith(self, value):
+        self.before(value)
+        for tag in self:
+            parent = tag.getparent()
+            parent.remove(tag)
+        return self
+
+    def replaceAll(self, expr):
+        self._parent(expr).replaceWith(self)
+        return self
+
     def clone(self):
         self[:] = [deepcopy(tag) for tag in self]
         return self
@@ -410,7 +424,7 @@ class PyQuery(list):
             tag[:] = []
         return self
 
-    def remove(expr=NoDefault):
+    def remove(self, expr=NoDefault):
         if expr is NoDefault:
             for tag in self:
                 parent = tag.getparent()

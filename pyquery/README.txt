@@ -45,7 +45,8 @@ You can play with the attributes::
     >>> p.attr("id", "hello")
     [<p#hello.hello>]
 
-Same thing the pythonic way::    
+
+Same thing the pythonic way::
 
     >>> p.attr.id = "plop"
     >>> p.attr.id
@@ -74,7 +75,7 @@ Or the css style::
     >>> p.attr("style")
     'font-size: 17px'
 
-Same thing the pythonic way ('_' characters are translated to '-')::    
+Same thing the pythonic way ('_' characters are translated to '-')::
 
     >>> p.css.font_size = "16px"
     >>> p.attr.style
@@ -126,17 +127,40 @@ Or before::
     >>> d('body').html()
     '\n<p class="hello" id="hello" style="font-size: 17px">...'
 
-
 Doing something for each elements::
 
     >>> p.each(lambda e: e.addClass('hello2'))
     [<p#hello.hello2.hello>]
 
+Remove an element::
+
+    >>> d.remove('p#id')
+    [<html>]
+    >>> d('p#id')
+    []
+
+Replace an element by another::
+
+    >>> p.replaceWith('<p>testing</p>')
+    [<p#hello.hello2.hello>]
+    >>> d('p')
+    [<p>, <p#test>]
+
+Or the other way around::
+
+    >>> d('<h1>arya stark</h1>').replaceAll('p')
+    [<h1>]
+    >>> d('p')
+    []
+    >>> d('h1')
+    [<h1>, <h1>]
+
 And you can get back the modified html::
 
     >>> print d
     <html>
-    ...style="font-size: 17px"...
+    <body>
+    <h1>arya stark</h1><h1>arya stark</h1></body>
     </html>
 
 You can generate html stuff::
