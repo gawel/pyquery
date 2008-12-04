@@ -95,6 +95,7 @@ class PyQuery(list):
                     elements.extend(r)
 
         list.__init__(self, elements)
+        self._parent = NoDefault
 
     def __call__(self, *args):
         # just return a new instance
@@ -104,8 +105,9 @@ class PyQuery(list):
         if len(args) == 1 and not args[0].startswith('<'):
             args += (self,)
         result = self.__class__(*args)
-        object.__setattr__(result, '_parent', self)
+        result._parent = self
         return result
+
     # keep original list api prefixed with _
     _append = list.append
     _extend = list.extend
@@ -411,6 +413,9 @@ class PyQuery(list):
         return self
 
     def replaceAll(self, expr):
+        if self._parent is NoDefault:
+            raise ValueError(
+                    'replaceAll can only be used with an object with parent')
         self._parent(expr).replaceWith(self)
         return self
 
