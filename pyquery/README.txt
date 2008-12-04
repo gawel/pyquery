@@ -191,8 +191,8 @@ To run the tests go into the pyquery folder and do::
 - ATTRIBUTES: done
 - CSS: done
 - HTML: done
-- MANIPULATING: TODO (this is the priority very useful)
-- TRAVERSING: TODO (may prove troublesome)
+- MANIPULATING: done all but the "wrap" methods
+- TRAVERSING: did a few
 - EVENTS: nothing to do with server side might be used later for automatic ajax
 - CORE UI EFFECTS: did hide and show the rest doesn't really makes sense on
   server side
