@@ -8,9 +8,10 @@ import doctest
 from lxml import etree
 import os
 
+import pyquery
 from pyquery import PyQuery as pq
 
-dirname = os.path.dirname(__file__)
+dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
 path_to_html_file = os.path.join(dirname, 'test.html')
 
 
@@ -68,13 +69,7 @@ class TestSelector(unittest.TestCase):
         assert len(e('div', self.html2)) == 1
         assert len(e('div#node2', self.html2)) == 0
 
-
-def main():
-    doctest.testfile('README.txt', globs=globals(),
-                     optionflags=doctest.ELLIPSIS)
-    fails, total = doctest.testfile('README.txt', optionflags=doctest.ELLIPSIS)
+if __name__ == '__main__':
+    fails, total = unittest.main()
     if fails == 0:
         print 'OK'
-
-if __name__ == '__main__':
-    main()
