@@ -5,27 +5,21 @@
 # Distributed under the BSD license, see LICENSE.txt
 
 from setuptools import setup, find_packages
-import xml.sax.saxutils
 import sys, os
 
-def read(filename):
-    text = open(filename).read()
-    text = unicode(text, 'utf-8').encode('ascii', 'xmlcharrefreplace')
-    return xml.sax.saxutils.escape(text)
-
-long_description = read(os.path.join('pyquery', 'README.txt'))
+long_description = open(os.path.join('pyquery', 'README.txt')).read()
 
 version = '0.2'
 
 setup(name='pyquery',
       version=version,
-      description='A jquery-like library for manipulating html and xml documents',
+      description='A jquery-like library for python',
       long_description=long_description,
       classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords='jquery html xml',
       author='Olivier Lauzanne',
       author_email='olauzanne@gmail.com',
-      url='http://libreamoi.com/index.php/pyquery',
+      url='http://www.bitbucket.org/olauzanne/pyquery/',
       license='BSD',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
