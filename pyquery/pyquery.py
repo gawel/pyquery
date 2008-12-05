@@ -3,7 +3,6 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-
 from lxml.cssselect import css_to_xpath
 from lxml import etree
 from copy import deepcopy
@@ -14,6 +13,14 @@ def selector_to_xpath(selector):
     """
     selector = selector.replace('[@', '[')
     return css_to_xpath(selector)
+
+def fromstring(context):
+    """use html parser if we don't have clean xml
+    """
+    try:
+        return etree.fromstring(context)
+    except etree.XMLSyntaxError:
+        return etree.fromstring(context, etree.HTMLParser())
 
 NoDefault = object()
 
@@ -65,7 +72,7 @@ class PyQuery(list):
                 html = urlopen(kwargs['url']).read()
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
-            elements = [etree.fromstring(html)]
+            elements = [fromstring(html)]
         else:
             # get nodes
 
@@ -82,7 +89,10 @@ class PyQuery(list):
 
             # get context
             if isinstance(context, basestring):
-                elements = [etree.fromstring(context)]
+                try:
+                    elements = [fromstring(context)]
+                except Exception, e:
+                    raise ValueError('%r, %s' % (e, context))
             elif isinstance(context, self.__class__):
                 # copy
                 elements = context[:]
