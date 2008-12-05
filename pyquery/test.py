@@ -16,6 +16,17 @@ from ajax import PyQuery as pqa
 dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
 path_to_html_file = os.path.join(dirname, 'test.html')
 
+def input_app(environ, start_response):
+    resp = Response()
+    req = Request(environ)
+    if req.path_info == '/':
+        resp.body = '<input name="youyou" type="text" value="" />'
+    elif req.path_info == '/submit':
+        resp.body = '<input type="submit" value="OK" />'
+    else:
+        resp.body = ''
+    return resp(environ, start_response)
+
 
 class DocTest(doctest.DocFileCase):
 

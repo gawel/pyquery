@@ -70,7 +70,7 @@ class PyQuery(list):
             # get nodes
 
             # determine context and selector if any
-            selector = context = None
+            selector = context = NoDefault
             length = len(args)
             if len(args) == 1:
                 context = args[0]
@@ -92,7 +92,7 @@ class PyQuery(list):
                 elements = [context]
 
             # select nodes
-            if elements and selector is not None:
+            if elements and selector is not NoDefault:
                 xpath = selector_to_xpath(selector)
                 results = [tag.xpath(xpath) for tag in elements]
                 # Flatten the results

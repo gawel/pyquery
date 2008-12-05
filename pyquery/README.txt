@@ -183,6 +183,33 @@ You can generate html stuff::
     >>> print pq('<div>Yeah !</div>').addClass('myclass') + pq('<b>cool</b>')
     <div class="myclass">Yeah !</div><b>cool</b>
 
+.. fake imports
+
+    >>> from ajax import PyQuery as pq
+
+You can query some wsgi app if WebOb is installed (it's not a pyquery
+dependencie). The test app just return a simple input at `/` and a submit
+button at `/submit`::
+
+    >>> form = pq('<form></form>', app=input_app)
+    >>> i = form.get('/')
+    >>> form.append(i)
+    [<form>]
+    >>> print form
+    <form><input name="youyou" type="text" value=""/></form>
+
+The app is keeped as original in new nodes::
+
+    >>> i.app is form.app
+    True
+
+So you can request another path::
+
+    >>> form.append(i.get('/submit'))
+    [<form>]
+    >>> print form
+    <form><input name="youyou" type="text" value=""/><input type="submit" value="OK"/></form>
+
 For more documentation about the API use the jquery website http://jquery.com/
 
 You can run the doctests that you just read by running the test function or by

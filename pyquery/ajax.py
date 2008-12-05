@@ -31,7 +31,9 @@ class PyQuery(Base):
 
         req = Request(environ)
         resp = req.get_response(self.app)
-        if resp.status.split()[0] == '200':
+        status = resp.status.split()[0]
+        ctype = resp.content_type.split(';')[0]
+        if status == '200' and ctype == 'text/html':
             result = self.__class__(resp.body,
                                    parent=self._parent,
                                    app=self.app)
