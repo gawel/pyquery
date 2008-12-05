@@ -102,13 +102,7 @@ def application(environ, start_response):
 def secure_application(environ, start_response):
     if 'REMOTE_USER' not in environ:
         return exc.HTTPUnauthorized('vomis')(environ, start_response)
-    req = Request(environ)
-    response = Response()
-    if req.method == 'GET':
-        response.body = '<pre>Yeah !</pre>'
-    else:
-        response.body = '<a href="/plop">Yeah !</a>'
-    return response(environ, start_response)
+    return application(environ, start_response)
 
 class TestAjaxSelector(TestSelector):
     klass = pqa

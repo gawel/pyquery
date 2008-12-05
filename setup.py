@@ -5,9 +5,15 @@
 # Distributed under the BSD license, see LICENSE.txt
 
 from setuptools import setup, find_packages
+import xml.sax.saxutils
 import sys, os
 
-long_description = open(os.path.join('pyquery', 'README.txt')).read()
+def read(filename):
+    text = open(filename).read()
+    text = unicode(text, 'utf-8').encode('ascii', 'xmlcharrefreplace')
+    return xml.sax.saxutils.escape(text)
+
+long_description = read(os.path.join('pyquery', 'README.txt'))
 
 version = '0.2'
 
