@@ -14,7 +14,7 @@ class PyQuery(Base):
         if 'response' in kwargs:
             self.response = kwargs.pop('response')
         else:
-            self.response = Response()
+            self.response = no_default
         if 'app' in kwargs:
             self.app = kwargs.pop('app')
             if len(args) == 0:

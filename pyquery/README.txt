@@ -12,6 +12,11 @@ told myself "Hey let's make jquery in python". This is the result.
 It can be used for many purposes, one idea that I might try in the future is to
 use it for templating with pure http templates that you modify using pyquery.
 
+.. contents::
+
+Usage
+-----
+
 You can use the PyQuery class to load an xml document from a string, a lxml
 document, from a file or from an url::
 
@@ -36,6 +41,9 @@ Now d is like the $ in jquery::
     >>> p.text()
     'you know Python rocks'
 
+Attributes
+----------
+
 You can play with the attributes with the jquery API::
 
     >>> p.attr("id")
@@ -59,6 +67,9 @@ Or in a more pythonic way::
     >>> p.attr.class_
     'hello2'
     >>> p.attr.class_ = 'hello'
+
+CSS
+---
 
 You can also play with css classes::
 
@@ -95,6 +106,9 @@ Same thing the pythonic way ('_' characters are translated to '-')::
     >>> p.css = {"font-size": "17px"}
     >>> p.attr.style
     'font-size: 17px'
+
+Manipulating
+------------
 
 You can also add content to the end of tags::
 
@@ -183,11 +197,15 @@ You can generate html stuff::
     >>> print pq('<div>Yeah !</div>').addClass('myclass') + pq('<b>cool</b>')
     <div class="myclass">Yeah !</div><b>cool</b>
 
+
+AJAX
+----
+
 .. fake imports
 
     >>> from ajax import PyQuery as pq
 
-You can query some wsgi app if WebOb is installed (it's not a pyquery
+You can query some wsgi app if `WebOb`_ is installed (it's not a pyquery
 dependencie). IN this example the test app returns a simple input at `/` and a
 submit button at `/submit`::
 
@@ -209,11 +227,37 @@ You can also request another path::
     >>> print d
     <form><input name="youyou" type="text" value=""/><input type="submit" value="OK"/></form>
 
+If `Paste`_ is installed, you are able to get url directly with a `Proxy`_ app::
+
+    >>> a = d.get('https://bitbucket.org/olauzanne/pyquery/')
+    >>> a
+    [<html>]
+
+You can retrieve the app response::
+
+    >>> print a.response.status
+    301 Moved Permanently
+
+The response attribute is a `WebOb`_ `Response`_
+
+.. _webob: http://pythonpaste.org/webob/
+.. _response: http://pythonpaste.org/webob/#response
+.. _paste: http://pythonpaste.org/
+.. _proxy: http://pythonpaste.org/modules/proxy.html#paste.proxy.Proxy
+
+Testing
+-------
+
 If you want to run the tests that you can see above you should do::
 
+    $ hg clone https://bitbucket.org/olauzanne/pyquery/
+    $ cd pyquery
     $ python bootstrap.py
     $ bin/buildout
     $ bin/test
+
+Other documentations
+--------------------
 
 For more documentation about the API use the jquery website http://docs.jquery.com/
 
