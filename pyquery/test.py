@@ -114,29 +114,29 @@ class TestAjaxSelector(TestSelector):
     klass = pqa
 
     def test_get(self):
-        e = self.klass(self.html, app=application)
+        e = self.klass(app=application)
         val = e.get('/')
         assert len(val('pre')) == 1, val
 
     def test_secure_get(self):
-        e = self.klass(self.html, app=secure_application)
+        e = self.klass(app=secure_application)
         val = e.get('/', environ=dict(REMOTE_USER='gawii'))
         assert len(val('pre')) == 1, val
         val = e.get('/', REMOTE_USER='gawii')
         assert len(val('pre')) == 1, val
 
     def test_secure_get_not_authorized(self):
-        e = self.klass(self.html, app=secure_application)
+        e = self.klass(app=secure_application)
         val = e.get('/')
         assert len(val('pre')) == 0, val
 
     def test_post(self):
-        e = self.klass(self.html, app=application)
+        e = self.klass(app=application)
         val = e.post('/')
         assert len(val('a')) == 1, val
 
     def test_subquery(self):
-        e = self.klass(self.html, app=application)
+        e = self.klass(app=application)
         n = e('div')
         val = n.post('/')
         assert len(val('a')) == 1, val

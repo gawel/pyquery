@@ -8,6 +8,8 @@ class PyQuery(Base):
     def __init__(self, *args, **kwargs):
         if 'app' in kwargs:
             self.app = kwargs.pop('app')
+            if len(args) == 0:
+                args = [[]]
         else:
             self.app = NoDefault
         Base.__init__(self, *args, **kwargs)
