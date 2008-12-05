@@ -19,7 +19,7 @@ document, from a file or from an url::
     >>> from lxml import etree
     >>> d = PyQuery("<html></html>")
     >>> d = PyQuery(etree.fromstring("<html></html>"))
-    >>> d = PyQuery(url='http://w3c.org/')
+    >>> d = PyQuery(url='http://google.com/')
     >>> d = PyQuery(filename=path_to_html_file)
 
 Now d is like the $ in jquery::
@@ -36,7 +36,7 @@ Now d is like the $ in jquery::
     >>> p.text()
     'you know Python rocks'
 
-You can play with the attributes::
+You can play with the attributes with the jquery API::
 
     >>> p.attr("id")
     'hello'
@@ -46,7 +46,7 @@ You can play with the attributes::
     [<p#hello.hello>]
 
 
-Same thing the pythonic way::
+Or in a more pythonic way::
 
     >>> p.attr.id = "plop"
     >>> p.attr.id
@@ -188,42 +188,37 @@ You can generate html stuff::
     >>> from ajax import PyQuery as pq
 
 You can query some wsgi app if WebOb is installed (it's not a pyquery
-dependencie). The test app just return a simple input at `/` and a submit
-button at `/submit`::
+dependencie). IN this example the test app returns a simple input at `/` and a
+submit button at `/submit`::
 
-    >>> form = pq('<form></form>', app=input_app)
-    >>> i = form.get('/')
-    >>> form.append(i)
+    >>> d = pq('<form></form>', app=input_app)
+    >>> d.append(d.get('/'))
     [<form>]
-    >>> print form
+    >>> print d
     <form><input name="youyou" type="text" value=""/></form>
 
-The app is keeped as original in new nodes::
+The app is also available in new nodes::
 
-    >>> i.app is form.app
+    >>> d.get('/').app is d.app is d('form').app
     True
 
-So you can request another path::
+You can also request another path::
 
-    >>> form.append(i.get('/submit'))
+    >>> d.append(d.get('/submit'))
     [<form>]
-    >>> print form
+    >>> print d
     <form><input name="youyou" type="text" value=""/><input type="submit" value="OK"/></form>
 
-For more documentation about the API use the jquery website http://jquery.com/
-
-You can run the doctests that you just read by running the test function or by
-running "$ python pyquery.py" in the pyquery source folder.
-
-The reference I'm using for the API now is ... the color cheat sheet
-http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
-
-If you want to run the tests you should do::
+If you want to run the tests that you can see above you should do::
 
     $ python bootstrap.py
     $ bin/buildout
     $ bin/test
 
+For more documentation about the API use the jquery website http://docs.jquery.com/
+
+The reference I'm now using for the API is ... the color cheat sheet
+http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
 
 TODO
 ----
@@ -233,9 +228,9 @@ TODO
 - ATTRIBUTES: done
 - CSS: done
 - HTML: done
-- MANIPULATING: done all but the "wrap" methods
+- MANIPULATING: did all but the "wrap" methods
 - TRAVERSING: did a few
 - EVENTS: nothing to do with server side might be used later for automatic ajax
 - CORE UI EFFECTS: did hide and show the rest doesn't really makes sense on
   server side
-- AJAX: doesn't make sense on server side
+- AJAX: some with wsgi app
