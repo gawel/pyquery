@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from webob import Request, Response
 from pyquery import PyQuery as Base
-from pyquery import NoDefault
+from pyquery import no_default
 
 try:
     from paste.proxy import Proxy
 except ImportError:
-    Proxy = NoDefault
+    Proxy = no_default
 
 class PyQuery(Base):
 
@@ -20,21 +20,21 @@ class PyQuery(Base):
             if len(args) == 0:
                 args = [[]]
         else:
-            self.app = NoDefault
+            self.app = no_default
         Base.__init__(self, *args, **kwargs)
-        if self._parent is not NoDefault:
+        if self._parent is not no_default:
             self.app = self._parent.app
 
     def _wsgi_get(self, path_info, **kwargs):
         if path_info.startswith('/'):
             if 'app' in kwargs:
                 app = kwargs.pop('app')
-            elif self.app is not NoDefault:
+            elif self.app is not no_default:
                 app = self.app
             else:
                 raise ValueError('There is no app available')
         else:
-            if Proxy is not NoDefault:
+            if Proxy is not no_default:
                 app = Proxy(path_info)
                 path_info = '/'
             else:
@@ -75,4 +75,3 @@ class PyQuery(Base):
     def post(self, path_info, **kwargs):
         kwargs['REQUEST_METHOD'] = 'POST'
         return self._wsgi_get(path_info, **kwargs)
-

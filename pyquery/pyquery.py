@@ -22,11 +22,11 @@ def fromstring(context):
     except etree.XMLSyntaxError:
         return etree.fromstring(context, etree.HTMLParser())
 
-NoDefault = object()
+no_default = object()
 
-class flexible_element(object):
+class FlexibleElement(object):
     """property to allow a flexible api"""
-    def __init__(self, pget, pset=NoDefault, pdel=NoDefault):
+    def __init__(self, pget, pset=no_default, pdel=no_default):
         self.pget = pget
         self.pset = pset
         self.pdel = pdel
@@ -38,7 +38,7 @@ class flexible_element(object):
                 return self.pget(instance, *args, **kwargs)
             __getattr__ = __getitem__ = __setattr__ = __setitem__ = __call__
             def __delitem__(prop, name):
-                if self.pdel is not NoDefault:
+                if self.pdel is not no_default:
                     return self.pdel(instance, name)
                 else:
                     raise NotImplementedError()
@@ -47,7 +47,7 @@ class flexible_element(object):
                 return '<flexible_element %s>' % self.pget.func_name
         return _element()
     def __set__(self, instance, value):
-        if self.pset is not NoDefault:
+        if self.pset is not no_default:
             self.pset(instance, value)
         else:
             raise NotImplementedError()
@@ -61,7 +61,7 @@ class PyQuery(list):
         if 'parent' in kwargs:
             self._parent = kwargs.pop('parent')
         else:
-            self._parent = NoDefault
+            self._parent = no_default
 
         if kwargs:
             # specific case to get the dom
@@ -77,7 +77,7 @@ class PyQuery(list):
             # get nodes
 
             # determine context and selector if any
-            selector = context = NoDefault
+            selector = context = no_default
             length = len(args)
             if len(args) == 1:
                 context = args[0]
@@ -102,7 +102,7 @@ class PyQuery(list):
                 elements = [context]
 
             # select nodes
-            if elements and selector is not NoDefault:
+            if elements and selector is not no_default:
                 xpath = selector_to_xpath(selector)
                 results = [tag.xpath(xpath) for tag in elements]
                 # Flatten the results
@@ -171,7 +171,7 @@ class PyQuery(list):
 
         mapping = {'class_': 'class', 'for_': 'for'}
 
-        attr = value = NoDefault
+        attr = value = no_default
         length = len(args)
         if length == 1:
             attr = args[0]
@@ -192,7 +192,7 @@ class PyQuery(list):
             for tag in self:
                 for key, value in attr.items():
                     tag.set(key, value)
-        elif value is NoDefault:
+        elif value is no_default:
             return self[0].get(attr)
         elif value is None or value == '':
             return self.removeAttr(attr)
@@ -206,15 +206,15 @@ class PyQuery(list):
             del tag.attrib[name]
         return self
 
-    attr = flexible_element(pget=attr, pdel=removeAttr)
+    attr = FlexibleElement(pget=attr, pdel=removeAttr)
 
     #######
     # CSS #
     #######
-    def height(self, value=NoDefault):
+    def height(self, value=no_default):
         return self.attr('height', value)
 
-    def width(self, value=NoDefault):
+    def width(self, value=no_default):
         return self.attr('width', value)
 
     def addClass(self, value):
@@ -248,7 +248,7 @@ class PyQuery(list):
 
     def css(self, *args, **kwargs):
 
-        attr = value = NoDefault
+        attr = value = no_default
         length = len(args)
         if length == 1:
             attr = args[0]
@@ -282,7 +282,7 @@ class PyQuery(list):
                 tag.set('style', '; '.join(current))
         return self
 
-    css = flexible_element(pget=css, pset=css)
+    css = FlexibleElement(pget=css, pset=css)
 
     ###################
     # CORE UI EFFECTS #
@@ -296,11 +296,11 @@ class PyQuery(list):
     ########
     # HTML #
     ########
-    def val(self, value=NoDefault):
+    def val(self, value=no_default):
         return self.attr('value', value)
 
-    def html(self, value=NoDefault):
-        if value is NoDefault:
+    def html(self, value=no_default):
+        if value is no_default:
             if not self:
                 return None
             tag = self[0]
@@ -327,7 +327,7 @@ class PyQuery(list):
                 tag.tail = root.tail
         return self
 
-    def text(self, value=NoDefault):
+    def text(self, value=no_default):
         def get_text(tag):
             text = []
             if tag.text:
@@ -338,7 +338,7 @@ class PyQuery(list):
                 text.append(tag.tail)
             return text
 
-        if value is NoDefault:
+        if value is no_default:
             if not self:
                 return None
             return ' '.join([''.join(get_text(tag)).strip() for tag in self])
@@ -460,7 +460,7 @@ class PyQuery(list):
         return self
 
     def replaceAll(self, expr):
-        if self._parent is NoDefault:
+        if self._parent is no_default:
             raise ValueError(
                     'replaceAll can only be used with an object with parent')
         self._parent(expr).replaceWith(self)
@@ -476,8 +476,8 @@ class PyQuery(list):
             tag[:] = []
         return self
 
-    def remove(self, expr=NoDefault):
-        if expr is NoDefault:
+    def remove(self, expr=no_default):
+        if expr is no_default:
             for tag in self:
                 parent = tag.getparent()
                 parent.remove(tag)
