@@ -113,6 +113,11 @@ def secure_application(environ, start_response):
 class TestAjaxSelector(TestSelector):
     klass = pqa
 
+    def test_proxy(self):
+        e = self.klass([])
+        val = e.get('http://pypi.python.org/pypi/pyquery/')
+        assert len(val('div#breadcrumb')) == 1, (val.response, val)
+
     def test_get(self):
         e = self.klass(app=application)
         val = e.get('/')

@@ -1,11 +1,20 @@
 # -*- coding: utf-8 -*-
-from webob import Request
+from webob import Request, Response
 from pyquery import PyQuery as Base
 from pyquery import NoDefault
+
+try:
+    from paste.proxy import Proxy
+except ImportError:
+    Proxy = NoDefault
 
 class PyQuery(Base):
 
     def __init__(self, *args, **kwargs):
+        if 'response' in kwargs:
+            self.response = kwargs.pop('response')
+        else:
+            self.response = Response()
         if 'app' in kwargs:
             self.app = kwargs.pop('app')
             if len(args) == 0:
@@ -17,6 +26,20 @@ class PyQuery(Base):
             self.app = self._parent.app
 
     def _wsgi_get(self, path_info, **kwargs):
+        if path_info.startswith('/'):
+            if 'app' in kwargs:
+                app = kwargs.pop('app')
+            elif self.app is not NoDefault:
+                app = self.app
+            else:
+                raise ValueError('There is no app available')
+        else:
+            if Proxy is not NoDefault:
+                app = Proxy(path_info)
+                path_info = '/'
+            else:
+                raise ImportError('Paste is not installed')
+
         if 'environ' in kwargs:
             environ = kwargs.pop('environ').copy()
         else:
@@ -32,17 +55,17 @@ class PyQuery(Base):
                 del environ[key]
 
         req = Request(environ)
-        resp = req.get_response(self.app)
-        status = resp.status.split()[0]
+        resp = req.get_response(app)
+        status = resp.status.split()
         ctype = resp.content_type.split(';')[0]
-        if status == '200' and ctype == 'text/html':
-            result = self.__class__(resp.body,
-                                   parent=self._parent,
-                                   app=self.app)
+        if status[0] not in '45' and ctype == 'text/html':
+            body = resp.body
         else:
-            result = self.__class__([],
-                                    parent=self._parent,
-                                    app=self.app)
+            body = []
+        result = self.__class__(body,
+                                parent=self._parent,
+                                app=self.app, # always return self.app
+                                response=resp)
         return result
 
     def get(self, path_info, **kwargs):
