@@ -50,6 +50,12 @@ class PyQuery(list):
     def __init__(self, *args, **kwargs):
         html = None
         elements = []
+
+        if 'parent' in kwargs:
+            self._parent = kwargs.pop('parent')
+        else:
+            self._parent = NoDefault
+
         if kwargs:
             # specific case to get the dom
             if 'filename' in kwargs:
@@ -92,7 +98,6 @@ class PyQuery(list):
                     elements.extend(r)
 
         list.__init__(self, elements)
-        self._parent = NoDefault
 
     def __call__(self, *args):
         # just return a new instance
@@ -101,8 +106,7 @@ class PyQuery(list):
             raise ValueError('You must provide at least a selector')
         if len(args) == 1 and not args[0].startswith('<'):
             args += (self,)
-        result = self.__class__(*args)
-        result._parent = self
+        result = self.__class__(*args, **dict(parent=self))
         return result
 
     # keep original list api prefixed with _

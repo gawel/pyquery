@@ -4,4 +4,10 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 
-from pyquery import PyQuery
+try:
+    import webob
+except ImportError:
+    from pyquery import PyQuery
+else:
+    from ajax import PyQuery
+
