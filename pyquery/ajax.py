@@ -31,10 +31,6 @@ class PyQuery(Base):
 
         req = Request(environ)
         resp = req.get_response(self.app)
-        result = self.__class__(resp.body,
-                               parent=self._parent,
-                               app=self.app)
-        return result
         if resp.status.split()[0] == '200':
             result = self.__class__(resp.body,
                                    parent=self._parent,

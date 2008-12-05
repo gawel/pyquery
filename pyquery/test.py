@@ -3,7 +3,7 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-from webob import Request, Response
+from webob import Request, Response, exc
 from lxml import etree
 import unittest
 import doctest
@@ -88,16 +88,39 @@ def application(environ, start_response):
         response.body = '<a href="/plop">Yeah !</a>'
     return response(environ, start_response)
 
+def secure_application(environ, start_response):
+    if 'REMOTE_USER' not in environ:
+        return exc.HTTPUnauthorized('vomis')(environ, start_response)
+    req = Request(environ)
+    response = Response()
+    if req.method == 'GET':
+        response.body = '<pre>Yeah !</pre>'
+    else:
+        response.body = '<a href="/plop">Yeah !</a>'
+    return response(environ, start_response)
+
 class TestAjaxSelector(TestSelector):
     klass = pqa
 
     def test_get(self):
-        e = self.klass(app=application)
+        e = self.klass(self.html, app=application)
         val = e.get('/')
         assert len(val('pre')) == 1, val
 
+    def test_secure_get(self):
+        e = self.klass(self.html, app=secure_application)
+        val = e.get('/', environ=dict(REMOTE_USER='gawii'))
+        assert len(val('pre')) == 1, val
+        val = e.get('/', REMOTE_USER='gawii')
+        assert len(val('pre')) == 1, val
+
+    def test_secure_get_not_authorized(self):
+        e = self.klass(self.html, app=secure_application)
+        val = e.get('/')
+        assert len(val('pre')) == 0, val
+
     def test_post(self):
-        e = self.klass(app=application)
+        e = self.klass(self.html, app=application)
         val = e.post('/')
         assert len(val('a')) == 1, val
 

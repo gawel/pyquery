@@ -76,6 +76,9 @@ class PyQuery(list):
                 context = args[0]
             elif len(args) == 2:
                 selector, context = args
+            else:
+                raise ValueError("You can't do that." +\
+                        " Please, provide arguments")
 
             # get context
             if isinstance(context, basestring):
