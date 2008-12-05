@@ -16,7 +16,7 @@ class PyQuery(Base):
 
     def _wsgi_get(self, path_info, **kwargs):
         if 'environ' in kwargs:
-            environ = kwargs.pop('environ')
+            environ = kwargs.pop('environ').copy()
         else:
             environ = {}
         if path_info:
