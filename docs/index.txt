@@ -1,0 +1,19 @@
+.. include:: ../pyquery/README.txt
+
+:mod:`pyquery.pyquery` -- PyQuery complete API
+==============================================
+
+.. automodule:: pyquery.pyquery
+
+.. autoclass:: PyQuery
+   :members:
+
+:mod:`pyquery.ajax` -- PyQuery AJAX extension
+=============================================
+
+.. automodule:: pyquery.ajax
+
+.. autoclass:: PyQuery
+   :members:
+
+

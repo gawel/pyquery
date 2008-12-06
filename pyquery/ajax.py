@@ -69,9 +69,13 @@ class PyQuery(Base):
         return result
 
     def get(self, path_info, **kwargs):
+        """GET a path from wsgi app or url
+        """
         kwargs['REQUEST_METHOD'] = 'GET'
         return self._wsgi_get(path_info, **kwargs)
 
     def post(self, path_info, **kwargs):
+        """POST a path from wsgi app or url
+        """
         kwargs['REQUEST_METHOD'] = 'POST'
         return self._wsgi_get(path_info, **kwargs)

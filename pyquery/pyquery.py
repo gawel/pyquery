@@ -22,7 +22,13 @@ def fromstring(context):
     except etree.XMLSyntaxError:
         return etree.fromstring(context, etree.HTMLParser())
 
-no_default = object()
+class NoDefault(object):
+    def __repr__(self):
+        """clean representation in Sphinx"""
+        return '<NoDefault>'
+
+no_default = NoDefault()
+del NoDefault
 
 class FlexibleElement(object):
     """property to allow a flexible api"""
@@ -53,7 +59,8 @@ class FlexibleElement(object):
             raise NotImplementedError()
 
 class PyQuery(list):
-    """See the README.txt"""
+    """The main class
+    """
     def __init__(self, *args, **kwargs):
         html = None
         elements = []
@@ -113,7 +120,8 @@ class PyQuery(list):
         list.__init__(self, elements)
 
     def __call__(self, *args):
-        # just return a new instance
+        """return a new PyQuery instance
+        """
         length = len(args)
         if length == 0:
             raise ValueError('You must provide at least a selector')
@@ -136,6 +144,8 @@ class PyQuery(list):
         self._extend(other[:])
 
     def __str__(self):
+        """html representation of current nodes
+        """
         return ''.join([etree.tostring(e) for e in self])
 
     def __repr__(self):
@@ -153,6 +163,8 @@ class PyQuery(list):
     ##############
 
     def each(self, func):
+        """apply func on each nodes
+        """
         for e in self:
             func(self.__class__([e]))
         return self
@@ -161,13 +173,15 @@ class PyQuery(list):
     def length(self):
         return len(self)
 
-    def size():
+    def size(self):
         return len(self)
 
     ##############
     # Attributes #
     ##############
     def attr(self, *args, **kwargs):
+        """Attributes manipulation
+        """
 
         mapping = {'class_': 'class', 'for_': 'for'}
 
@@ -202,6 +216,8 @@ class PyQuery(list):
         return self
 
     def removeAttr(self, name):
+        """remove an attribute
+        """
         for tag in self:
             del tag.attrib[name]
         return self
@@ -212,12 +228,18 @@ class PyQuery(list):
     # CSS #
     #######
     def height(self, value=no_default):
+        """set/get height of element
+        """
         return self.attr('height', value)
 
     def width(self, value=no_default):
+        """set/get width of element
+        """
         return self.attr('width', value)
 
     def addClass(self, value):
+        """add a css class to elements
+        """
         for tag in self:
             values = value.split(' ')
             classes = set((tag.get('class') or '').split())
@@ -227,6 +249,8 @@ class PyQuery(list):
         return self
 
     def removeClass(self, value):
+        """remove a css class to elements
+        """
         for tag in self:
             values = value.split(' ')
             classes = set((tag.get('class') or '').split())
@@ -236,6 +260,8 @@ class PyQuery(list):
         return self
 
     def toggleClass(self, value):
+        """toggle a css class to elements
+        """
         for tag in self:
             values = set(value.split(' '))
             classes = set((tag.get('class') or '').split())
@@ -247,6 +273,8 @@ class PyQuery(list):
         return self
 
     def css(self, *args, **kwargs):
+        """css attributes manipulation
+        """
 
         attr = value = no_default
         length = len(args)
@@ -288,18 +316,26 @@ class PyQuery(list):
     # CORE UI EFFECTS #
     ###################
     def hide(self):
+        """add display:none to elements style
+        """
         return self.css('display', 'none')
 
     def show(self):
+        """add display:block to elements style
+        """
         return self.css('display', 'block')
 
     ########
     # HTML #
     ########
     def val(self, value=no_default):
+        """return the value attribute
+        """
         return self.attr('value', value)
 
     def html(self, value=no_default):
+        """return the html representation of sub nodes
+        """
         if value is no_default:
             if not self:
                 return None
@@ -328,6 +364,8 @@ class PyQuery(list):
         return self
 
     def text(self, value=no_default):
+        """return the text representation of sub nodes
+        """
         def get_text(tag):
             text = []
             if tag.text:
@@ -368,6 +406,8 @@ class PyQuery(list):
         return root, root_text
 
     def append(self, value):
+        """append value to each nodes
+        """
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
             if len(tag) > 0: # if the tag has children
@@ -386,10 +426,14 @@ class PyQuery(list):
         return self
 
     def appendTo(self, value):
+        """append nodes to value
+        """
         value.append(self)
         return self
 
     def prepend(self, value):
+        """prepend value to nodes
+        """
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
             if not tag.text:
@@ -406,10 +450,14 @@ class PyQuery(list):
         return self
 
     def prependTo(self, value):
+        """prepend nodes to value
+        """
         value.prepend(self)
         return self
 
     def after(self, value):
+        """add value after nodes
+        """
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
             if not tag.tail:
@@ -424,10 +472,14 @@ class PyQuery(list):
         return self
 
     def insertAfter(self, value):
+        """insert nodes after value
+        """
         value.after(self)
         return self
 
     def before(self, value):
+        """insert value before nodes
+        """
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
             previous = tag.getprevious()
@@ -449,10 +501,14 @@ class PyQuery(list):
         return self
 
     def insertBefore(self, value):
+        """insert nodes before value
+        """
         value.before(self)
         return self
 
     def replaceWith(self, value):
+        """replace nodes by value
+        """
         self.before(value)
         for tag in self:
             parent = tag.getparent()
@@ -460,6 +516,8 @@ class PyQuery(list):
         return self
 
     def replaceAll(self, expr):
+        """replace nodes by expr
+        """
         if self._parent is no_default:
             raise ValueError(
                     'replaceAll can only be used with an object with parent')
@@ -467,16 +525,22 @@ class PyQuery(list):
         return self
 
     def clone(self):
+        """return a copy of nodes
+        """
         self[:] = [deepcopy(tag) for tag in self]
         return self
 
     def empty(self):
+        """remove nodes content
+        """
         for tag in self:
             tag.text = None
             tag[:] = []
         return self
 
     def remove(self, expr=no_default):
+        """remove nodes
+        """
         if expr is no_default:
             for tag in self:
                 parent = tag.getparent()

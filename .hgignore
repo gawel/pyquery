@@ -3,6 +3,7 @@ syntax: glob
 
 develop-eggs/
 bin/
+docs/.build/
 .installed.cfg
 *.egg-info
 *.pyc
