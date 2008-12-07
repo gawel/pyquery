@@ -62,6 +62,15 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
+    html3 = """
+           <html>
+            <body>
+              <div id="node1"><span>node1</span></div>
+              <div id="node2"><span>node2</span><span> booyah</span></div>
+            </body>
+           </html>
+           """
+
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)
         assert len(self.klass(doc)) == 1
@@ -89,6 +98,19 @@ class TestSelector(unittest.TestCase):
         n = e('div', self.html2)
         assert isinstance(n, self.klass)
         assert n._parent is e
+
+    def test_filter(self):
+        assert len(self.klass('div', self.html).filter('.node3')) == 1
+        assert len(self.klass('div', self.html).filter('#node2')) == 1
+
+    def test_find(self):
+        assert len(self.klass('#node1', self.html3).find('span')) == 1
+        assert len(self.klass('#node2', self.html3).find('span')) == 2
+        assert len(self.klass('div', self.html3).find('span')) == 3
+
+    def test_end(self):
+        assert len(self.klass('div', self.html3).find('span').end()) == 2
+        assert len(self.klass('#node2', self.html3).find('span').end()) == 1
 
 def application(environ, start_response):
     req = Request(environ)

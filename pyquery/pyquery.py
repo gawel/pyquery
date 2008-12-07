@@ -162,6 +162,20 @@ class PyQuery(list):
     # Traversing #
     ##############
 
+    def filter(self, selector):
+        """Filter elements in self using selector."""
+        return self.__class__(selector, self, **dict(parent=self))
+
+    def find(self, selector):
+        """Find elements using selector traversing down from self."""
+        xpath = selector_to_xpath(selector)
+        results = [child.xpath(xpath) for tag in self for child in tag.getchildren()]
+        # Flatten the results
+        elements = []
+        for r in results:
+            elements.extend(r)
+        return self.__class__(elements, **dict(parent=self))
+
     def each(self, func):
         """apply func on each nodes
         """
@@ -175,6 +189,9 @@ class PyQuery(list):
 
     def size(self):
         return len(self)
+
+    def end(self):
+        return self._parent
 
     ##############
     # Attributes #
