@@ -366,20 +366,21 @@ class PyQuery(list):
     def text(self, value=no_default):
         """return the text representation of sub nodes
         """
-        def get_text(tag):
+        def get_text(tag, no_tail=False):
             text = []
             if tag.text:
                 text.append(tag.text)
             for child in tag.getchildren():
                 text.extend(get_text(child))
-            if tag.tail:
+            if not no_tail and tag.tail:
                 text.append(tag.tail)
             return text
 
         if value is no_default:
             if not self:
                 return None
-            return ' '.join([''.join(get_text(tag)).strip() for tag in self])
+            return ' '.join([''.join(get_text(tag, no_tail=True)).strip()
+                             for tag in self])
 
         for tag in self:
             for child in tag.getchildren():
