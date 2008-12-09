@@ -3,9 +3,87 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-from lxml.cssselect import css_to_xpath
-from lxml import etree
+from lxml.cssselect import css_to_xpath, Pseudo, XPathExpr, XPathExprOr
+from lxml import etree, cssselect
 from copy import deepcopy
+
+class JQueryPseudo(Pseudo):
+    """This class is used to implement the css pseudo classes
+    (:checked, :first-child, ...)that are not defined in the css standard,
+    but are defined in the jquery API.
+    """
+    def _xpath_first(self, xpath):
+        xpath.add_star_prefix()
+        xpath.add_name_test()
+        xpath.add_post_condition('position() = 1')
+        return xpath
+
+    def _xpath_last(self, xpath):
+        xpath.add_star_prefix()
+        xpath.add_name_test()
+        xpath.add_post_condition('position() = last()')
+        return xpath
+
+    def _xpath_even(self, xpath):
+        xpath.add_star_prefix()
+        xpath.add_name_test()
+
+        # the first element is 1 in xpath and 0 in python
+        xpath.add_post_condition('position() mod 2 = 1')
+        return xpath
+
+    def _xpath_odd(self, xpath):
+        xpath.add_star_prefix()
+        xpath.add_name_test()
+        xpath.add_post_condition('position() mod 2 = 0')
+        return xpath
+
+cssselect.Pseudo = JQueryPseudo
+
+class AdvancedXPathExpr(XPathExpr):
+    def __init__(self, prefix=None, path=None, element='*', condition=None,
+                 post_condition=None, star_prefix=False):
+        self.prefix = prefix
+        self.path = path
+        self.element = element
+        self.condition = condition
+        self.post_condition = post_condition
+        self.star_prefix = star_prefix
+
+    def add_post_condition(self, post_condition):
+        if self.post_condition:
+            self.post_condition = '%s and (%s)' % (self.post_condition,
+                                                   post_condition)
+        else:
+            self.post_condition = post_condition
+
+    def __str__(self):
+        path = ''
+        if self.prefix is not None:
+            path += str(self.prefix)
+        if self.path is not None:
+            path += str(self.path)
+        path += str(self.element)
+        if self.condition:
+            path += '[%s]' % self.condition
+        if self.post_condition:
+            path = '(%s)[%s]' % (path, self.post_condition)
+        return path
+
+cssselect.XPathExpr = AdvancedXPathExpr
+
+class AdvancedXPathExprOr(XPathExprOr):
+    def __init__(self, items, prefix=None):
+        self.prefix = prefix = prefix or ''
+        self.items = items
+
+    def __str__(self):
+        prefix = self.prefix or ''
+        for item in self.items:
+            item.prefix = prefix
+        return ' | '.join([str(i) for i in self.items])
+
+cssselect.XPathExprOr = AdvancedXPathExprOr
 
 def selector_to_xpath(selector):
     """JQuery selector to xpath.
