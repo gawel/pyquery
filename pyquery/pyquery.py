@@ -241,8 +241,31 @@ class PyQuery(list):
     ##############
 
     def filter(self, selector):
-        """Filter elements in self using selector."""
-        return self.__class__(selector, self, **dict(parent=self))
+        """Filter elements in self using selector (string or function)."""
+        if not callable(selector):
+            return self.__class__(selector, self, **dict(parent=self))
+        else:
+            elements = []
+            try:
+                for i, this in enumerate(self):
+                    selector.func_globals['this'] = this
+                    if selector(i):
+                        elements.append(this)
+            finally:
+                del selector.func_globals['this']
+            return self.__class__(elements, **dict(parent=self))
+
+    def not_(self, selector):
+        """Return elements that don't match the given selector."""
+        exclude = set(self.__class__(selector, self))
+        return self.__class__([e for e in self if e not in exclude], **dict(parent=self))
+
+    def is_(self, selector):
+        """Returns True if selector matches at least one current element, else False."""
+        return bool(self.__class__(selector, self))
+
+    def hasClass(self, name):
+        return self.is_('.%s' % name)
 
     def find(self, selector):
         """Find elements using selector traversing down from self."""
@@ -253,6 +276,10 @@ class PyQuery(list):
         for r in results:
             elements.extend(r)
         return self.__class__(elements, **dict(parent=self))
+
+    def eq(self, index):
+        """Return PyQuery of only the element with the provided index."""
+        return self.__class__([self[index]], **dict(parent=self))
 
     def each(self, func):
         """apply func on each nodes

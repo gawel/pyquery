@@ -120,6 +120,65 @@ Same thing the pythonic way ('_' characters are translated to '-')::
     >>> p.attr.style
     'font-size: 17px'
 
+Traversing
+----------
+
+Some jQuery traversal methods are supported.  For instance, you can filter the selection list
+using a string selector::
+
+    >>> d('p').filter('.hello')
+    [<p#hello.hello>]
+
+Filtering can also be done using a function::
+
+    >>> d('p').filter(lambda i: i == 1)
+    [<p#test>]
+
+Filtering functions can refer to the current element as 'this', like in jQuery::
+
+    >>> d('p').filter(lambda i: PyQuery(this).text() == 'you know Python rocks')
+    [<p#hello.hello>]
+
+The opposite of filter is not_ - it returns the items that don't match the selector::
+
+    >>> d('p').not_('.hello')
+    [<p#test>]
+
+It is possible to select a single element with eq::
+
+    >>> d('p').eq(0)
+    [<p#hello.hello>]
+
+The is_ method lets you query if any current elements match the selector::
+
+    >>> d('p').eq(0).is_('.hello')
+    True
+    >>> d('p').eq(1).is_('.hello')
+    False
+
+hasClass allows for checking for the presence of a class by name::
+
+    >>> d('p').eq(0).hasClass('hello')
+    True
+    >>> d('p').eq(1).hasClass('hello')
+    False
+
+You can find nested elements::
+
+    >>> d('p').find('a')
+    [<a>, <a>]
+    >>> d('p').eq(1).find('a')
+    [<a>]
+
+Breaking out of a level of traversal is also supported using end::
+
+    >>> d('p').find('a').end()
+    [<p#hello.hello>, <p#test>]
+    >>> d('p').eq(0).end()
+    [<p#hello.hello>, <p#test>]
+    >>> d('p').filter(lambda i: i == 1).end()
+    [<p#hello.hello>, <p#test>]
+
 Manipulating
 ------------
 

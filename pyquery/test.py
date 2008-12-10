@@ -62,15 +62,6 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
-    html3 = """
-           <html>
-            <body>
-              <div id="node1"><span>node1</span></div>
-              <div id="node2"><span>node2</span><span> booyah</span></div>
-            </body>
-           </html>
-           """
-
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)
         assert len(self.klass(doc)) == 1
@@ -99,18 +90,37 @@ class TestSelector(unittest.TestCase):
         assert isinstance(n, self.klass)
         assert n._parent is e
 
+class TestTraversal(unittest.TestCase):
+    klass = pq
+    html = """
+           <html>
+            <body>
+              <div id="node1"><span>node1</span></div>
+              <div id="node2" class="node3"><span>node2</span><span> booyah</span></div>
+            </body>
+           </html>
+           """
+
     def test_filter(self):
         assert len(self.klass('div', self.html).filter('.node3')) == 1
         assert len(self.klass('div', self.html).filter('#node2')) == 1
+        assert len(self.klass('div', self.html).filter(lambda i: i == 0)) == 1
+
+    def test_not(self):
+        assert len(self.klass('div', self.html).not_('.node3')) == 1
+
+    def test_is(self):
+        assert self.klass('div', self.html).is_('.node3')
+        assert not self.klass('div', self.html).is_('.foobazbar')
 
     def test_find(self):
-        assert len(self.klass('#node1', self.html3).find('span')) == 1
-        assert len(self.klass('#node2', self.html3).find('span')) == 2
-        assert len(self.klass('div', self.html3).find('span')) == 3
+        assert len(self.klass('#node1', self.html).find('span')) == 1
+        assert len(self.klass('#node2', self.html).find('span')) == 2
+        assert len(self.klass('div', self.html).find('span')) == 3
 
     def test_end(self):
-        assert len(self.klass('div', self.html3).find('span').end()) == 2
-        assert len(self.klass('#node2', self.html3).find('span').end()) == 1
+        assert len(self.klass('div', self.html).find('span').end()) == 2
+        assert len(self.klass('#node2', self.html).find('span').end()) == 1
 
 def application(environ, start_response):
     req = Request(environ)
