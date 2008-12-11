@@ -42,7 +42,7 @@ Now d is like the $ in jquery::
     'you know Python rocks'
 
 You can use some of the pseudo classes :first :last :even :odd that are
-available in jQuery but that are not standard in css.
+available in jQuery but that are not standard in css::
 
     >>> d('p:first')
     [<p#hello.hello>]
@@ -327,6 +327,10 @@ If you want to run the tests that you can see above you should do::
     $ python bootstrap.py
     $ bin/buildout
     $ bin/test
+
+If you don't already have lxml installed use this line::
+
+    $ STATIC_DEPS=true bin/buildout
 
 Other documentations
 --------------------
