@@ -658,24 +658,64 @@ class PyQuery(list):
         for tag in self:
             wrapper = deepcopy(value)
             # FIXME: using iterchildren is probably not optimal
-            childs = [c for c in wrapper.iterchildren()]
-            if not childs:
-                child = wrapper
+            if not wrapper.getchildren():
+                wrapper.append(deepcopy(tag))
             else:
+                childs = [c for c in wrapper.iterchildren()]
                 child = childs[-1]
-            child.append(deepcopy(tag))
-            nodes.append(child)
+                child.append(deepcopy(tag))
+            nodes.append(wrapper)
 
             parent = tag.getparent()
             if parent is not None:
-                index = parent.index(tag)
-                # FIXME: using iterchildren is probably not optimal
                 for t in parent.iterchildren():
                     if t is tag:
-                        t.addnext(child)
+                        t.addnext(wrapper)
                         parent.remove(t)
                         break
         self[:] = nodes
+        return self
+
+    def wrapAll(self, value):
+        """Wrap all the elements in the matched set into a single wrapper element::
+
+            >>> d = PyQuery('<div><span>Hey</span><span>you !</span></div>')
+            >>> print d('span').wrapAll('<div id="wrapper"></div>')
+            <div><div id="wrapper"><span>Hey</span><span>you !</span></div></div>
+
+        """
+        if not self:
+            return self
+
+        assert isinstance(value, basestring)
+        value = fromstring(value)
+        wrapper = deepcopy(value)
+        if not wrapper.getchildren():
+            child = wrapper
+        else:
+            childs = [c for c in wrapper.iterchildren()]
+            child = childs[-1]
+
+        replace_childs = True
+        parent = self[0].getparent()
+        if parent is None:
+            parent = no_default
+
+        # add nodes to wrapper and check parent
+        for tag in self:
+            child.append(deepcopy(tag))
+            if tag.getparent() is not parent:
+                replace_childs = False
+
+        # replace nodes i parent if possible
+        if parent is not no_default and replace_childs:
+            childs = [c for c in parent.iterchildren()]
+            if len(childs) == len(self):
+                for tag in self:
+                    parent.remove(tag)
+                parent.append(wrapper)
+
+        self[:] = [wrapper]
         return self
 
     def replaceWith(self, value):

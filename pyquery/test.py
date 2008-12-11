@@ -47,13 +47,23 @@ def test_wrap():
         >>> s = d('span')
         >>> s is d
         False
-        >>> s.wrap('<div id="wrapper"></div>')
-        [<div#wrapper>]
+        >>> s.wrap('<div><div id="wrapper"></div></div>')
+        [<div>]
 
     We get the original doc with new node::
 
         >>> print d
-        <div id="bouh"><div id="wrapper"><span>youhou</span></div></div>
+        <div id="bouh"><div><div id="wrapper"><span>youhou</span></div></div></div>
+
+    Complex wrapAll::
+
+        >>> doc = pq('<div><span>Hey</span><span>you !</span></div>')
+        >>> s = doc('span')
+        >>> s.wrapAll('<div id="wrapper"></div>')
+        [<div#wrapper>]
+
+        >>> print doc
+        <div><div id="wrapper"><span>Hey</span><span>you !</span></div></div>
     """
 
 class DocTest(doctest.DocFileCase):
