@@ -27,6 +27,20 @@ def input_app(environ, start_response):
         resp.body = ''
     return resp(environ, start_response)
 
+def test_text():
+    """
+    Assume spaces normalization::
+
+        >>> pq('<ul> <li>  </li> </ul>').text()
+        ''
+
+        >>> print pq('<ul><li>toto</li><li>tata</li></ul>').text()
+        toto tata
+
+        >>> print pq('<ul> <li> toto </li> <li> tata </li> </ul>').text()
+        toto tata
+
+    """
 
 class DocTest(doctest.DocFileCase):
 
