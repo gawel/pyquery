@@ -681,7 +681,7 @@ class PyQuery(list):
 
             >>> d = PyQuery('<div><span>Hey</span><span>you !</span></div>')
             >>> print d('span').wrapAll('<div id="wrapper"></div>')
-            <div><div id="wrapper"><span>Hey</span><span>you !</span></div></div>
+            <div id="wrapper"><span>Hey</span><span>you !</span></div>
 
         """
         if not self:
