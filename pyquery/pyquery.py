@@ -486,7 +486,17 @@ class PyQuery(list):
         return self
 
     def text(self, value=no_default):
-        """return the text representation of sub nodes
+        """Get or set the text representation of sub nodes::
+
+            >>> doc = PyQuery('<div><span>toto</span><span>tata</span></div>')
+            >>> print doc.text()
+            toto tata
+
+            >>> doc.text('Youhou !')
+            [<div>]
+            >>> print doc
+            <div>Youhou !</div>
+
         """
 
         if value is no_default:
@@ -630,6 +640,42 @@ class PyQuery(list):
         """insert nodes before value
         """
         value.before(self)
+        return self
+
+    def wrap(self, value):
+        """A string of HTML that will be created on the fly and wrapped around
+        each target::
+
+            >>> d = PyQuery('<span>youhou</span>')
+            >>> d.wrap('<div></div>')
+            [<div>]
+            >>> print d
+            <div><span>youhou</span></div>
+        """
+        assert isinstance(value, basestring)
+        value = fromstring(value)
+        nodes = []
+        for tag in self:
+            wrapper = deepcopy(value)
+            # FIXME: using iterchildren is probably not optimal
+            childs = [c for c in wrapper.iterchildren()]
+            if not childs:
+                child = wrapper
+            else:
+                child = childs[-1]
+            child.append(deepcopy(tag))
+            nodes.append(child)
+
+            parent = tag.getparent()
+            if parent is not None:
+                index = parent.index(tag)
+                # FIXME: using iterchildren is probably not optimal
+                for t in parent.iterchildren():
+                    if t is tag:
+                        t.addnext(child)
+                        parent.remove(t)
+                        break
+        self[:] = nodes
         return self
 
     def replaceWith(self, value):

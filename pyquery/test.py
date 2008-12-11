@@ -34,12 +34,26 @@ def test_text():
         >>> pq('<ul> <li>  </li> </ul>').text()
         ''
 
-        >>> print pq('<ul><li>toto</li><li>tata</li></ul>').text()
-        toto tata
-
         >>> print pq('<ul> <li> toto </li> <li> tata </li> </ul>').text()
         toto tata
 
+    """
+
+def test_wrap():
+    """
+    Complex wrapping::
+
+        >>> d = pq('<div id="bouh"><span>youhou</span></div>')
+        >>> s = d('span')
+        >>> s is d
+        False
+        >>> s.wrap('<div id="wrapper"></div>')
+        [<div#wrapper>]
+
+    We get the original doc with new node::
+
+        >>> print d
+        <div id="bouh"><div id="wrapper"><span>youhou</span></div></div>
     """
 
 class DocTest(doctest.DocFileCase):
