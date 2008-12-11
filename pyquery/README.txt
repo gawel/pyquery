@@ -139,7 +139,7 @@ Filtering functions can refer to the current element as 'this', like in jQuery::
     >>> d('p').filter(lambda i: PyQuery(this).text() == 'you know Python rocks')
     [<p#hello.hello>]
 
-The opposite of filter is not_ - it returns the items that don't match the selector::
+The opposite of filter is `not_` - it returns the items that don't match the selector::
 
     >>> d('p').not_('.hello')
     [<p#test>]
@@ -149,7 +149,7 @@ It is possible to select a single element with eq::
     >>> d('p').eq(0)
     [<p#hello.hello>]
 
-The is_ method lets you query if any current elements match the selector::
+The `is_` method lets you query if any current elements match the selector::
 
     >>> d('p').eq(0).is_('.hello')
     True

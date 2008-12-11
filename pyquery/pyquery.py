@@ -486,11 +486,14 @@ class PyQuery(list):
         return self
 
     def text(self, value=no_default):
-        """Get or set the text representation of sub nodes::
+        """Get or set the text representation of sub nodes.
 
+        Get the text value::
             >>> doc = PyQuery('<div><span>toto</span><span>tata</span></div>')
             >>> print doc.text()
             toto tata
+
+        Set the text value::
 
             >>> doc.text('Youhou !')
             [<div>]
@@ -651,6 +654,7 @@ class PyQuery(list):
             [<div>]
             >>> print d
             <div><span>youhou</span></div>
+
         """
         assert isinstance(value, basestring)
         value = fromstring(value)
