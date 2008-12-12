@@ -144,6 +144,23 @@ The opposite of filter is `not_` - it returns the items that don't match the sel
     >>> d('p').not_('.hello')
     [<p#test>]
 
+You can map a callable onto a PyQuery and get a mutated result. The result can
+contain any items, not just elements::
+
+    >>> d('p').map(lambda i, e: PyQuery(e).text())
+    ['you know Python rocks', 'hello python !']
+
+Like the filter method, map callbacks can reference the current item as this::
+
+    >>> d('p').map(lambda i, e: len(PyQuery(this).text()))
+    [21, 14]
+
+The map callback can also return a list, which will extend the resulting
+PyQuery::
+
+    >>> d('p').map(lambda i, e: PyQuery(this).text().split())
+    ['you', 'know', 'Python', 'rocks', 'hello', 'python', '!']
+
 It is possible to select a single element with eq::
 
     >>> d('p').eq(0)

@@ -156,6 +156,11 @@ class TestTraversal(unittest.TestCase):
         assert len(self.klass('#node2', self.html).find('span')) == 2
         assert len(self.klass('div', self.html).find('span')) == 3
 
+    def test_map(self):
+        def ids_minus_one(i, elem):
+            return int(self.klass(elem).attr('id')[-1]) - 1
+        assert self.klass('div', self.html).map(ids_minus_one) == [0, 1]
+
     def test_end(self):
         assert len(self.klass('div', self.html).find('span').end()) == 2
         assert len(self.klass('#node2', self.html).find('span').end()) == 1

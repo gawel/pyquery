@@ -228,13 +228,17 @@ class PyQuery(list):
 
     def __repr__(self):
         r = []
-        for el in self:
-            c = el.get('class')
-            c = c and '.' + '.'.join(c.split(' ')) or ''
-            id = el.get('id')
-            id = id and '#' + id or ''
-            r.append('<%s%s%s>' % (el.tag, id, c))
-        return '[' + (', '.join(r)) + ']'
+        try:
+            for el in self:
+                c = el.get('class')
+                c = c and '.' + '.'.join(c.split(' ')) or ''
+                id = el.get('id')
+                id = id and '#' + id or ''
+                r.append('<%s%s%s>' % (el.tag, id, c))
+            return '[' + (', '.join(r)) + ']'
+        except AttributeError:
+            return list.__repr__(self)
+
 
     ##############
     # Traversing #
@@ -287,6 +291,26 @@ class PyQuery(list):
         for e in self:
             func(self.__class__([e]))
         return self
+
+    def map(self, func):
+        """Returns a new PyQuery after transforming current items with func.
+
+        func should take two arguments - 'index' and 'element'.  Elements can 
+        also be referred to as 'this' inside of func.
+        """
+        items = []
+        try:
+            for i, element in enumerate(self):
+                func.func_globals['this'] = element
+                result = func(i, element)
+                if result is not None:
+                    if not isinstance(result, list):
+                        items.append(result)
+                    else:
+                        items.extend(result)
+        finally:
+            del func.func_globals['this']
+        return self.__class__(items, **dict(parent=self))
 
     @property
     def length(self):
