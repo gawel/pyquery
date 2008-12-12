@@ -268,9 +268,6 @@ class PyQuery(list):
         """Returns True if selector matches at least one current element, else False."""
         return bool(self.__class__(selector, self))
 
-    def hasClass(self, name):
-        return self.is_('.%s' % name)
-
     def find(self, selector):
         """Find elements using selector traversing down from self."""
         xpath = selector_to_xpath(selector)
@@ -362,7 +359,12 @@ class PyQuery(list):
         return self
 
     def removeAttr(self, name):
-        """remove an attribute
+        """Remove an attribute::
+
+            >>> d = PyQuery('<div id="myid"></div>')
+            >>> d.removeAttr('id')
+            [<div>]
+
         """
         for tag in self:
             del tag.attrib[name]
@@ -383,8 +385,23 @@ class PyQuery(list):
         """
         return self.attr('width', value)
 
+    def hasClass(self, name):
+        """Return True if element has class::
+
+            >>> d = PyQuery('<div class="myclass"></div>')
+            >>> d.hasClass('myclass')
+            True
+
+        """
+        return self.is_('.%s' % name)
+
     def addClass(self, value):
-        """add a css class to elements
+        """Add a css class to elements::
+
+            >>> d = PyQuery('<div></div>')
+            >>> d.addClass('myclass')
+            [<div.myclass>]
+
         """
         for tag in self:
             values = value.split(' ')
@@ -395,7 +412,12 @@ class PyQuery(list):
         return self
 
     def removeClass(self, value):
-        """remove a css class to elements
+        """Remove a css class to elements
+
+            >>> d = PyQuery('<div class="myclass"></div>')
+            >>> d.removeClass('myclass')
+            [<div>]
+
         """
         for tag in self:
             values = value.split(' ')
@@ -406,7 +428,12 @@ class PyQuery(list):
         return self
 
     def toggleClass(self, value):
-        """toggle a css class to elements
+        """Toggle a css class to elements
+
+            >>> d = PyQuery('<div></div>')
+            >>> d.toggleClass('myclass')
+            [<div.myclass>]
+
         """
         for tag in self:
             values = set(value.split(' '))
@@ -475,12 +502,32 @@ class PyQuery(list):
     # HTML #
     ########
     def val(self, value=no_default):
-        """return the value attribute
+        """Set/get the attribute value::
+
+            >>> d = PyQuery('<input />')
+            >>> d.val('Youhou')
+            [<input>]
+            >>> d.val()
+            'Youhou'
+
         """
         return self.attr('value', value)
 
     def html(self, value=no_default):
-        """return the html representation of sub nodes
+        """Get or set the html representation of sub nodes.
+
+        Get the text value::
+
+            >>> doc = PyQuery('<div><span>toto</span></div>')
+            >>> print doc.html()
+            <span>toto</span>
+
+        Set the text value::
+
+            >>> doc.html('<span>Youhou !</span>')
+            [<div>]
+            >>> print doc
+            <div><span>Youhou !</span></div>
         """
         if value is no_default:
             if not self:
@@ -513,6 +560,7 @@ class PyQuery(list):
         """Get or set the text representation of sub nodes.
 
         Get the text value::
+
             >>> doc = PyQuery('<div><span>toto</span><span>tata</span></div>')
             >>> print doc.text()
             toto tata
