@@ -27,46 +27,7 @@ def input_app(environ, start_response):
         resp.body = ''
     return resp(environ, start_response)
 
-def test_text():
-    """
-    Assume spaces normalization::
-
-        >>> pq('<ul> <li>  </li> </ul>').text()
-        ''
-
-        >>> print pq('<ul> <li> toto </li> <li> tata </li> </ul>').text()
-        toto tata
-
-    """
-
-def test_wrap():
-    """
-    Complex wrapping::
-
-        >>> d = pq('<div id="bouh"><span>youhou</span></div>')
-        >>> s = d('span')
-        >>> s is d
-        False
-        >>> s.wrap('<div><div id="wrapper"></div></div>')
-        [<div>]
-
-    We get the original doc with new node::
-
-        >>> print d
-        <div id="bouh"><div><div id="wrapper"><span>youhou</span></div></div></div>
-
-    Complex wrapAll::
-
-        >>> doc = pq('<div><span>Hey</span><span>you !</span></div>')
-        >>> s = doc('span')
-        >>> s.wrapAll('<div id="wrapper"></div>')
-        [<div#wrapper>]
-
-        >>> print doc
-        <div><div id="wrapper"><span>Hey</span><span>you !</span></div></div>
-    """
-
-class DocTest(doctest.DocFileCase):
+class TestReadme(doctest.DocFileCase):
 
     path = os.path.join(dirname, 'README.txt')
 
@@ -79,6 +40,15 @@ class DocTest(doctest.DocFileCase):
     def setUp(self):
         test = self._dt_test
         test.globs.update(globals())
+
+class TestTests(doctest.DocFileCase):
+    path = os.path.join(dirname, 'tests.txt')
+
+    def __init__(self, *args, **kwargs):
+        parser = doctest.DocTestParser()
+        doc = open(self.path).read()
+        test = parser.get_doctest(doc, globals(), '', self.path, 0)
+        doctest.DocFileCase.__init__(self, test, optionflags=doctest.ELLIPSIS)
 
 class TestSelector(unittest.TestCase):
     klass = pq
