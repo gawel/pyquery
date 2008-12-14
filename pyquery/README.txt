@@ -45,6 +45,7 @@ You can use some of the pseudo classes that are available in jQuery but that
 are not standard in css such as :first :last :even :odd :eq :lt :gt::
 
     >>> d('p:first')
+    [<p#hello.hello>]
 
 
 Attributes
