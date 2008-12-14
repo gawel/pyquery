@@ -28,7 +28,6 @@ def input_app(environ, start_response):
     return resp(environ, start_response)
 
 class TestReadme(doctest.DocFileCase):
-
     path = os.path.join(dirname, 'README.txt')
 
     def __init__(self, *args, **kwargs):
@@ -70,6 +69,16 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
+    html3 = """
+           <html>
+            <body>
+              <div>node1</div>
+              <div id="node2">node2</div>
+              <div class="node3">node3</div>
+            </body>
+           </html>
+           """
+
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)
         assert len(self.klass(doc)) == 1
@@ -97,6 +106,17 @@ class TestSelector(unittest.TestCase):
         n = e('div', self.html2)
         assert isinstance(n, self.klass)
         assert n._parent is e
+
+    def test_pseudo_classes(self):
+        e = self.klass(self.html)
+        self.assertEqual(e('div:first').text(), 'node1')
+        self.assertEqual(e('div:last').text(), 'node3')
+        self.assertEqual(e('div:even').text(), 'node1 node3')
+        self.assertEqual(e('div div:even').text(), None)
+        self.assertEqual(e('body div:even').text(), 'node1 node3')
+        self.assertEqual(e('div:gt(0)').text(), 'node2 node3')
+        self.assertEqual(e('div:lt(1)').text(), 'node1')
+        self.assertEqual(e('div:eq(2)').text(), 'node3')
 
 class TestTraversal(unittest.TestCase):
     klass = pq

@@ -41,17 +41,10 @@ Now d is like the $ in jquery::
     >>> p.text()
     'you know Python rocks'
 
-You can use some of the pseudo classes :first :last :even :odd that are
-available in jQuery but that are not standard in css::
+You can use some of the pseudo classes that are available in jQuery but that
+are not standard in css such as :first :last :even :odd :eq :lt :gt::
 
     >>> d('p:first')
-    [<p#hello.hello>]
-    >>> d('p:last')
-    [<p#test>]
-    >>> d('p:even')
-    [<p#hello.hello>]
-    >>> d('p:odd')
-    [<p#test>]
 
 
 Attributes

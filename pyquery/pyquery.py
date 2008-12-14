@@ -3,42 +3,66 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-from lxml.cssselect import css_to_xpath, Pseudo, XPathExpr, XPathExprOr
+from lxml.cssselect import css_to_xpath, Pseudo, XPathExpr, XPathExprOr, \
+                           Function
 from lxml import etree, cssselect
 from copy import deepcopy
 
 class JQueryPseudo(Pseudo):
     """This class is used to implement the css pseudo classes
-    (:checked, :first-child, ...)that are not defined in the css standard,
+    (:first, :last, ...) that are not defined in the css standard,
     but are defined in the jquery API.
     """
     def _xpath_first(self, xpath):
-        xpath.add_star_prefix()
-        xpath.add_name_test()
+        """Matches the first selected element.
+        """
         xpath.add_post_condition('position() = 1')
         return xpath
 
     def _xpath_last(self, xpath):
-        xpath.add_star_prefix()
-        xpath.add_name_test()
+        """Matches the last selected element.
+        """
         xpath.add_post_condition('position() = last()')
         return xpath
 
     def _xpath_even(self, xpath):
-        xpath.add_star_prefix()
-        xpath.add_name_test()
-
-        # the first element is 1 in xpath and 0 in python
+        """Matches even elements, zero-indexed.
+        """
+        # the first element is 1 in xpath and 0 in python and js
         xpath.add_post_condition('position() mod 2 = 1')
         return xpath
 
     def _xpath_odd(self, xpath):
-        xpath.add_star_prefix()
-        xpath.add_name_test()
+        """Matches odd elements, zero-indexed.
+        """
         xpath.add_post_condition('position() mod 2 = 0')
         return xpath
 
 cssselect.Pseudo = JQueryPseudo
+
+class JQueryFunction(Function):
+    """Represents selector:name(expr) that are present in JQuery but not in the
+    css standard.
+    """
+    def _xpath_eq(self, xpath, expr):
+        """Matches a single element by its index.
+        """
+        xpath.add_post_condition('position() = %s' % int(expr+1))
+        return xpath
+
+    def _xpath_gt(self, xpath, expr):
+        """Matches all elements with an index over the given one.
+        """
+        xpath.add_post_condition('position() > %s' % int(expr+1))
+        return xpath
+
+    def _xpath_lt(self, xpath, expr):
+        """Matches all elements with an index below the given one.
+        """
+        xpath.add_post_condition('position() < %s' % int(expr+1))
+        return xpath
+
+cssselect.Function = JQueryFunction
 
 class AdvancedXPathExpr(XPathExpr):
     def __init__(self, prefix=None, path=None, element='*', condition=None,
@@ -58,17 +82,14 @@ class AdvancedXPathExpr(XPathExpr):
             self.post_condition = post_condition
 
     def __str__(self):
-        path = ''
-        if self.prefix is not None:
-            path += str(self.prefix)
-        if self.path is not None:
-            path += str(self.path)
-        path += str(self.element)
-        if self.condition:
-            path += '[%s]' % self.condition
+        path = XPathExpr.__str__(self)
         if self.post_condition:
             path = '(%s)[%s]' % (path, self.post_condition)
         return path
+
+    def join(self, combiner, other):
+        XPathExpr.join(self, combiner, other)
+        self.post_condition = other.post_condition
 
 cssselect.XPathExpr = AdvancedXPathExpr
 
@@ -87,7 +108,6 @@ cssselect.XPathExprOr = AdvancedXPathExprOr
 
 def selector_to_xpath(selector):
     """JQuery selector to xpath.
-    TODO: patch cssselect to add :first, :last, ...
     """
     selector = selector.replace('[@', '[')
     return css_to_xpath(selector)
@@ -292,7 +312,7 @@ class PyQuery(list):
     def map(self, func):
         """Returns a new PyQuery after transforming current items with func.
 
-        func should take two arguments - 'index' and 'element'.  Elements can 
+        func should take two arguments - 'index' and 'element'.  Elements can
         also be referred to as 'this' inside of func.
         """
         items = []
