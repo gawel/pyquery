@@ -6,6 +6,7 @@
 from cssselectpatch import selector_to_xpath
 from lxml import etree
 from copy import deepcopy
+from urlparse import urljoin
 
 def fromstring(context):
     """use html parser if we don't have clean xml
@@ -57,6 +58,7 @@ class PyQuery(list):
     def __init__(self, *args, **kwargs):
         html = None
         elements = []
+        self._base_url = None
 
         if 'parent' in kwargs:
             self._parent = kwargs.pop('parent')
@@ -69,7 +71,9 @@ class PyQuery(list):
                 html = file(kwargs['filename']).read()
             elif 'url' in kwargs:
                 from urllib2 import urlopen
-                html = urlopen(kwargs['url']).read()
+                url = kwargs['url']
+                html = urlopen(url).read()
+                self._base_url = url
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
             elements = [fromstring(html)]
@@ -751,4 +755,30 @@ class PyQuery(list):
         else:
             results = self.__class__(expr, self)
             results.remove()
+        return self
+
+    #####################################################
+    # Additional methods that are not in the jQuery API #
+    #####################################################
+
+    @property
+    def base_url(self):
+        """Return the url of current html document or None if not available.
+        """
+        if self._base_url is not None:
+            return self._base_url
+        if self._parent is not no_default:
+            return self._parent.base_url
+
+    def make_links_absolute(self, base_url=None):
+        """Make all links absolute.
+        """
+        if base_url is None:
+            base_url = self.base_url
+            if base_url is None:
+                raise ValueError('You need a base URL to make your links'
+                 'absolute. It can be provided by the base_url parameter.')
+
+        self('a').each(lambda a:
+                       a.attr('href', urljoin(base_url, a.attr('href'))))
         return self

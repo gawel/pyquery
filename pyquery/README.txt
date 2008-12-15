@@ -20,12 +20,12 @@ Usage
 You can use the PyQuery class to load an xml document from a string, a lxml
 document, from a file or from an url::
 
-    >>> from pyquery import PyQuery
+    >>> from pyquery import PyQuery as pq
     >>> from lxml import etree
-    >>> d = PyQuery("<html></html>")
-    >>> d = PyQuery(etree.fromstring("<html></html>"))
-    >>> d = PyQuery(url='http://google.com/')
-    >>> d = PyQuery(filename=path_to_html_file)
+    >>> d = pq("<html></html>")
+    >>> d = pq(etree.fromstring("<html></html>"))
+    >>> d = pq(url='http://google.com/')
+    >>> d = pq(filename=path_to_html_file)
 
 Now d is like the $ in jquery::
 
@@ -130,7 +130,7 @@ Filtering can also be done using a function::
 
 Filtering functions can refer to the current element as 'this', like in jQuery::
 
-    >>> d('p').filter(lambda i: PyQuery(this).text() == 'you know Python rocks')
+    >>> d('p').filter(lambda i: pq(this).text() == 'you know Python rocks')
     [<p#hello.hello>]
 
 The opposite of filter is `not_` - it returns the items that don't match the selector::
@@ -141,18 +141,18 @@ The opposite of filter is `not_` - it returns the items that don't match the sel
 You can map a callable onto a PyQuery and get a mutated result. The result can
 contain any items, not just elements::
 
-    >>> d('p').map(lambda i, e: PyQuery(e).text())
+    >>> d('p').map(lambda i, e: pq(e).text())
     ['you know Python rocks', 'hello python !']
 
 Like the filter method, map callbacks can reference the current item as this::
 
-    >>> d('p').map(lambda i, e: len(PyQuery(this).text()))
+    >>> d('p').map(lambda i, e: len(pq(this).text()))
     [21, 14]
 
 The map callback can also return a list, which will extend the resulting
 PyQuery::
 
-    >>> d('p').map(lambda i, e: PyQuery(this).text().split())
+    >>> d('p').map(lambda i, e: pq(this).text().split())
     ['you', 'know', 'Python', 'rocks', 'hello', 'python', '!']
 
 It is possible to select a single element with eq::
@@ -328,6 +328,21 @@ The response attribute is a `WebOb`_ `Response`_
 .. _paste: http://pythonpaste.org/
 .. _proxy: http://pythonpaste.org/modules/proxy.html#paste.proxy.Proxy
 
+Making links absolute
+---------------------
+
+You can make all links on a page absolute which can be usefull for screen
+scrapping::
+
+    >>> d = pq(url='http://google.com')
+    >>> d('a:last').attr('href')
+    '/intl/fr/privacy.html'
+    >>> d.make_links_absolute()
+    [<html>]
+    >>> d('a:last').attr('href')
+    'http://google.com/intl/fr/privacy.html'
+
+
 Testing
 -------
 
@@ -338,6 +353,11 @@ If you want to run the tests that you can see above you should do::
     $ python bootstrap.py
     $ bin/buildout
     $ bin/test
+
+You can build the Sphinx documentation by doing::
+
+    $ cd docs
+    $ make html
 
 If you don't already have lxml installed use this line::
 
