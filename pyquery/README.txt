@@ -290,12 +290,12 @@ You can make all links on a page absolute which can be usefull for screen
 scrapping::
 
     >>> d = pq(url='http://google.com')
-    >>> d('a:last').attr('href')
-    '/intl/fr/privacy.html'
+    >>> d('a').eq(25).attr('href')
+    '/services/'
     >>> d.make_links_absolute()
     [<html>]
-    >>> d('a:last').attr('href')
-    'http://google.com/intl/fr/privacy.html'
+    >>> d('a').eq(25).attr('href')
+    'http://google.com/services/'
 
 
 Testing
