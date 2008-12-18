@@ -8,13 +8,20 @@ from lxml import etree
 from copy import deepcopy
 from urlparse import urljoin
 
-def fromstring(context):
+def fromstring(context, parser=None):
     """use html parser if we don't have clean xml
     """
-    try:
+    if parser == None:
+        try:
+            return etree.fromstring(context)
+        except etree.XMLSyntaxError:
+            return etree.fromstring(context, etree.HTMLParser())
+    elif parser == 'xml':
         return etree.fromstring(context)
-    except etree.XMLSyntaxError:
+    elif parser == 'html':
         return etree.fromstring(context, etree.HTMLParser())
+    else:
+        ValueError('No such parser: "%s"' % parser)
 
 class NoDefault(object):
     def __repr__(self):
@@ -59,6 +66,7 @@ class PyQuery(list):
         html = None
         elements = []
         self._base_url = None
+        parser = kwargs.get('parser')
 
         if 'parent' in kwargs:
             self._parent = kwargs.pop('parent')
@@ -76,7 +84,7 @@ class PyQuery(list):
                 self._base_url = url
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
-            elements = [fromstring(html)]
+            elements = [fromstring(html, parser)]
         else:
             # get nodes
 
@@ -94,7 +102,7 @@ class PyQuery(list):
             # get context
             if isinstance(context, basestring):
                 try:
-                    elements = [fromstring(context)]
+                    elements = [fromstring(context, parser)]
                 except Exception, e:
                     raise ValueError('%r, %s' % (e, context))
             elif isinstance(context, self.__class__):

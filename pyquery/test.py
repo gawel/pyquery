@@ -79,6 +79,27 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
+    html4 = """
+           <html>
+            <body>
+              <form action="/">
+                <input name="enabled" type="text" value="test"/>
+                <input name="disabled" type="text" value="disabled" disabled="disabled"/>
+                <input name="file" type="file" />
+                <select name="select">
+                  <option value="">Choose something</option>
+                  <option value="one">One</option>
+                  <option value="two" selected="selected">Two</option>
+                  <option value="three">Three</option>
+                </select>
+                <input name="radio" type="radio" value="one"/>
+                <input name="radio" type="radio" value="two" checked="checked"/>
+                <input name="radio" type="radio" value="three"/>
+              </form>
+            </body>
+           </html>
+           """
+
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)
         assert len(self.klass(doc)) == 1
@@ -117,6 +138,14 @@ class TestSelector(unittest.TestCase):
         self.assertEqual(e('div:gt(0)').text(), 'node2 node3')
         self.assertEqual(e('div:lt(1)').text(), 'node1')
         self.assertEqual(e('div:eq(2)').text(), 'node3')
+
+        #test on the form
+        e = self.klass(self.html4)
+        assert len(e(':disabled')) == 1
+        assert len(e('input:enabled')) == 5
+        assert len(e(':selected')) == 1
+        assert len(e(':checked')) == 1
+        assert len(e(':file')) == 1
 
 class TestTraversal(unittest.TestCase):
     klass = pq

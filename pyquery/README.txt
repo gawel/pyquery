@@ -286,16 +286,15 @@ The response attribute is a `WebOb`_ `Response`_
 Making links absolute
 ---------------------
 
-You can make all links on a page absolute which can be usefull for screen
-scrapping::
+You can make links absolute which can be usefull for screen scrapping::
 
-    >>> d = pq(url='http://google.com')
-    >>> d('a').eq(25).attr('href')
-    '/services/'
+    >>> d = pq(url='http://www.w3.org/', parser='html')
+    >>> d('a[title="W3C Activities"]').attr('href')
+    '/Consortium/activities'
     >>> d.make_links_absolute()
     [<html>]
-    >>> d('a').eq(25).attr('href')
-    'http://google.com/services/'
+    >>> d('a[title="W3C Activities"]').attr('href')
+    'http://www.w3.org/Consortium/activities'
 
 
 Testing
