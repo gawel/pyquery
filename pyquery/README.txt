@@ -117,62 +117,17 @@ Same thing the pythonic way ('_' characters are translated to '-')::
 Traversing
 ----------
 
-Some jQuery traversal methods are supported.  For instance, you can filter the selection list
-using a string selector::
+Some jQuery traversal methods are supported.  Here are a few examples.
+
+You can filter the selection list using a string selector::
 
     >>> d('p').filter('.hello')
     [<p#hello.hello>]
-
-Filtering can also be done using a function::
-
-    >>> d('p').filter(lambda i: i == 1)
-    [<p#test>]
-
-Filtering functions can refer to the current element as 'this', like in jQuery::
-
-    >>> d('p').filter(lambda i: pq(this).text() == 'you know Python rocks')
-    [<p#hello.hello>]
-
-The opposite of filter is `not_` - it returns the items that don't match the selector::
-
-    >>> d('p').not_('.hello')
-    [<p#test>]
-
-You can map a callable onto a PyQuery and get a mutated result. The result can
-contain any items, not just elements::
-
-    >>> d('p').map(lambda i, e: pq(e).text())
-    ['you know Python rocks', 'hello python !']
-
-Like the filter method, map callbacks can reference the current item as this::
-
-    >>> d('p').map(lambda i, e: len(pq(this).text()))
-    [21, 14]
-
-The map callback can also return a list, which will extend the resulting
-PyQuery::
-
-    >>> d('p').map(lambda i, e: pq(this).text().split())
-    ['you', 'know', 'Python', 'rocks', 'hello', 'python', '!']
 
 It is possible to select a single element with eq::
 
     >>> d('p').eq(0)
     [<p#hello.hello>]
-
-The `is_` method lets you query if any current elements match the selector::
-
-    >>> d('p').eq(0).is_('.hello')
-    True
-    >>> d('p').eq(1).is_('.hello')
-    False
-
-hasClass allows for checking for the presence of a class by name::
-
-    >>> d('p').eq(0).hasClass('hello')
-    True
-    >>> d('p').eq(1).hasClass('hello')
-    False
 
 You can find nested elements::
 

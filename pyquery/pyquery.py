@@ -164,7 +164,18 @@ class PyQuery(list):
     ##############
 
     def filter(self, selector):
-        """Filter elements in self using selector (string or function)."""
+        """Filter elements in self using selector (string or function).
+
+            >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p>')
+            >>> d('p')
+            [<p.hello>, <p>]
+            >>> d('p').filter('.hello')
+            [<p.hello>]
+            >>> d('p').filter(lambda i: i == 1)
+            [<p>]
+            >>> d('p').filter(lambda i: PyQuery(this).text() == 'Hi')
+            [<p.hello>]
+        """
         if not callable(selector):
             return self.__class__(selector, self, **dict(parent=self))
         else:
@@ -179,16 +190,35 @@ class PyQuery(list):
             return self.__class__(elements, **dict(parent=self))
 
     def not_(self, selector):
-        """Return elements that don't match the given selector."""
+        """Return elements that don't match the given selector.
+
+            >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
+            >>> d('p').not_('.hello')
+            [<p>]
+        """
         exclude = set(self.__class__(selector, self))
         return self.__class__([e for e in self if e not in exclude], **dict(parent=self))
 
     def is_(self, selector):
-        """Returns True if selector matches at least one current element, else False."""
+        """Returns True if selector matches at least one current element, else False.
+            >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
+            >>> d('p').eq(0).is_('.hello')
+            True
+            >>> d('p').eq(1).is_('.hello')
+            False
+        """
         return bool(self.__class__(selector, self))
 
     def find(self, selector):
-        """Find elements using selector traversing down from self."""
+        """Find elements using selector traversing down from self.
+
+            >>> m = '<p><span><em>Whoah!</em></span></p><p><em> there</em></p>'
+            >>> d = PyQuery(m)
+            >>> d('p').find('em')
+            [<em>, <em>]
+            >>> d('p').eq(1).find('em')
+            [<em>]
+        """
         xpath = selector_to_xpath(selector)
         results = [child.xpath(xpath) for tag in self for child in tag.getchildren()]
         # Flatten the results
@@ -198,7 +228,14 @@ class PyQuery(list):
         return self.__class__(elements, **dict(parent=self))
 
     def eq(self, index):
-        """Return PyQuery of only the element with the provided index."""
+        """Return PyQuery of only the element with the provided index.
+
+            >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
+            >>> d('p').eq(0)
+            [<p.hello>]
+            >>> d('p').eq(1)
+            [<p>]
+        """
         return self.__class__([self[index]], **dict(parent=self))
 
     def each(self, func):
@@ -213,6 +250,16 @@ class PyQuery(list):
 
         func should take two arguments - 'index' and 'element'.  Elements can
         also be referred to as 'this' inside of func.
+
+            >>> d = PyQuery('<p class="hello">Hi there</p><p>Bye</p><br />')
+            >>> d('p').map(lambda i, e: PyQuery(e).text())
+            ['Hi there', 'Bye']
+
+            >>> d('p').map(lambda i, e: len(PyQuery(this).text()))
+            [8, 3]
+
+            >>> d('p').map(lambda i, e: PyQuery(this).text().split())
+            ['Hi', 'there', 'Bye']
         """
         items = []
         try:
@@ -236,6 +283,13 @@ class PyQuery(list):
         return len(self)
 
     def end(self):
+        """Break out of a level of traversal and return to the parent level.
+
+            >>> m = '<p><span><em>Whoah!</em></span></p><p><em> there</em></p>'
+            >>> d = PyQuery(m)
+            >>> d('p').eq(1).find('em').end().end()
+            [<p>, <p>]
+        """
         return self._parent
 
     ##############
