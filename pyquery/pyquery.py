@@ -5,6 +5,7 @@
 # Distributed under the BSD license, see LICENSE.txt
 from cssselectpatch import selector_to_xpath
 from lxml import etree
+import lxml.html
 from copy import deepcopy
 from urlparse import urljoin
 
@@ -13,13 +14,15 @@ def fromstring(context, parser=None):
     """
     if parser == None:
         try:
-            return etree.fromstring(context)
+            return [etree.fromstring(context)]
         except etree.XMLSyntaxError:
-            return etree.fromstring(context, etree.HTMLParser())
+            return [lxml.html.fromstring(context)]
     elif parser == 'xml':
-        return etree.fromstring(context)
+        return [etree.fromstring(context)]
     elif parser == 'html':
-        return etree.fromstring(context, etree.HTMLParser())
+        return [lxml.html.fromstring(context)]
+    elif parser == 'html_fragments':
+        return lxml.html.fragments_fromstring(context)
     else:
         ValueError('No such parser: "%s"' % parser)
 
@@ -69,6 +72,10 @@ class PyQuery(list):
         parser = kwargs.get('parser')
         if 'parser' in kwargs:
             del kwargs['parser']
+        if not kwargs and len(args) == 1 and isinstance(args[0], basestring) \
+           and args[0].startswith('http://'):
+            kwargs = {'url': args[0]}
+            args = []
 
         if 'parent' in kwargs:
             self._parent = kwargs.pop('parent')
@@ -86,7 +93,7 @@ class PyQuery(list):
                 self._base_url = url
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
-            elements = [fromstring(html, parser)]
+            elements = fromstring(html, parser)
         else:
             # get nodes
 
@@ -104,7 +111,7 @@ class PyQuery(list):
             # get context
             if isinstance(context, basestring):
                 try:
-                    elements = [fromstring(context, parser)]
+                    elements = fromstring(context, parser)
                 except Exception, e:
                     raise ValueError('%r, %s' % (e, context))
             elif isinstance(context, self.__class__):
@@ -712,7 +719,7 @@ class PyQuery(list):
 
         """
         assert isinstance(value, basestring)
-        value = fromstring(value)
+        value = fromstring(value)[0]
         nodes = []
         for tag in self:
             wrapper = deepcopy(value)
@@ -747,7 +754,7 @@ class PyQuery(list):
             return self
 
         assert isinstance(value, basestring)
-        value = fromstring(value)
+        value = fromstring(value)[0]
         wrapper = deepcopy(value)
         if not wrapper.getchildren():
             child = wrapper

@@ -14,14 +14,14 @@ use it for templating with pure http templates that you modify using pyquery.
 I can also be used for web scrapping or for theming applications with
 `Deliverance`_.
 
-The project is being actively developped on `Bitbucket`_ and I have the policy
-of giving push access to anyone who wants it and then to review what he does.
-So if you want to contribute just email me.
+The `project`_ is being actively developped on a mercurial repository on
+Bitbucket. I have the policy of giving push access to anyone who wants it
+and then to review what he does. So if you want to contribute just email me.
 
 The Sphinx documentation is available on `pyquery.org`_.
 
 .. _deliverance: http://www.gawel.org/weblog/en/2008/12/skinning-with-pyquery-and-deliverance
-.. _bitbucket: http://www.bitbucket.org/olauzanne/pyquery/
+.. _project: http://www.bitbucket.org/olauzanne/pyquery/
 .. _pyquery.org: http://pyquery.org/
 
 .. contents::
@@ -313,15 +313,20 @@ Using different parsers
 -----------------------
 
 By default pyquery uses the lxml xml parser and then if it doesn't work goes on
-to try the html parser. It can sometimes be problematic when parsing xhtml pages
-because the parser will not raise an error but give an unusable tree.
+to try the html parser from lxml.html. The xml parser can sometimes be
+problematic when parsing xhtml pages because the parser will not raise an error
+but give an unusable tree (on w3c.org for example).
 
 You can also choose which parser to use explicitly::
 
-   >>> pq('<p>toto</p>', parser='html')
+   >>> pq('<html><body><p>toto</p></body></html>', parser='xml')
    [<html>]
-   >>> pq('<p>toto</p>', parser='xml')
+   >>> pq('<html><body><p>toto</p></body></html>', parser='html')
+   [<html>]
+   >>> pq('<html><body><p>toto</p></body></html>', parser='html_fragments')
    [<p>]
+
+The html and html_fragments parser are the ones from lxml.html.
 
 Testing
 -------
@@ -343,14 +348,15 @@ If you don't already have lxml installed use this line::
 
     $ STATIC_DEPS=true bin/buildout
 
-Other documentations
---------------------
+More documentation
+------------------
 
 First there is the Sphinx documentation `here`_.
-Then for more documentation about the API you can use the jquery website http://docs.jquery.com/.
+Then for more documentation about the API you can use the `jquery website`_.
 The reference I'm now using for the API is ... the `color cheat sheet`_.
 Then you can always look at the `code`_.
 
+.. _jquery website: http://docs.jquery.com/
 .. _code: http://www.bitbucket.org/olauzanne/pyquery/src/tip/pyquery/pyquery.py
 .. _here: http://pyquery.org
 .. _color cheat sheet: http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
