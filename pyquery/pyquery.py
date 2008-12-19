@@ -67,6 +67,8 @@ class PyQuery(list):
         elements = []
         self._base_url = None
         parser = kwargs.get('parser')
+        if 'parser' in kwargs:
+            del kwargs['parser']
 
         if 'parent' in kwargs:
             self._parent = kwargs.pop('parent')
