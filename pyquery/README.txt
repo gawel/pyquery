@@ -312,14 +312,14 @@ You can also request another path::
 
 If `Paste`_ is installed, you are able to get url directly with a `Proxy`_ app::
 
-    >>> a = d.get('https://bitbucket.org/olauzanne/pyquery/')
+    >>> a = d.get('http://pyquery.org/')
     >>> a
     [<html>]
 
 You can retrieve the app response::
 
     >>> print a.response.status
-    301 Moved Permanently
+    200 OK
 
 The response attribute is a `WebOb`_ `Response`_
 

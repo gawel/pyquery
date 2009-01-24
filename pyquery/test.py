@@ -174,8 +174,8 @@ class TestAjaxSelector(TestSelector):
 
     def test_proxy(self):
         e = self.klass([])
-        val = e.get('http://pypi.python.org/pypi/pyquery/')
-        assert len(val('div#breadcrumb')) == 1, (val.response, val)
+        val = e.get('http://pyquery.org/')
+        assert len(val('div.document')) == 1, (val.response, val)
 
     def test_get(self):
         e = self.klass(app=application)
