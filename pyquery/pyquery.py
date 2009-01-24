@@ -522,13 +522,15 @@ class PyQuery(list):
     ################
 
     def _get_root(self, value):
-        is_pyquery_results = isinstance(value, self.__class__)
-        is_string = isinstance(value, basestring)
-        assert is_string or is_pyquery_results, value
-        if is_string:
+        if  isinstance(value, basestring):
             root = etree.fromstring('<root>' + value + '</root>')
-        elif is_pyquery_results:
+        elif isinstance(value, etree._Element):
+            root = self.__class__(value)
+        elif isinstance(value, PyQuery):
             root = value
+        else:
+            raise TypeError(
+            'Value must be string, PyQuery or Element. Got %r' %  value)
         if hasattr(root, 'text') and isinstance(root.text, basestring):
             root_text = root.text
         else:
