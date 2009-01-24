@@ -36,6 +36,36 @@ class JQueryPseudo(Pseudo):
         xpath.add_post_condition('position() mod 2 = 0')
         return xpath
 
+    def _xpath_checked(self, xpath):
+        """Matches odd elements, zero-indexed.
+        """
+        xpath.add_condition("@checked and name(.) = 'input'")
+        return xpath
+
+    def _xpath_selected(self, xpath):
+        """Matches all elements that are selected.
+        """
+        xpath.add_condition("@selected and name(.) = 'option'")
+        return xpath
+
+    def _xpath_disabled(self, xpath):
+        """Matches all elements that are disabled.
+        """
+        xpath.add_condition("@disabled")
+        return xpath
+
+    def _xpath_enabled(self, xpath):
+        """Matches all elements that are disabled.
+        """
+        xpath.add_condition("not(@disabled) and name(.) = 'input'")
+        return xpath
+
+    def _xpath_file(self, xpath):
+        """Matches all input elements of type file.
+        """
+        xpath.add_condition("@type = 'file' and name(.) = 'input'")
+        return xpath
+
 cssselect.Pseudo = JQueryPseudo
 
 class JQueryFunction(Function):

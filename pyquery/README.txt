@@ -11,6 +11,18 @@ told myself "Hey let's make jquery in python". This is the result.
 
 It can be used for many purposes, one idea that I might try in the future is to
 use it for templating with pure http templates that you modify using pyquery.
+I can also be used for web scrapping or for theming applications with
+`Deliverance`_.
+
+The `project`_ is being actively developped on a mercurial repository on
+Bitbucket. I have the policy of giving push access to anyone who wants it
+and then to review what he does. So if you want to contribute just email me.
+
+The Sphinx documentation is available on `pyquery.org`_.
+
+.. _deliverance: http://www.gawel.org/weblog/en/2008/12/skinning-with-pyquery-and-deliverance
+.. _project: http://www.bitbucket.org/olauzanne/pyquery/
+.. _pyquery.org: http://pyquery.org/
 
 .. contents::
 
@@ -42,7 +54,8 @@ Now d is like the $ in jquery::
     'you know Python rocks'
 
 You can use some of the pseudo classes that are available in jQuery but that
-are not standard in css such as :first :last :even :odd :eq :lt :gt::
+are not standard in css such as :first :last :even :odd :eq :lt :gt :checked
+:selected :file::
 
     >>> d('p:first')
     [<p#hello.hello>]
@@ -117,62 +130,17 @@ Same thing the pythonic way ('_' characters are translated to '-')::
 Traversing
 ----------
 
-Some jQuery traversal methods are supported.  For instance, you can filter the selection list
-using a string selector::
+Some jQuery traversal methods are supported.  Here are a few examples.
+
+You can filter the selection list using a string selector::
 
     >>> d('p').filter('.hello')
     [<p#hello.hello>]
-
-Filtering can also be done using a function::
-
-    >>> d('p').filter(lambda i: i == 1)
-    [<p#test>]
-
-Filtering functions can refer to the current element as 'this', like in jQuery::
-
-    >>> d('p').filter(lambda i: pq(this).text() == 'you know Python rocks')
-    [<p#hello.hello>]
-
-The opposite of filter is `not_` - it returns the items that don't match the selector::
-
-    >>> d('p').not_('.hello')
-    [<p#test>]
-
-You can map a callable onto a PyQuery and get a mutated result. The result can
-contain any items, not just elements::
-
-    >>> d('p').map(lambda i, e: pq(e).text())
-    ['you know Python rocks', 'hello python !']
-
-Like the filter method, map callbacks can reference the current item as this::
-
-    >>> d('p').map(lambda i, e: len(pq(this).text()))
-    [21, 14]
-
-The map callback can also return a list, which will extend the resulting
-PyQuery::
-
-    >>> d('p').map(lambda i, e: pq(this).text().split())
-    ['you', 'know', 'Python', 'rocks', 'hello', 'python', '!']
 
 It is possible to select a single element with eq::
 
     >>> d('p').eq(0)
     [<p#hello.hello>]
-
-The `is_` method lets you query if any current elements match the selector::
-
-    >>> d('p').eq(0).is_('.hello')
-    True
-    >>> d('p').eq(1).is_('.hello')
-    False
-
-hasClass allows for checking for the presence of a class by name::
-
-    >>> d('p').eq(0).hasClass('hello')
-    True
-    >>> d('p').eq(1).hasClass('hello')
-    False
 
 You can find nested elements::
 
@@ -331,17 +299,34 @@ The response attribute is a `WebOb`_ `Response`_
 Making links absolute
 ---------------------
 
-You can make all links on a page absolute which can be usefull for screen
-scrapping::
+You can make links absolute which can be usefull for screen scrapping::
 
-    >>> d = pq(url='http://google.com')
-    >>> d('a:last').attr('href')
-    '/intl/fr/privacy.html'
+    >>> d = pq(url='http://www.w3.org/', parser='html')
+    >>> d('a[title="W3C Activities"]').attr('href')
+    '/Consortium/activities'
     >>> d.make_links_absolute()
     [<html>]
-    >>> d('a:last').attr('href')
-    'http://google.com/intl/fr/privacy.html'
+    >>> d('a[title="W3C Activities"]').attr('href')
+    'http://www.w3.org/Consortium/activities'
 
+Using different parsers
+-----------------------
+
+By default pyquery uses the lxml xml parser and then if it doesn't work goes on
+to try the html parser from lxml.html. The xml parser can sometimes be
+problematic when parsing xhtml pages because the parser will not raise an error
+but give an unusable tree (on w3c.org for example).
+
+You can also choose which parser to use explicitly::
+
+   >>> pq('<html><body><p>toto</p></body></html>', parser='xml')
+   [<html>]
+   >>> pq('<html><body><p>toto</p></body></html>', parser='html')
+   [<html>]
+   >>> pq('<html><body><p>toto</p></body></html>', parser='html_fragments')
+   [<p>]
+
+The html and html_fragments parser are the ones from lxml.html.
 
 Testing
 -------
@@ -363,24 +348,28 @@ If you don't already have lxml installed use this line::
 
     $ STATIC_DEPS=true bin/buildout
 
-Other documentations
---------------------
+More documentation
+------------------
 
-For more documentation about the API use the jquery website http://docs.jquery.com/
+First there is the Sphinx documentation `here`_.
+Then for more documentation about the API you can use the `jquery website`_.
+The reference I'm now using for the API is ... the `color cheat sheet`_.
+Then you can always look at the `code`_.
 
-The reference I'm now using for the API is ... the color cheat sheet
-http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
+.. _jquery website: http://docs.jquery.com/
+.. _code: http://www.bitbucket.org/olauzanne/pyquery/src/tip/pyquery/pyquery.py
+.. _here: http://pyquery.org
+.. _color cheat sheet: http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
 
 TODO
 ----
 
-- SELECTORS: it works fine but missing all the :xxx (:first, :last, ...) can be
-  done by patching lxml.cssselect
+- SELECTORS: still missing some jQuery pseudo classes (:radio, :password, ...)
 - ATTRIBUTES: done
 - CSS: done
 - HTML: done
-- MANIPULATING: did all but the "wrap" methods
-- TRAVERSING: did a few
+- MANIPULATING: missing the wrapAll and wrapInner methods
+- TRAVERSING: about half done
 - EVENTS: nothing to do with server side might be used later for automatic ajax
 - CORE UI EFFECTS: did hide and show the rest doesn't really makes sense on
   server side
