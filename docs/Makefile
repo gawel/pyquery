@@ -32,7 +32,7 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in .build/html."
 
-osx: html
+open: html
 	open .build/html/index.html
 
 pickle:

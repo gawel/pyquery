@@ -1,0 +1,22 @@
+Future
+-------
+
+- SELECTORS: still missing some jQuery pseudo classes (:radio, :password, ...)
+
+- ATTRIBUTES: done
+
+- CSS: done
+
+- HTML: done
+
+- MANIPULATING: missing the wrapAll and wrapInner methods
+
+- TRAVERSING: about half done
+
+- EVENTS: nothing to do with server side might be used later for automatic ajax
+
+- CORE UI EFFECTS: did hide and show the rest doesn't really makes sense on
+  server side
+
+- AJAX: some with wsgi app
+
