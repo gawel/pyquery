@@ -252,8 +252,12 @@ class PyQuery(list):
             [<p.hello>]
             >>> d('p').eq(1)
             [<p>]
+            >>> d('p').eq(2)
+            []
         """
-        return self.__class__([self[index]], **dict(parent=self))
+        # Use slicing to silently handle out of bounds indexes
+        items = self[index:index+1]
+        return self.__class__(items, **dict(parent=self))
 
     def each(self, func):
         """apply func on each nodes
