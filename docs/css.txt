@@ -1,7 +1,12 @@
 CSS
 ---
 
-You can also play with css classes::
+.. Initialize tests
+
+    >>> from pyquery import PyQuery
+    >>> p = PyQuery('<p id="hello" class="hello"><a/></p>')('p')
+
+You can play with css classes::
 
     >>> p.addClass("toto")
     [<p#hello.toto.hello>]

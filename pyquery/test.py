@@ -14,6 +14,7 @@ from pyquery import PyQuery as pq
 from ajax import PyQuery as pqa
 
 dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
+docs = os.path.join(os.path.dirname(dirname), 'docs')
 path_to_html_file = os.path.join(dirname, 'test.html')
 
 def input_app(environ, start_response):
@@ -39,6 +40,12 @@ class TestReadme(doctest.DocFileCase):
     def setUp(self):
         test = self._dt_test
         test.globs.update(globals())
+
+for filename in os.listdir(docs):
+    if filename.endswith('.txt'):
+        klass_name = 'Test%s' % filename.replace('.txt', '').title()
+        path = os.path.join(docs, filename)
+        exec '%s = type("%s", (TestReadme,), dict(path=path))' % (klass_name, klass_name)
 
 class TestTests(doctest.DocFileCase):
     path = os.path.join(dirname, 'tests.txt')

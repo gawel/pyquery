@@ -3,18 +3,15 @@ Manipulating
 
 You can also add content to the end of tags::
 
-    >>> d('p').append('check out <a href="http://reddit.com/r/python"><span>reddit</span></a>')
-    [<p#hello.hello>, <p#test>]
+    >>> d = pq('<p class="hello" id="hello">you know Python rocks</p>')
+    >>> d('p').append(' check out <a href="http://reddit.com/r/python"><span>reddit</span></a>')
+    [<p#hello.hello>]
     >>> print d
-    <html>
-    ...
-    <p class="hello" id="hello" style="font-size: 17px">you know <a href="http://python.org/">Python</a> rockscheck out <a href="http://reddit.com/r/python"><span>reddit</span></a></p><p id="test">
-    hello <a href="http://python.org">python</a> !
-    check out <a href="http://python.org/">Python</a> rockscheck out <a href="http://reddit.com/r/python"><span>reddit</span></a></p>
-    ...
+    <p class="hello" id="hello">you know Python rocks check out <a href="http://reddit.com/r/python"><span>reddit</span></a></p>
 
 Or to the beginning::
 
+    >>> p = d('p')
     >>> p.prepend('check out <a href="http://reddit.com/r/python">reddit</a>')
     [<p#hello.hello>]
     >>> p.html()
@@ -22,10 +19,11 @@ Or to the beginning::
 
 Prepend or append an element into an other::
 
+    >>> d = pq('<html><body><div id="test"><a href="http://python.org">python</a> !</div></body></html>')
     >>> p.prependTo(d('#test'))
     [<p#hello.hello>]
     >>> d('#test').html()
-    '<p class="hello" ...</p>...hello...python...'
+    '<p class="hello" ...'
 
 Insert an element after another::
 
@@ -39,7 +37,7 @@ Or before::
     >>> p.insertBefore(d('#test'))
     [<p#hello.hello>]
     >>> d('body').html()
-    '\n<p class="hello" id="hello" style="font-size: 17px">...'
+    '<p class="hello" id="hello">...'
 
 Doing something for each elements::
 
@@ -48,39 +46,21 @@ Doing something for each elements::
 
 Remove an element::
 
+    >>> d = pq('<html><body><p id="id">Yeah!</p><p>python rocks !</p></div></html>')
     >>> d.remove('p#id')
     [<html>]
     >>> d('p#id')
     []
 
-Replace an element by another::
-
-    >>> p.replaceWith('<p>testing</p>')
-    [<p#hello.hello2.hello>]
-    >>> d('p')
-    [<p>, <p#test>]
-
-Or the other way around::
-
-    >>> d('<h1>arya stark</h1>').replaceAll('p')
-    [<h1>]
-    >>> d('p')
-    []
-    >>> d('h1')
-    [<h1>, <h1>]
-
 Remove what's inside the selection::
 
-    >>> d('h1').empty()
-    [<h1>, <h1>]
+    >>> d('p').empty()
+    [<p>]
 
 And you can get back the modified html::
 
     >>> print d
-    <html>
-    <body>
-    <h1/><h1/></body>
-    </html>
+    <html><body><p/></body></html>
 
 You can generate html stuff::
 

@@ -1,8 +1,10 @@
 Attributes
 ----------
 
+
 You can play with the attributes with the jquery API::
 
+    >>> p = pq('<p id="hello" class="hello"></p>')('p')
     >>> p.attr("id")
     'hello'
     >>> p.attr("id", "plop")

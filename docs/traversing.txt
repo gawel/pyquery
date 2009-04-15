@@ -5,6 +5,7 @@ Some jQuery traversal methods are supported.  Here are a few examples.
 
 You can filter the selection list using a string selector::
 
+    >>> d = pq('<p id="hello" class="hello"><a/></p><p id="test"><a/></p>')
     >>> d('p').filter('.hello')
     [<p#hello.hello>]
 
