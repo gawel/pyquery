@@ -531,7 +531,7 @@ class PyQuery(list):
             if not children:
                 return tag.text
             html = tag.text or ''
-            html += ''.join(map(etree.tostring, children))
+            html += ''.join(map(lambda x: etree.tostring(x, encoding=unicode), children))
             return html
         else:
             if isinstance(value, self.__class__):
