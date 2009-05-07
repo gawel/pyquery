@@ -74,7 +74,7 @@ class JQueryPseudo(Pseudo):
         return xpath
 
     def _xpath_button(self, xpath):
-        """Matches all input elements.
+        """Matches all button input elements and the button element.
         """
         xpath.add_condition("(@type = 'button' and name(.) = 'input') "
             + "or name(.) = 'button'")
