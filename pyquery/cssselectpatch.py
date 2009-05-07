@@ -66,6 +66,13 @@ class JQueryPseudo(Pseudo):
         xpath.add_condition("@type = 'file' and name(.) = 'input'")
         return xpath
 
+    def _xpath_input(self, xpath):
+        """Matches all input elements.
+        """
+        xpath.add_condition("(name(.) = 'input' or name(.) = 'select') "
+        + "or (name(.) = 'textarea' or name(.) = 'button')")
+        return xpath
+
 cssselect.Pseudo = JQueryPseudo
 
 class JQueryFunction(Function):
