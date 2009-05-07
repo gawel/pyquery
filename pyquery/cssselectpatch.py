@@ -123,10 +123,23 @@ class JQueryPseudo(Pseudo):
         return xpath
 
     def _xpath_header(self, xpath):
-        """Matches all header elelements (h1, ..., h6)"""
+        """Matches all header elelements (h1, ..., h6)
+        """
         # this seems kind of brute-force, is there a better way?
         xpath.add_condition("(name(.) = 'h1' or name(.) = 'h2' or name (.) = 'h3') "
         + "or (name(.) = 'h4' or name (.) = 'h5' or name(.) = 'h6')")
+        return xpath
+
+    def _xpath_parent(self, xpath):
+        """Match all elements that contain other elements
+        """
+        xpath.add_condition("count(child::*) > 0")
+        return xpath
+
+    def _xpath_empty(self, xpath):
+        """Match all elements that do not contain other elements
+        """
+        xpath.add_condition("count(child::*) = 0")
         return xpath
 
 cssselect.Pseudo = JQueryPseudo
@@ -151,6 +164,12 @@ class JQueryFunction(Function):
         """Matches all elements with an index below the given one.
         """
         xpath.add_post_condition('position() < %s' % int(expr+1))
+        return xpath
+
+    def _xpath_contains(self, xpath, expr):
+        """Matches all elements that contain the given text
+        """
+        xpath.add_post_condition("contains(text(), '%s')" % str(expr))
         return xpath
 
 cssselect.Function = JQueryFunction

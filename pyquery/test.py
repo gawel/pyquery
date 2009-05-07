@@ -179,6 +179,9 @@ class TestSelector(unittest.TestCase):
         #test on other elements
         e = self.klass(self.html5)
         assert len(e(":header")) == 6
+        assert len(e(":parent")) == 2
+        assert len(e(":empty")) == 6
+        assert len(e(":contains('Heading')")) == 6
 
 class TestTraversal(unittest.TestCase):
     klass = pq
