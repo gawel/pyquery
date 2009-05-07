@@ -98,6 +98,30 @@ class JQueryPseudo(Pseudo):
         xpath.add_condition("@type = 'checkbox' and name(.) = 'input'")
         return xpath
 
+    def _xpath_password(self, xpath):
+        """Matches all password input elements.
+        """
+        xpath.add_condition("@type = 'password' and name(.) = 'input'")
+        return xpath
+
+    def _xpath_submit(self, xpath):
+        """Matches all submit input elements.
+        """
+        xpath.add_condition("@type = 'submit' and name(.) = 'input'")
+        return xpath
+
+    def _xpath_image(self, xpath):
+        """Matches all image input elements.
+        """
+        xpath.add_condition("@type = 'image' and name(.) = 'input'")
+        return xpath
+
+    def _xpath_reset(self, xpath):
+        """Matches all reset input elements.
+        """
+        xpath.add_condition("@type = 'reset' and name(.) = 'input'")
+        return xpath
+
 cssselect.Pseudo = JQueryPseudo
 
 class JQueryFunction(Function):
