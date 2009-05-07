@@ -73,6 +73,19 @@ class JQueryPseudo(Pseudo):
         + "or (name(.) = 'textarea' or name(.) = 'button')")
         return xpath
 
+    def _xpath_button(self, xpath):
+        """Matches all input elements.
+        """
+        xpath.add_condition("(@type = 'button' and name(.) = 'input') "
+            + "or name(.) = 'button'")
+        return xpath
+
+    def _xpath_radio(self, xpath):
+        """Matches all radio input elements.
+        """
+        xpath.add_condition("@type = 'radio' and name(.) = 'input'")
+        return xpath
+
 cssselect.Pseudo = JQueryPseudo
 
 class JQueryFunction(Function):

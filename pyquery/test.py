@@ -154,6 +154,7 @@ class TestSelector(unittest.TestCase):
         assert len(e(':checked')) == 1
         assert len(e(':file')) == 1
         assert len(e(':input')) == 7
+        assert len(e(':radio')) == 3
 
 class TestTraversal(unittest.TestCase):
     klass = pq
