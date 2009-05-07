@@ -102,6 +102,11 @@ class TestSelector(unittest.TestCase):
                 <input name="radio" type="radio" value="one"/>
                 <input name="radio" type="radio" value="two" checked="checked"/>
                 <input name="radio" type="radio" value="three"/>
+                <input name="checkbox" type="checkbox" value="a"/>
+                <input name="checkbox" type="checkbox" value="b" checked="checked"/>
+                <input name="checkbox" type="checkbox" value="c"/>
+                <input name="button" type="button" value="button" />
+                <button>button</button>
               </form>
             </body>
            </html>
@@ -149,12 +154,14 @@ class TestSelector(unittest.TestCase):
         #test on the form
         e = self.klass(self.html4)
         assert len(e(':disabled')) == 1
-        assert len(e('input:enabled')) == 5
+        assert len(e('input:enabled')) == 9
         assert len(e(':selected')) == 1
-        assert len(e(':checked')) == 1
+        assert len(e(':checked')) == 2
         assert len(e(':file')) == 1
-        assert len(e(':input')) == 7
+        assert len(e(':input')) == 12
+        assert len(e(':button')) == 2
         assert len(e(':radio')) == 3
+        assert len(e(':checkbox')) == 3
 
 class TestTraversal(unittest.TestCase):
     klass = pq

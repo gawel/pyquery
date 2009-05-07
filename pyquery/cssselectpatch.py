@@ -86,6 +86,18 @@ class JQueryPseudo(Pseudo):
         xpath.add_condition("@type = 'radio' and name(.) = 'input'")
         return xpath
 
+    def _xpath_text(self, xpath):
+        """Matches all text input elements.
+        """
+        xpath.add_condition("@type = 'text' and name(.) = 'input'")
+        return xpath
+
+    def _xpath_checkbox(self, xpath):
+        """Matches all checkbox input elements.
+        """
+        xpath.add_condition("@type = 'checkbox' and name(.) = 'input'")
+        return xpath
+
 cssselect.Pseudo = JQueryPseudo
 
 class JQueryFunction(Function):
