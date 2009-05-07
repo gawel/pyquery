@@ -122,6 +122,13 @@ class JQueryPseudo(Pseudo):
         xpath.add_condition("@type = 'reset' and name(.) = 'input'")
         return xpath
 
+    def _xpath_header(self, xpath):
+        """Matches all header elelements (h1, ..., h6)"""
+        # this seems kind of brute-force, is there a better way?
+        xpath.add_condition("(name(.) = 'h1' or name(.) = 'h2' or name (.) = 'h3') "
+        + "or (name(.) = 'h4' or name (.) = 'h5' or name(.) = 'h6')")
+        return xpath
+
 cssselect.Pseudo = JQueryPseudo
 
 class JQueryFunction(Function):

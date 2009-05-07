@@ -112,6 +112,19 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
+    html5 = """
+           <html>
+            <body>
+              <h1>Heading 1</h1>
+              <h2>Heading 2</h2>
+              <h3>Heading 3</h3>
+              <h4>Heading 4</h4>
+              <h5>Heading 5</h5>
+              <h6>Heading 6</h6>
+            </body>
+           </html>
+           """
+
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)
         assert len(self.klass(doc)) == 1
@@ -162,6 +175,10 @@ class TestSelector(unittest.TestCase):
         assert len(e(':button')) == 2
         assert len(e(':radio')) == 3
         assert len(e(':checkbox')) == 3
+
+        #test on other elements
+        e = self.klass(self.html5)
+        assert len(e(":header")) == 6
 
 class TestTraversal(unittest.TestCase):
     klass = pq
