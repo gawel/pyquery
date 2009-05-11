@@ -47,7 +47,7 @@ Now d is like the $ in jquery::
     >>> p.html("you know <a href='http://python.org/'>Python</a> rocks")
     [<p#hello.hello>]
     >>> p.html()
-    'you know <a href="http://python.org/">Python</a> rocks'
+    u'you know <a href="http://python.org/">Python</a> rocks'
     >>> p.text()
     'you know Python rocks'
 

@@ -15,7 +15,7 @@ Or to the beginning::
     >>> p.prepend('check out <a href="http://reddit.com/r/python">reddit</a>')
     [<p#hello.hello>]
     >>> p.html()
-    'check out <a href="http://reddit.com/r/python">reddit</a>you know ...'
+    u'check out <a href="http://reddit.com/r/python">reddit</a>you know ...'
 
 Prepend or append an element into an other::
 
@@ -23,21 +23,21 @@ Prepend or append an element into an other::
     >>> p.prependTo(d('#test'))
     [<p#hello.hello>]
     >>> d('#test').html()
-    '<p class="hello" ...'
+    u'<p class="hello" ...'
 
 Insert an element after another::
 
     >>> p.insertAfter(d('#test'))
     [<p#hello.hello>]
     >>> d('#test').html()
-    '<a href="http://python.org">python</a> !...'
+    u'<a href="http://python.org">python</a> !'
 
 Or before::
 
     >>> p.insertBefore(d('#test'))
     [<p#hello.hello>]
     >>> d('body').html()
-    '<p class="hello" id="hello">...'
+    u'<p class="hello" id="hello">...'
 
 Doing something for each elements::
 
