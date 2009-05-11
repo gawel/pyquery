@@ -1,7 +1,7 @@
 Future
 -------
 
-- SELECTORS: still missing some jQuery pseudo classes (:radio, :password, ...)
+- SELECTORS: done
 
 - ATTRIBUTES: done
 
@@ -9,7 +9,7 @@ Future
 
 - HTML: done
 
-- MANIPULATING: missing the wrapAll and wrapInner methods
+- MANIPULATING: missing the wrapInner method
 
 - TRAVERSING: about half done
 
