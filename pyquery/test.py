@@ -211,6 +211,11 @@ class TestTraversal(unittest.TestCase):
         assert len(self.klass('#node2', self.html).find('span')) == 2
         assert len(self.klass('div', self.html).find('span')) == 3
 
+    def test_each(self):
+        doc = self.klass(self.html)
+        doc('span').each(lambda e: e.wrap("<em></em>"))
+        assert len(doc('em')) == 3
+
     def test_map(self):
         def ids_minus_one(i, elem):
             return int(self.klass(elem).attr('id')[-1]) - 1
