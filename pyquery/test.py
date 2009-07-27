@@ -225,6 +225,16 @@ class TestTraversal(unittest.TestCase):
         assert len(self.klass('div', self.html).find('span').end()) == 2
         assert len(self.klass('#node2', self.html).find('span').end()) == 1
 
+
+class TestOpener(unittest.TestCase):
+
+    def test_custom_opener(self):
+        def opener(url):
+            return '<html><body><div class="node"></div>'
+
+        doc = pq(url='http://example.com', opener=opener)
+        assert len(doc('.node')) == 1, doc
+
 def application(environ, start_response):
     req = Request(environ)
     response = Response()

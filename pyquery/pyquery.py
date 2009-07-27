@@ -87,9 +87,13 @@ class PyQuery(list):
             if 'filename' in kwargs:
                 html = file(kwargs['filename']).read()
             elif 'url' in kwargs:
-                from urllib2 import urlopen
-                url = kwargs['url']
-                html = urlopen(url).read()
+                url = kwargs.pop('url')
+                if 'opener' in kwargs:
+                    opener = kwargs.pop('opener')
+                    html = opener(url)
+                else:
+                    from urllib2 import urlopen
+                    html = urlopen(url).read()
                 self._base_url = url
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
