@@ -162,9 +162,24 @@ class PyQuery(list):
         self._extend(other[:])
 
     def __str__(self):
-        """html representation of current nodes
+        """xml representation of current nodes::
+
+            >>> xml = PyQuery('<script><![[CDATA[ ]></script>', parser='html_fragments')
+            >>> print str(xml)
+            <script>&lt;![[CDATA[ ]&gt;</script>
+
         """
         return ''.join([etree.tostring(e) for e in self])
+
+    def __html__(self):
+        """html representation of current nodes::
+
+            >>> html = PyQuery('<script><![[CDATA[ ]></script>', parser='html_fragments')
+            >>> print html.__html__()
+            <script><![[CDATA[ ]></script>
+
+        """
+        return ''.join([lxml.html.tostring(e) for e in self])
 
     def __repr__(self):
         r = []
