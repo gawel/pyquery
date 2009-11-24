@@ -847,6 +847,10 @@ class PyQuery(list):
         if expr is no_default:
             for tag in self:
                 parent = tag.getparent()
+                if tag.tail:
+                    if not parent.text:
+                        parent.text = ''
+                    parent.text += ' ' + tag.tail
                 parent.remove(tag)
         else:
             results = self.__class__(expr, self)
