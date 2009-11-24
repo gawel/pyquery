@@ -285,6 +285,22 @@ class TestAjaxSelector(TestSelector):
         val = n.post('/')
         assert len(val('a')) == 1, val
 
+class TestManipulating(unittest.TestCase):
+    html = '''
+    <div class="portlet">
+      <a href="/toto">Test<img src ="myimage" />My link text</a>
+      <a href="/toto2"><img src ="myimage2" />My link text 2</a>
+    </div>
+    '''
+
+    def test_remove(self):
+        d = pq(self.html)
+        d('img').remove()
+        val = d('a:first').html()
+        assert val == 'Test My link text', repr(val)
+        val = d('a:last').html()
+        assert val == ' My link text 2', repr(val)
+
 if __name__ == '__main__':
     fails, total = unittest.main()
     if fails == 0:
