@@ -3,7 +3,7 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-from lxml.cssselect import Pseudo, XPathExpr, XPathExprOr, Function, css_to_xpath
+from lxml.cssselect import Pseudo, XPathExpr, XPathExprOr, Function, css_to_xpath, Element
 from lxml import cssselect
 
 class JQueryPseudo(Pseudo):
@@ -55,7 +55,7 @@ class JQueryPseudo(Pseudo):
         return xpath
 
     def _xpath_enabled(self, xpath):
-        """Matches all elements that are disabled.
+        """Matches all elements that are enabled.
         """
         xpath.add_condition("not(@disabled) and name(.) = 'input'")
         return xpath
@@ -216,8 +216,23 @@ class AdvancedXPathExprOr(XPathExprOr):
 
 cssselect.XPathExprOr = AdvancedXPathExprOr
 
-def selector_to_xpath(selector):
+class JQueryElement(Element):
+    """
+    Represents namespace|element
+    """
+    
+    def xpath(self):
+        if self.namespace == '*':
+            el = self.element
+        else:
+            # FIXME: Should we lowercase here?
+            el = '%s:%s' % (self.namespace, self.element)
+        return AdvancedXPathExpr(element=el)
+        
+cssselect.Element = JQueryElement
+
+def selector_to_xpath(selector, prefix='descendant-or-self::'):
     """JQuery selector to xpath.
     """
     selector = selector.replace('[@', '[')
-    return css_to_xpath(selector)
+    return css_to_xpath(selector, prefix)

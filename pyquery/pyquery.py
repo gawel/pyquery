@@ -199,6 +199,116 @@ class PyQuery(list):
     # Traversing #
     ##############
 
+    def _filter_only(self, selector, elements, reverse=False, unique=False):
+        """Filters the selection set only, as opposed to also including
+           descendants.
+        """
+        if selector is None:
+            results = elements
+        else:
+            xpath = selector_to_xpath(selector, 'self::')
+            results = []
+            for tag in elements:
+                results.extend(tag.xpath(xpath))
+        if reverse:
+            results.reverse()
+        if unique:
+            result_list = results
+            results = []
+            for item in result_list:
+                if not item in results:
+                    results.append(item)
+        return self.__class__(results, **dict(parent=self))
+
+    def parent(self, selector=None):
+        return self._filter_only(selector, [e.getparent() for e in self if e.getparent() is not None], unique = True)
+
+    def prev(self, selector=None):
+        return self._filter_only(selector, [e.getprevious() for e in self if e.getprevious() is not None])
+
+    def next(self, selector=None):
+        return self._filter_only(selector, [e.getnext() for e in self if e.getnext() is not None])
+
+    def _traverse(self, method):
+        for e in self:
+            current = getattr(e, method)()
+            while current is not None:
+                yield current
+                current = getattr(current, method)()
+
+    def _traverse_parent_topdown(self):
+        for e in self:
+            this_list = []
+            current = e.getparent()
+            while current is not None:
+                this_list.append(current)
+                current = current.getparent()
+            this_list.reverse()
+            for j in this_list:
+                yield j
+
+    def _nextAll(self):
+        return [e for e in self._traverse('getnext')]
+
+    def nextAll(self, selector=None):
+        """
+            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>')
+            >>> d('p:last').nextAll()
+            [<img>]
+        """
+        return self._filter_only(selector, self._nextAll())
+
+    def _prevAll(self):
+        return [e for e in self._traverse('getprevious')]
+
+    def prevAll(self, selector=None):
+        """
+            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>')
+            >>> d('p:last').prevAll()
+            [<p.hello>]
+        """
+        return self._filter_only(selector, self._prevAll(), reverse = True)
+
+    def siblings(self, selector=None):
+        """
+            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>')
+            >>> d('.hello').siblings()
+            [<p>, <img>]
+            >>> d('.hello').siblings('img')
+            [<img>]
+        """
+        return self._filter_only(selector, self._prevAll() + self._nextAll())
+
+    def parents(self, selector=None):
+        """
+            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p></span>')
+            >>> d('p').parents()
+            [<span>]
+            >>> d('.hello').parents('span')
+            [<span>]
+            >>> d('.hello').parents('p')
+            []
+        """
+        return self._filter_only(
+                selector,
+                [e for e in self._traverse_parent_topdown()],
+                unique = True
+            )
+
+    def children(self, selector=None):
+        """Filter elements that are direct children of self using optional selector.
+
+            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p></span>')
+            >>> d
+            [<span>]
+            >>> d.children()
+            [<p.hello>, <p>]
+            >>> d.children('.hello')
+            [<p.hello>]
+        """
+        elements = [child for tag in self for child in tag.getchildren()]
+        return self._filter_only(selector, elements)
+
     def filter(self, selector):
         """Filter elements in self using selector (string or function).
 
@@ -213,7 +323,7 @@ class PyQuery(list):
             [<p.hello>]
         """
         if not callable(selector):
-            return self.__class__(selector, self, **dict(parent=self))
+            return self._filter_only(selector, self)
         else:
             elements = []
             try:
@@ -847,11 +957,12 @@ class PyQuery(list):
         if expr is no_default:
             for tag in self:
                 parent = tag.getparent()
-                if tag.tail:
-                    if not parent.text:
-                        parent.text = ''
-                    parent.text += ' ' + tag.tail
-                parent.remove(tag)
+                if parent is not None:
+                    if tag.tail:
+                        if not parent.text:
+                            parent.text = ''
+                        parent.text += ' ' + tag.tail
+                    parent.remove(tag)
         else:
             results = self.__class__(expr, self)
             results.remove()
