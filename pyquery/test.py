@@ -7,11 +7,28 @@ from webob import Request, Response, exc
 from lxml import etree
 import unittest
 import doctest
+import httplib
+import socket
 import os
 
 import pyquery
 from pyquery import PyQuery as pq
 from ajax import PyQuery as pqa
+
+socket.setdefaulttimeout(1)
+
+try:
+    conn = httplib.HTTPConnection("pyquery.org:80")
+    conn.request("GET", "/")
+    response = conn.getresponse()
+except socket.timeout:
+    GOT_NET=False
+else:
+    GOT_NET=True
+
+def with_net(func):
+    if GOT_NET:
+        return func
 
 dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
 docs = os.path.join(os.path.dirname(dirname), 'docs')
@@ -43,6 +60,8 @@ class TestReadme(doctest.DocFileCase):
 
 for filename in os.listdir(docs):
     if filename.endswith('.txt'):
+        if not GOT_NET and filename in ('ajax.txt', 'tips.txt'):
+            continue
         klass_name = 'Test%s' % filename.replace('.txt', '').title()
         path = os.path.join(docs, filename)
         exec '%s = type("%s", (TestReadme,), dict(path=path))' % (klass_name, klass_name)
@@ -252,6 +271,7 @@ def secure_application(environ, start_response):
 class TestAjaxSelector(TestSelector):
     klass = pqa
 
+    @with_net
     def test_proxy(self):
         e = self.klass([])
         val = e.get('http://pyquery.org/')
