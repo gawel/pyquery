@@ -7,12 +7,12 @@ Making links absolute
 You can make links absolute which can be usefull for screen scrapping::
 
     >>> d = pq(url='http://www.w3.org/', parser='html')
-    >>> d('a[title="W3C Activities"]').attr('href')
-    '/Consortium/activities'
+    >>> d('a[title="Available positions"]').attr('href')
+    '/Consortium/Recruitment/'
     >>> d.make_links_absolute()
     [<html>]
-    >>> d('a[title="W3C Activities"]').attr('href')
-    'http://www.w3.org/Consortium/activities'
+    >>> d('a[title="Available positions"]').attr('href')
+    'http://www.w3.org/Consortium/Recruitment/'
 
 Using different parsers
 -----------------------
