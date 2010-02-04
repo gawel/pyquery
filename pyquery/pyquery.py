@@ -309,6 +309,24 @@ class PyQuery(list):
         elements = [child for tag in self for child in tag.getchildren()]
         return self._filter_only(selector, elements)
 
+    def closest(self, selector=None):
+        """
+            >>> d = PyQuery('<div class="hello"><p>This is a <strong class="hello">test</strong></p></div>')
+            >>> d('strong').closest('div')
+            [<div.hello>]
+            >>> d('strong').closest('.hello')
+            [<strong.hello>]
+            >>> d('strong').closest('form')
+            []
+        """
+        try:
+            current = self[0]
+        except IndexError:
+            current = None
+        while current is not None and not self.__class__(current).is_(selector):
+            current = current.getparent()
+        return self.__class__(current, **dict(parent=self))
+
     def filter(self, selector):
         """Filter elements in self using selector (string or function).
 

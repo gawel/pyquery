@@ -244,6 +244,10 @@ class TestTraversal(unittest.TestCase):
         assert len(self.klass('div', self.html).find('span').end()) == 2
         assert len(self.klass('#node2', self.html).find('span').end()) == 1
 
+    def test_closest(self):
+        assert len(self.klass('#node1 span', self.html).closest('body')) == 1
+        assert self.klass('#node2', self.html).closest('.node3').attr('id') == 'node2'
+        assert self.klass('.node3', self.html).closest('form') == []
 
 class TestOpener(unittest.TestCase):
 
