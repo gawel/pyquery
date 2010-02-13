@@ -940,8 +940,8 @@ class PyQuery(list):
     def replaceWith(self, value):
         """replace nodes by value
         """
-        self.before(value)
         for tag in self:
+            self.__class__(tag).before(value + (tag.tail or ''))
             parent = tag.getparent()
             parent.remove(tag)
         return self
