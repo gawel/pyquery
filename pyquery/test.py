@@ -325,6 +325,18 @@ class TestManipulating(unittest.TestCase):
         val = d('a:last').html()
         assert val == ' My link text 2', repr(val)
 
+    def test_replaceWith(self):
+        expected = '''
+    <div class="portlet">
+      <a href="/toto">TestimageMy link text</a>
+      <a href="/toto2">imageMy link text 2</a>
+    </div>
+        '''
+        d = pq(self.html)
+        d('img').replaceWith('image')
+	val = d.__html__()
+        assert val == expected, repr(val)
+
 if __name__ == '__main__':
     fails, total = unittest.main()
     if fails == 0:
