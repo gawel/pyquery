@@ -321,6 +321,20 @@ class TestManipulating(unittest.TestCase):
         val = d('a:last').html()
         assert val == ' My link text 2', repr(val)
 
+class TestHTMLParser(unittest.TestCase):
+    xml = "<div>I'm valid XML</div>"
+    html = '''
+    <div class="portlet">
+        Behind you, a three-headed HTML&dash;Entity!
+    </div>
+    '''
+    
+    def test_parser_persistance(self):
+        d = pq(self.xml, parser='xml')
+        self.assertRaises(etree.XMLSyntaxError, lambda: d.after(self.html))
+        d = pq(self.xml, parser='html')
+        d.after(self.html) # this should not fail
+        
 if __name__ == '__main__':
     fails, total = unittest.main()
     if fails == 0:

@@ -69,7 +69,7 @@ class PyQuery(list):
         html = None
         elements = []
         self._base_url = None
-        parser = kwargs.get('parser')
+        self.parser = kwargs.get('parser', None)
         if 'parser' in kwargs:
             del kwargs['parser']
         if not kwargs and len(args) == 1 and isinstance(args[0], basestring) \
@@ -97,7 +97,7 @@ class PyQuery(list):
                 self._base_url = url
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
-            elements = fromstring(html, parser)
+            elements = fromstring(html, self.parser)
         else:
             # get nodes
 
@@ -115,7 +115,7 @@ class PyQuery(list):
             # get context
             if isinstance(context, basestring):
                 try:
-                    elements = fromstring(context, parser)
+                    elements = fromstring(context, self.parser)
                 except Exception, e:
                     raise ValueError('%r, %s' % (e, context))
             elif isinstance(context, self.__class__):
@@ -671,7 +671,7 @@ class PyQuery(list):
             for tag in self:
                 for child in tag.getchildren():
                     tag.remove(child)
-                root = etree.fromstring('<root>' + new_html + '</root>')
+                root = fromstring('<root>' + new_html + '</root>', self.parser)[0]
                 children = root.getchildren()
                 if children:
                     tag.extend(children)
@@ -727,7 +727,7 @@ class PyQuery(list):
 
     def _get_root(self, value):
         if  isinstance(value, basestring):
-            root = etree.fromstring('<root>' + value + '</root>')
+            root = fromstring('<root>' + value + '</root>', self.parser)[0]
         elif isinstance(value, etree._Element):
             root = self.__class__(value)
         elif isinstance(value, PyQuery):
