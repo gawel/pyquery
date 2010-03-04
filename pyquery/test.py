@@ -244,6 +244,10 @@ class TestTraversal(unittest.TestCase):
         assert len(self.klass('div', self.html).find('span').end()) == 2
         assert len(self.klass('#node2', self.html).find('span').end()) == 1
 
+    def test_closest(self):
+        assert len(self.klass('#node1 span', self.html).closest('body')) == 1
+        assert self.klass('#node2', self.html).closest('.node3').attr('id') == 'node2'
+        assert self.klass('.node3', self.html).closest('form') == []
 
 class TestOpener(unittest.TestCase):
 
@@ -325,16 +329,39 @@ class TestHTMLParser(unittest.TestCase):
     xml = "<div>I'm valid XML</div>"
     html = '''
     <div class="portlet">
-        Behind you, a three-headed HTML&dash;Entity!
+      <a href="/toto">TestimageMy link text</a>
+      <a href="/toto2">imageMy link text 2</a>
+      Behind you, a three-headed HTML&dash;Entity!
     </div>
     '''
-    
     def test_parser_persistance(self):
         d = pq(self.xml, parser='xml')
         self.assertRaises(etree.XMLSyntaxError, lambda: d.after(self.html))
         d = pq(self.xml, parser='html')
         d.after(self.html) # this should not fail
-        
+
+    def test_replaceWith(self):
+        expected = '''<div class="portlet">
+      <a href="/toto">TestimageMy link text</a>
+      <a href="/toto2">imageMy link text 2</a>
+      Behind you, a three-headed HTML&amp;dash;Entity!
+    </div>'''
+        d = pq(self.html)
+        d('img').replaceWith('image')
+        val = d.__html__()
+        assert val == expected, (repr(val), repr(expected))
+
+    def test_replaceWith_with_function(self):
+        expected = '''<div class="portlet">
+      TestimageMy link text
+      imageMy link text 2
+      Behind you, a three-headed HTML&amp;dash;Entity!
+    </div>'''
+        d = pq(self.html)
+        d('a').replaceWith(lambda i, e: pq(e).html())
+        val = d.__html__()
+        assert val == expected, (repr(val), repr(expected))
+
 if __name__ == '__main__':
     fails, total = unittest.main()
     if fails == 0:
