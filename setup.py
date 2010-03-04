@@ -9,7 +9,7 @@ import sys, os
 
 long_description = open(os.path.join('pyquery', 'README.txt')).read()
 
-version = '0.4'
+version = '0.5'
 
 setup(name='pyquery',
       version=version,
