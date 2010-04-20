@@ -339,6 +339,9 @@ class TestHTMLParser(unittest.TestCase):
         self.assertRaises(etree.XMLSyntaxError, lambda: d.after(self.html))
         d = pq(self.xml, parser='html')
         d.after(self.html) # this should not fail
+        
+        d = pq('<meta><head><title>Hello</head><body onload=crash()>Hi all<p>', parser='soup')
+        self.assertEqual(str(d), '<html><meta/><head><title>Hello</title></head><body onload="crash()">Hi all<p/></body></html>')
 
     def test_replaceWith(self):
         expected = '''<div class="portlet">
@@ -361,6 +364,16 @@ class TestHTMLParser(unittest.TestCase):
         d('a').replaceWith(lambda i, e: pq(e).html())
         val = d.__html__()
         assert val == expected, (repr(val), repr(expected))
+
+class TestWebScrapping(unittest.TestCase):
+    def test_get(self):
+        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='get')
+        self.assertEqual(d('input [name=q]:last').val(), 'inconsistency')
+        self.assertEqual(d('.news-in-brief h3').text(), 'Slight Inconsistency Found In Bible')
+        
+    def test_post(self):
+        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='post')
+        self.assertEqual(d('input [name=q]:last').val(), '') # the onion does not search on post
 
 if __name__ == '__main__':
     fails, total = unittest.main()

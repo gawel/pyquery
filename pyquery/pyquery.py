@@ -9,22 +9,33 @@ import lxml.html
 from copy import deepcopy
 from urlparse import urljoin
 
-def fromstring(context, parser=None):
+def fromstring(context, parser=None, custom_parser=None):
     """use html parser if we don't have clean xml
     """
-    if parser == None:
-        try:
-            return [etree.fromstring(context)]
-        except etree.XMLSyntaxError:
-            return [lxml.html.fromstring(context)]
-    elif parser == 'xml':
-        return [etree.fromstring(context)]
-    elif parser == 'html':
-        return [lxml.html.fromstring(context)]
-    elif parser == 'html_fragments':
-        return lxml.html.fragments_fromstring(context)
+    if custom_parser is None:
+        if parser is None:
+            try:
+                return [etree.fromstring(context)]
+            except etree.XMLSyntaxError:
+                return [lxml.html.fromstring(context)]
+        
+        elif parser == 'xml':
+            custom_parser = etree.fromstring
+        elif parser == 'html':
+            custom_parser = lxml.html.fromstring
+        elif parser == 'soup':
+            from  lxml.html import soupparser
+            custom_parser = lxml.html.soupparser.fromstring
+        elif parser == 'html_fragments':
+            custom_parser = lxml.html.fragments_fromstring
+        else:
+            ValueError('No such parser: "%s"' % parser)
+    
+    result = custom_parser(context)
+    if type(result) is list:
+        return result
     else:
-        ValueError('No such parser: "%s"' % parser)
+        return [result]
 
 class NoDefault(object):
     def __repr__(self):
@@ -72,9 +83,11 @@ class PyQuery(list):
         self.parser = kwargs.get('parser', None)
         if 'parser' in kwargs:
             del kwargs['parser']
-        if not kwargs and len(args) == 1 and isinstance(args[0], basestring) \
+        if len(args) >= 1 and isinstance(args[0], basestring) \
            and args[0].startswith('http://'):
-            kwargs = {'url': args[0]}
+            kwargs['url'] = args[0]
+            if len(args) >= 2:
+                kwargs['data'] = args[1]
             args = []
 
         if 'parent' in kwargs:
@@ -93,7 +106,21 @@ class PyQuery(list):
                     html = opener(url)
                 else:
                     from urllib2 import urlopen
-                    html = urlopen(url).read()
+                    from urllib import urlencode
+                    method = kwargs.get('method')
+                    data = kwargs.get('data')
+                    if type(data) in (dict, list, tuple):
+                        data = urlencode(data)
+                        
+                    if isinstance(method, basestring) and method.lower() == 'get' and data:
+                        if '?' not in url:
+                            url += '?'
+                        elif url[-1] not in ('?', '&'):
+                            url += '&'
+                        url += data
+                        data = None
+                    
+                    html = urlopen(url, data).read()
                 self._base_url = url
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
