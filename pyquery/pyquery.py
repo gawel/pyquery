@@ -686,15 +686,15 @@ class PyQuery(list):
 
         Get the text value::
 
-            >>> doc = PyQuery('<div><span>toto</span></div>')
-            >>> print doc.html()
+            >>> d = PyQuery('<div><span>toto</span></div>')
+            >>> print d.html()
             <span>toto</span>
 
         Set the text value::
 
-            >>> doc.html('<span>Youhou !</span>')
+            >>> d.html('<span>Youhou !</span>')
             [<div>]
-            >>> print doc
+            >>> print d
             <div><span>Youhou !</span></div>
         """
         if value is no_default:
@@ -724,6 +724,22 @@ class PyQuery(list):
                 tag.tail = root.tail
         return self
 
+    def outerHtml(self):
+        """Get the html representation of the first selected element.
+
+            
+
+            >>> d = PyQuery('<div class="red">toto</div>')
+            >>> print d
+            <div class="red">toto</div>
+        """
+        if not self:
+            return None
+        e0 = self[0]
+        if e0.tail:
+            return lxml.html.tostring(e0)[:-len(e0.tail)]
+        else:
+            return lxml.html.tostring(e0)
     def text(self, value=no_default):
         """Get or set the text representation of sub nodes.
 
