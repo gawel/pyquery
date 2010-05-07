@@ -1020,15 +1020,27 @@ class PyQuery(list):
 
     def remove(self, expr=no_default):
         """remove nodes
+        
+        >>> d = PyQuery('<div>Maybe <em>she</em> does <strong>NOT</strong> know</div>')
+        >>> d('strong').remove()
+        [<strong>]
+        >>> print d
+        <div>Maybe <em>she</em> does   know</div>
         """
         if expr is no_default:
             for tag in self:
                 parent = tag.getparent()
                 if parent is not None:
                     if tag.tail:
-                        if not parent.text:
-                            parent.text = ''
-                        parent.text += ' ' + tag.tail
+                        prev = tag.getprevious()
+                        if prev is None:
+                            if not parent.text:
+                                parent.text = ''
+                            parent.text += ' ' + tag.tail
+                        else:
+                            if not prev.tail:
+                                prev.tail = ''
+                            prev.tail += ' ' + tag.tail
                     parent.remove(tag)
         else:
             results = self.__class__(expr, self)
