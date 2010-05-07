@@ -455,6 +455,10 @@ class PyQuery(list):
 
             >>> d('p').map(lambda i, e: PyQuery(this).text().split())
             ['Hi', 'there', 'Bye']
+            
+            Added this 
+
+
         """
         items = []
         try:
@@ -467,7 +471,8 @@ class PyQuery(list):
                     else:
                         items.extend(result)
         finally:
-            del func.func_globals['this']
+            if 'this' in func.func_globals:
+                del func.func_globals['this']
         return self.__class__(items, **dict(parent=self))
 
     @property

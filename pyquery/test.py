@@ -239,6 +239,9 @@ class TestTraversal(unittest.TestCase):
         def ids_minus_one(i, elem):
             return int(self.klass(elem).attr('id')[-1]) - 1
         assert self.klass('div', self.html).map(ids_minus_one) == [0, 1]
+        
+        d = pq('<p>Hello <b>warming</b> world</p>')
+        self.assertEqual(d('strong').map(lambda i,el: pq(this).text()), [])
 
     def test_end(self):
         assert len(self.klass('div', self.html).find('span').end()) == 2
