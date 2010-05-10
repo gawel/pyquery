@@ -21,7 +21,7 @@ try:
     conn = httplib.HTTPConnection("pyquery.org:80")
     conn.request("GET", "/")
     response = conn.getresponse()
-except socket.timeout:
+except socket.timeout, socket.error:
     GOT_NET=False
 else:
     GOT_NET=True
@@ -369,11 +369,13 @@ class TestHTMLParser(unittest.TestCase):
         assert val == expected, (repr(val), repr(expected))
 
 class TestWebScrapping(unittest.TestCase):
+    @with_net
     def test_get(self):
         d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='get')
         self.assertEqual(d('input [name=q]:last').val(), 'inconsistency')
         self.assertEqual(d('.news-in-brief h3').text(), 'Slight Inconsistency Found In Bible')
-        
+    
+    @with_net
     def test_post(self):
         d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='post')
         self.assertEqual(d('input [name=q]:last').val(), '') # the onion does not search on post
