@@ -377,7 +377,8 @@ class PyQuery(list):
                     if selector(i):
                         elements.append(this)
             finally:
-                del selector.func_globals['this']
+                if 'this' in selector.func_globals:
+                    del selector.func_globals['this']
             return self.__class__(elements, **dict(parent=self))
 
     def not_(self, selector):

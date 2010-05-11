@@ -217,6 +217,9 @@ class TestTraversal(unittest.TestCase):
         assert len(self.klass('div', self.html).filter('.node3')) == 1
         assert len(self.klass('div', self.html).filter('#node2')) == 1
         assert len(self.klass('div', self.html).filter(lambda i: i == 0)) == 1
+        
+        d = pq('<p>Hello <b>warming</b> world</p>')
+        self.assertEqual(d('strong').filter(lambda el: True), [])
 
     def test_not(self):
         assert len(self.klass('div', self.html).not_('.node3')) == 1
