@@ -21,7 +21,7 @@ try:
     conn = httplib.HTTPConnection("pyquery.org:80")
     conn.request("GET", "/")
     response = conn.getresponse()
-except socket.timeout, socket.error:
+except (socket.timeout, socket.error):
     GOT_NET=False
 else:
     GOT_NET=True
