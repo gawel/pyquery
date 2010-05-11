@@ -1053,6 +1053,23 @@ class PyQuery(list):
             results.remove()
         return self
 
+    class Fn(object):
+        """Hook for defining custom funcion (like the jQuery.fn)
+        
+        >>> PyQuery.fn.listOuterHtml = lambda: this.map(lambda i, el: PyQuery(this).outerHtml())
+        >>> S = PyQuery('<ol>   <li>Coffee</li>   <li>Tea</li>   <li>Milk</li>   </ol>')
+        >>> S('li').listOuterHtml()
+        ['<li>Coffee</li>', '<li>Tea</li>', '<li>Milk</li>']
+        
+        """
+        def __setattr__(self, name, func):
+            def fn(self, *args):
+                func.func_globals['this'] = self
+                return func(*args)
+            fn.__name__ = name
+            setattr(PyQuery, name, fn)
+    fn = Fn()
+    
     #####################################################
     # Additional methods that are not in the jQuery API #
     #####################################################
