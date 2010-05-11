@@ -264,6 +264,19 @@ class TestOpener(unittest.TestCase):
         doc = pq(url='http://example.com', opener=opener)
         assert len(doc('.node')) == 1, doc
 
+class TestCallback(unittest.TestCase):
+    html = """
+        <ol>
+            <li>Coffee</li>
+            <li>Tea</li>
+            <li>Milk</li>
+        </ol>
+    """
+    
+    def test_S_this_inside_callback(self):
+        S = pq(self.html)
+        self.assertEqual(S('li').map(lambda i, el: S(this).html()), ['Coffee', 'Tea', 'Milk'])
+        
 def application(environ, start_response):
     req = Request(environ)
     response = Response()

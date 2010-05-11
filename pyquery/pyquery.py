@@ -170,7 +170,7 @@ class PyQuery(list):
         length = len(args)
         if length == 0:
             raise ValueError('You must provide at least a selector')
-        if len(args) == 1 and not args[0].startswith('<'):
+        if len(args) == 1 and isinstance(args[0], str) and not args[0].startswith('<'):
             args += (self,)
         result = self.__class__(*args, **dict(parent=self))
         return result
