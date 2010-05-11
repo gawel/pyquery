@@ -733,12 +733,13 @@ class PyQuery(list):
     def outerHtml(self):
         """Get the html representation of the first selected element.
 
-            
-
-            >>> d = PyQuery('<div class="red">toto</div>')
-            >>> print d
-            <div class="red">toto</div>
+            >>> d = PyQuery('<div><span class="red">toto</span> rocks</div>')
+            >>> print d('span')
+            <span class="red">toto</span> rocks
+            >>> print d('span').outerHtml()
+            <span class="red">toto</span>
         """
+        
         if not self:
             return None
         e0 = self[0]
