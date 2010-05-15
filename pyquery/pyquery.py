@@ -442,8 +442,14 @@ class PyQuery(list):
     def each(self, func):
         """apply func on each nodes
         """
-        for e in self:
-            func(self.__class__([e]))
+        try:
+            for i, element in enumerate(self):
+                func.func_globals['this'] = element
+                if callback(func, i, element) == False:
+                    break
+        finally:
+            if 'this' in func.func_globals:
+                del func.func_globals['this']
         return self
 
     def map(self, func):
@@ -1098,6 +1104,5 @@ class PyQuery(list):
                 raise ValueError('You need a base URL to make your links'
                  'absolute. It can be provided by the base_url parameter.')
 
-        self('a').each(lambda a:
-                       a.attr('href', urljoin(base_url, a.attr('href'))))
+        self('a').each(lambda: self(this).attr('href', urljoin(base_url, self(this).attr('href'))))
         return self

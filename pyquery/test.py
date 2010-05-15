@@ -240,7 +240,7 @@ class TestTraversal(unittest.TestCase):
 
     def test_each(self):
         doc = self.klass(self.html)
-        doc('span').each(lambda e: e.wrap("<em></em>"))
+        doc('span').each(lambda: doc(this).wrap("<em></em>"))
         assert len(doc('em')) == 3
 
     def test_map(self):
