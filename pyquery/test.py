@@ -201,6 +201,11 @@ class TestSelector(unittest.TestCase):
         assert len(e(":parent")) == 2
         assert len(e(":empty")) == 6
         assert len(e(":contains('Heading')")) == 6
+        
+    def test_on_the_fly_dom_creation(self):
+        e = self.klass(self.html)
+        assert e('<p>Hello world</p>').text() == 'Hello world'
+        assert e('').text() == None
 
 class TestTraversal(unittest.TestCase):
     klass = pq
