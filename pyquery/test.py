@@ -277,6 +277,10 @@ class TestCallback(unittest.TestCase):
         S = pq(self.html)
         self.assertEqual(S('li').map(lambda i, el: S(this).html()), ['Coffee', 'Tea', 'Milk'])
         
+    def test_parameterless_callback(self):
+        S = pq(self.html)
+        self.assertEqual(S('li').map(lambda: S(this).html()), ['Coffee', 'Tea', 'Milk'])
+        
 def application(environ, start_response):
     req = Request(environ)
     response = Response()

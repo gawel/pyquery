@@ -37,6 +37,9 @@ def fromstring(context, parser=None, custom_parser=None):
     else:
         return [result]
 
+def callback(func, *args):
+    return func(*args[:func.func_code.co_argcount])
+        
 class NoDefault(object):
     def __repr__(self):
         """clean representation in Sphinx"""
@@ -374,7 +377,7 @@ class PyQuery(list):
             try:
                 for i, this in enumerate(self):
                     selector.func_globals['this'] = this
-                    if selector(i):
+                    if callback(selector, i):
                         elements.append(this)
             finally:
                 if 'this' in selector.func_globals:
@@ -465,7 +468,7 @@ class PyQuery(list):
         try:
             for i, element in enumerate(self):
                 func.func_globals['this'] = element
-                result = func(i, element)
+                result = callback(func, i, element)
                 if result is not None:
                     if not isinstance(result, list):
                         items.append(result)
