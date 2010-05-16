@@ -749,15 +749,20 @@ class PyQuery(list):
             <span class="red">toto</span> rocks
             >>> print d('span').outerHtml()
             <span class="red">toto</span>
+
+            >>> S = PyQuery('<p>Only <b>me</b> & myself</p>')
+            >>> S('b').outerHtml()
+            '<b>me</b>'
         """
         
         if not self:
             return None
         e0 = self[0]
         if e0.tail:
-            return lxml.html.tostring(e0)[:-len(e0.tail)]
-        else:
-            return lxml.html.tostring(e0)
+            e0 = deepcopy(e0)
+            e0.tail = ''
+        return lxml.html.tostring(e0)
+        
     def text(self, value=no_default):
         """Get or set the text representation of sub nodes.
 
