@@ -18,7 +18,7 @@ def fromstring(context, parser=None, custom_parser=None):
                 return [etree.fromstring(context)]
             except etree.XMLSyntaxError:
                 return [lxml.html.fromstring(context)]
-        
+
         elif parser == 'xml':
             custom_parser = etree.fromstring
         elif parser == 'html':
@@ -30,7 +30,7 @@ def fromstring(context, parser=None, custom_parser=None):
             custom_parser = lxml.html.fragments_fromstring
         else:
             ValueError('No such parser: "%s"' % parser)
-    
+
     result = custom_parser(context)
     if type(result) is list:
         return result
@@ -39,7 +39,7 @@ def fromstring(context, parser=None, custom_parser=None):
 
 def callback(func, *args):
     return func(*args[:func.func_code.co_argcount])
-        
+
 class NoDefault(object):
     def __repr__(self):
         """clean representation in Sphinx"""
@@ -114,7 +114,7 @@ class PyQuery(list):
                     data = kwargs.get('data')
                     if type(data) in (dict, list, tuple):
                         data = urlencode(data)
-                        
+
                     if isinstance(method, basestring) and method.lower() == 'get' and data:
                         if '?' not in url:
                             url += '?'
@@ -122,7 +122,7 @@ class PyQuery(list):
                             url += '&'
                         url += data
                         data = None
-                    
+
                     html = urlopen(url, data).read()
                 self._base_url = url
             else:
@@ -467,8 +467,8 @@ class PyQuery(list):
 
             >>> d('p').map(lambda i, e: PyQuery(this).text().split())
             ['Hi', 'there', 'Bye']
-            
-            Added this 
+
+            Added this
 
 
         """
@@ -754,7 +754,7 @@ class PyQuery(list):
             >>> S('b').outerHtml()
             '<b>me</b>'
         """
-        
+
         if not self:
             return None
         e0 = self[0]
@@ -762,7 +762,7 @@ class PyQuery(list):
             e0 = deepcopy(e0)
             e0.tail = ''
         return lxml.html.tostring(e0)
-        
+
     def text(self, value=no_default):
         """Get or set the text representation of sub nodes.
 
@@ -1043,7 +1043,7 @@ class PyQuery(list):
 
     def remove(self, expr=no_default):
         """remove nodes
-        
+
         >>> d = PyQuery('<div>Maybe <em>she</em> does <strong>NOT</strong> know</div>')
         >>> d('strong').remove()
         [<strong>]
@@ -1072,12 +1072,12 @@ class PyQuery(list):
 
     class Fn(object):
         """Hook for defining custom funcion (like the jQuery.fn)
-        
+
         >>> PyQuery.fn.listOuterHtml = lambda: this.map(lambda i, el: PyQuery(this).outerHtml())
         >>> S = PyQuery('<ol>   <li>Coffee</li>   <li>Tea</li>   <li>Milk</li>   </ol>')
         >>> S('li').listOuterHtml()
         ['<li>Coffee</li>', '<li>Tea</li>', '<li>Milk</li>']
-        
+
         """
         def __setattr__(self, name, func):
             def fn(self, *args):
@@ -1086,7 +1086,7 @@ class PyQuery(list):
             fn.__name__ = name
             setattr(PyQuery, name, fn)
     fn = Fn()
-    
+
     #####################################################
     # Additional methods that are not in the jQuery API #
     #####################################################

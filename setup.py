@@ -25,7 +25,7 @@ setup(name='pyquery',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          'lxml>=2.1'
+          #'lxml>=2.1'
           # -*- Extra requirements: -*-
       ],
       entry_points="""
