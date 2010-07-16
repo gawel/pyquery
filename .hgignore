@@ -4,7 +4,7 @@ syntax: glob
 develop-eggs/
 bin/
 dist/
-docs/.build/
+docs/_build/
 .installed.cfg
 *.egg-info
 *.pyc

@@ -397,17 +397,21 @@ class PyQuery(list):
         return self.__class__([e for e in self if e not in exclude], **dict(parent=self))
 
     def is_(self, selector):
-        """Returns True if selector matches at least one current element, else False.
+        """Returns True if selector matches at least one current element, else False::
+
             >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
             >>> d('p').eq(0).is_('.hello')
             True
+
             >>> d('p').eq(1).is_('.hello')
             False
+
+        ..
         """
         return bool(self.__class__(selector, self))
 
     def find(self, selector):
-        """Find elements using selector traversing down from self.
+        """Find elements using selector traversing down from self::
 
             >>> m = '<p><span><em>Whoah!</em></span></p><p><em> there</em></p>'
             >>> d = PyQuery(m)
@@ -415,6 +419,8 @@ class PyQuery(list):
             [<em>, <em>]
             >>> d('p').eq(1).find('em')
             [<em>]
+
+        ..
         """
         xpath = selector_to_xpath(selector)
         results = [child.xpath(xpath) for tag in self for child in tag.getchildren()]
@@ -425,7 +431,7 @@ class PyQuery(list):
         return self.__class__(elements, **dict(parent=self))
 
     def eq(self, index):
-        """Return PyQuery of only the element with the provided index.
+        """Return PyQuery of only the element with the provided index::
 
             >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
             >>> d('p').eq(0)
@@ -434,6 +440,8 @@ class PyQuery(list):
             [<p>]
             >>> d('p').eq(2)
             []
+
+        ..
         """
         # Use slicing to silently handle out of bounds indexes
         items = self[index:index+1]
@@ -456,7 +464,7 @@ class PyQuery(list):
         """Returns a new PyQuery after transforming current items with func.
 
         func should take two arguments - 'index' and 'element'.  Elements can
-        also be referred to as 'this' inside of func.
+        also be referred to as 'this' inside of func::
 
             >>> d = PyQuery('<p class="hello">Hi there</p><p>Bye</p><br />')
             >>> d('p').map(lambda i, e: PyQuery(e).text())
@@ -467,9 +475,6 @@ class PyQuery(list):
 
             >>> d('p').map(lambda i, e: PyQuery(this).text().split())
             ['Hi', 'there', 'Bye']
-
-            Added this
-
 
         """
         items = []
@@ -550,6 +555,7 @@ class PyQuery(list):
             >>> d.removeAttr('id')
             [<div>]
 
+        ..
         """
         for tag in self:
             del tag.attrib[name]
@@ -577,6 +583,7 @@ class PyQuery(list):
             >>> d.hasClass('myclass')
             True
 
+        ..
         """
         return self.is_('.%s' % name)
 
@@ -587,6 +594,7 @@ class PyQuery(list):
             >>> d.addClass('myclass')
             [<div.myclass>]
 
+        ..
         """
         for tag in self:
             values = value.split(' ')
@@ -597,12 +605,13 @@ class PyQuery(list):
         return self
 
     def removeClass(self, value):
-        """Remove a css class to elements
+        """Remove a css class to elements::
 
             >>> d = PyQuery('<div class="myclass"></div>')
             >>> d.removeClass('myclass')
             [<div>]
 
+        ..
         """
         for tag in self:
             values = value.split(' ')
@@ -674,12 +683,20 @@ class PyQuery(list):
     # CORE UI EFFECTS #
     ###################
     def hide(self):
-        """add display:none to elements style
+        """remove display:none to elements style
+
+            >>> print PyQuery('<div style="display:none;"/>').hide()
+            <div style="display: none"/>
+
         """
         return self.css('display', 'none')
 
     def show(self):
         """add display:block to elements style
+
+            >>> print PyQuery('<div />').show()
+            <div style="display: block"/>
+
         """
         return self.css('display', 'block')
 
@@ -687,11 +704,14 @@ class PyQuery(list):
     # HTML #
     ########
     def val(self, value=no_default):
-        """Set/get the attribute value::
+        """Set the attribute value::
 
             >>> d = PyQuery('<input />')
             >>> d.val('Youhou')
             [<input>]
+
+        Get the attribute value::
+
             >>> d.val()
             'Youhou'
 
@@ -742,7 +762,7 @@ class PyQuery(list):
         return self
 
     def outerHtml(self):
-        """Get the html representation of the first selected element.
+        """Get the html representation of the first selected element::
 
             >>> d = PyQuery('<div><span class="red">toto</span> rocks</div>')
             >>> print d('span')
@@ -753,6 +773,8 @@ class PyQuery(list):
             >>> S = PyQuery('<p>Only <b>me</b> & myself</p>')
             >>> S('b').outerHtml()
             '<b>me</b>'
+
+        ..
         """
 
         if not self:
@@ -968,6 +990,7 @@ class PyQuery(list):
             >>> print d('span').wrapAll('<div id="wrapper"></div>')
             <div id="wrapper"><span>Hey</span><span>you !</span></div>
 
+        ..
         """
         if not self:
             return self
@@ -1071,7 +1094,7 @@ class PyQuery(list):
         return self
 
     class Fn(object):
-        """Hook for defining custom funcion (like the jQuery.fn)
+        """Hook for defining custom function (like the jQuery.fn)
 
         >>> PyQuery.fn.listOuterHtml = lambda: this.map(lambda i, el: PyQuery(this).outerHtml())
         >>> S = PyQuery('<ol>   <li>Coffee</li>   <li>Tea</li>   <li>Milk</li>   </ol>')
