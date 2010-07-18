@@ -1,0 +1,19 @@
+0.6.1
+------
+
+Move README.txt at package root
+
+Add CHANGES.txt and add it to long_description
+
+0.6
+----
+
+Added PyQuery.outerHtml
+
+Added PyQuery.fn
+
+Added PyQuery.map
+
+Change PyQuery.each behavior to reflect jQuery api
+
+

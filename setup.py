@@ -7,9 +7,30 @@
 from setuptools import setup, find_packages
 import sys, os
 
-long_description = open(os.path.join('pyquery', 'README.txt')).read()
+def read(*names):
+    values = dict()
+    for name in names:
+        filename = name+'.txt'
+        if os.path.isfile(filename):
+            value = open(name+'.txt').read()
+        else:
+            value = ''
+        values[name] = value
+    return values
 
-version = '0.6'
+long_description="""
+%(README)s
+
+See http://packages.python.org/pyquery/ for the full documentation
+
+News
+====
+
+%(CHANGES)s
+
+""" % read('README', 'CHANGES')
+
+version = '0.6.1'
 
 setup(name='pyquery',
       version=version,

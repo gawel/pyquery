@@ -18,11 +18,12 @@ The `project`_ is being actively developped on a mercurial repository on
 Bitbucket. I have the policy of giving push access to anyone who wants it
 and then to review what he does. So if you want to contribute just email me.
 
-The full documentation is available on `pyquery.org`_.
+Please report bugs on the `bitbucket
+<http://bitbucket.org/olauzanne/pyquery/issues?status=new&status=open>`_ issue
+tracker.
 
 .. _deliverance: http://www.gawel.org/weblog/en/2008/12/skinning-with-pyquery-and-deliverance
 .. _project: http://www.bitbucket.org/olauzanne/pyquery/
-.. _pyquery.org: http://pyquery.org/
 
 Quickstart
 ==========

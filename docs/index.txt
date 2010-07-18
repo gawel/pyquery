@@ -1,4 +1,4 @@
-.. include:: ../pyquery/README.txt
+.. include:: ../README.txt
 
 Full documentation
 ==================
@@ -15,6 +15,7 @@ Full documentation
    tips
    testing
    future
+   changes
 
 More documentation
 ==================
@@ -26,8 +27,8 @@ Then you can always look at the `code`_.
 
 .. _jquery website: http://docs.jquery.com/
 .. _code: http://www.bitbucket.org/olauzanne/pyquery/src/tip/pyquery/pyquery.py
-.. _here: http://pyquery.org
 .. _color cheat sheet: http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
+.. _here: http://packages.python.org/pyquery/
 
 Indices and tables
 ==================

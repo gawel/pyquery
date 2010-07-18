@@ -46,7 +46,7 @@ def input_app(environ, start_response):
     return resp(environ, start_response)
 
 class TestReadme(doctest.DocFileCase):
-    path = os.path.join(dirname, 'README.txt')
+    path = os.path.join(dirname, '..', 'README.txt')
 
     def __init__(self, *args, **kwargs):
         parser = doctest.DocTestParser()
