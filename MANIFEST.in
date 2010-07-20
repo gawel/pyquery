@@ -1,1 +1,3 @@
 recursive-include pyquery *.txt
+include README.txt
+include CHANGES.txt
