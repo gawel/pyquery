@@ -4,7 +4,7 @@ Assume spaces normalization::
     >>> pq('<ul> <li>  </li> </ul>').text()
     ''
 
-    >>> print pq('<ul> <li> toto </li> <li> tata </li> </ul>').text()
+    >>> print(pq('<ul> <li> toto </li> <li> tata </li> </ul>').text())
     toto tata
 
 Complex wrapping::
@@ -18,7 +18,7 @@ Complex wrapping::
 
 We get the original doc with new node::
 
-    >>> print d
+    >>> print(d)
     <div id="bouh"><div><div id="wrapper"><span>youhou</span></div></div></div>
 
 Complex wrapAll::
@@ -28,5 +28,5 @@ Complex wrapAll::
     >>> s.wrapAll('<div id="wrapper"></div>')
     [<div#wrapper>]
 
-    >>> print doc
+    >>> print(doc)
     <div><div id="wrapper"><span>Hey</span><span>you !</span></div></div>

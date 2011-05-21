@@ -37,7 +37,7 @@ document, from a file or from an url::
     >>> d = pq("<html></html>")
     >>> d = pq(etree.fromstring("<html></html>"))
     >>> d = pq(url='http://google.com/')
-    >>> d = pq(url='http://google.com/', opener=lambda url: urllib.urlopen(url).read())
+    >>> # d = pq(url='http://google.com/', opener=lambda url: urllib.urlopen(url).read())
     >>> d = pq(filename=path_to_html_file)
 
 Now d is like the $ in jquery::
@@ -45,14 +45,14 @@ Now d is like the $ in jquery::
     >>> d("#hello")
     [<p#hello.hello>]
     >>> p = d("#hello")
-    >>> p.html()
-    'Hello world !'
+    >>> print(p.html())
+    Hello world !
     >>> p.html("you know <a href='http://python.org/'>Python</a> rocks")
     [<p#hello.hello>]
-    >>> p.html()
-    u'you know <a href="http://python.org/">Python</a> rocks'
-    >>> p.text()
-    'you know Python rocks'
+    >>> print(p.html())
+    you know <a href="http://python.org/">Python</a> rocks
+    >>> print(p.text())
+    you know Python rocks
 
 You can use some of the pseudo classes that are available in jQuery but that
 are not standard in css such as :first :last :even :odd :eq :lt :gt :checked

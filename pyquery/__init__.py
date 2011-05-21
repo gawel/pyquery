@@ -4,10 +4,12 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 
+import sys
+
 try:
     import webob
 except ImportError:
-    from pyquery import PyQuery
+    from .pyquery import PyQuery
 else:
-    from ajax import PyQuery
+    from .ajax import PyQuery
 

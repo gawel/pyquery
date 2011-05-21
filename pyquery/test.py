@@ -3,22 +3,31 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-from webob import Request, Response, exc
 from lxml import etree
 import unittest
 import doctest
-import httplib
 import socket
+import sys
 import os
 
-import pyquery
-from pyquery import PyQuery as pq
-from ajax import PyQuery as pqa
+PY3k = sys.version_info >= (3,)
+
+if PY3k:
+    import pyquery
+    from pyquery.pyquery import PyQuery as pq
+    from http.client import HTTPConnection
+    pqa = pq
+else:
+    import pyquery
+    from httplib import HTTPConnection
+    from webob import Request, Response, exc
+    from pyquery import PyQuery as pq
+    from ajax import PyQuery as pqa
 
 socket.setdefaulttimeout(1)
 
 try:
-    conn = httplib.HTTPConnection("pyquery.org:80")
+    conn = HTTPConnection("pyquery.org:80")
     conn.request("GET", "/")
     response = conn.getresponse()
 except (socket.timeout, socket.error):
@@ -26,8 +35,13 @@ except (socket.timeout, socket.error):
 else:
     GOT_NET=True
 
+
 def with_net(func):
     if GOT_NET:
+        return func
+
+def not_py3k(func):
+    if not PY3k:
         return func
 
 dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
@@ -62,9 +76,11 @@ for filename in os.listdir(docs):
     if filename.endswith('.txt'):
         if not GOT_NET and filename in ('ajax.txt', 'tips.txt'):
             continue
+        if PY3k and filename in ('ajax.txt',):
+            continue
         klass_name = 'Test%s' % filename.replace('.txt', '').title()
         path = os.path.join(docs, filename)
-        exec '%s = type("%s", (TestReadme,), dict(path=path))' % (klass_name, klass_name)
+        exec('%s = type("%s", (TestReadme,), dict(path=path))' % (klass_name, klass_name))
 
 class TestTests(doctest.DocFileCase):
     path = os.path.join(dirname, 'tests.txt')
@@ -74,6 +90,16 @@ class TestTests(doctest.DocFileCase):
         doc = open(self.path).read()
         test = parser.get_doctest(doc, globals(), '', self.path, 0)
         doctest.DocFileCase.__init__(self, test, optionflags=doctest.ELLIPSIS)
+
+class TestUnicode(unittest.TestCase):
+
+    @not_py3k
+    def test_unicode(self):
+        xml = pq(unicode("<p>é</p>", 'utf-8'))
+        self.assertEqual(unicode(xml), unicode("<p>é</p>", 'utf-8'))
+        self.assertEqual(type(xml.html()), unicode)
+        self.assertEqual(str(xml), '<p>&#233;</p>')
+
 
 class TestSelector(unittest.TestCase):
     klass = pq
@@ -144,6 +170,10 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
+    def test_get_root(self):
+        doc = pq('<?xml version="1.0" encoding="UTF-8"?><root/>')
+        self.assertEqual(doc.encoding, 'UTF-8')
+
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)
         assert len(self.klass(doc)) == 1
@@ -201,7 +231,7 @@ class TestSelector(unittest.TestCase):
         assert len(e(":parent")) == 2
         assert len(e(":empty")) == 6
         assert len(e(":contains('Heading')")) == 6
-        
+
     def test_on_the_fly_dom_creation(self):
         e = self.klass(self.html)
         assert e('<p>Hello world</p>').text() == 'Hello world'
@@ -222,7 +252,7 @@ class TestTraversal(unittest.TestCase):
         assert len(self.klass('div', self.html).filter('.node3')) == 1
         assert len(self.klass('div', self.html).filter('#node2')) == 1
         assert len(self.klass('div', self.html).filter(lambda i: i == 0)) == 1
-        
+
         d = pq('<p>Hello <b>warming</b> world</p>')
         self.assertEqual(d('strong').filter(lambda el: True), [])
 
@@ -247,7 +277,7 @@ class TestTraversal(unittest.TestCase):
         def ids_minus_one(i, elem):
             return int(self.klass(elem).attr('id')[-1]) - 1
         assert self.klass('div', self.html).map(ids_minus_one) == [0, 1]
-        
+
         d = pq('<p>Hello <b>warming</b> world</p>')
         self.assertEqual(d('strong').map(lambda i,el: pq(this).text()), [])
 
@@ -277,15 +307,15 @@ class TestCallback(unittest.TestCase):
             <li>Milk</li>
         </ol>
     """
-    
+
     def test_S_this_inside_callback(self):
         S = pq(self.html)
         self.assertEqual(S('li').map(lambda i, el: S(this).html()), ['Coffee', 'Tea', 'Milk'])
-        
+
     def test_parameterless_callback(self):
         S = pq(self.html)
         self.assertEqual(S('li').map(lambda: S(this).html()), ['Coffee', 'Tea', 'Milk'])
-        
+
 def application(environ, start_response):
     req = Request(environ)
     response = Response()
@@ -303,17 +333,20 @@ def secure_application(environ, start_response):
 class TestAjaxSelector(TestSelector):
     klass = pqa
 
+    @not_py3k
     @with_net
     def test_proxy(self):
         e = self.klass([])
         val = e.get('http://pyquery.org/')
         assert len(val('body')) == 1, (str(val.response), val)
 
+    @not_py3k
     def test_get(self):
         e = self.klass(app=application)
         val = e.get('/')
         assert len(val('pre')) == 1, val
 
+    @not_py3k
     def test_secure_get(self):
         e = self.klass(app=secure_application)
         val = e.get('/', environ=dict(REMOTE_USER='gawii'))
@@ -321,16 +354,19 @@ class TestAjaxSelector(TestSelector):
         val = e.get('/', REMOTE_USER='gawii')
         assert len(val('pre')) == 1, val
 
+    @not_py3k
     def test_secure_get_not_authorized(self):
         e = self.klass(app=secure_application)
         val = e.get('/')
         assert len(val('pre')) == 0, val
 
+    @not_py3k
     def test_post(self):
         e = self.klass(app=application)
         val = e.post('/')
         assert len(val('a')) == 1, val
 
+    @not_py3k
     def test_subquery(self):
         e = self.klass(app=application)
         n = e('div')
@@ -367,7 +403,10 @@ class TestHTMLParser(unittest.TestCase):
         self.assertRaises(etree.XMLSyntaxError, lambda: d.after(self.html))
         d = pq(self.xml, parser='html')
         d.after(self.html) # this should not fail
-        
+
+
+    @not_py3k
+    def test_soup_parser(self):
         d = pq('<meta><head><title>Hello</head><body onload=crash()>Hi all<p>', parser='soup')
         self.assertEqual(str(d), '<html><meta/><head><title>Hello</title></head><body onload="crash()">Hi all<p/></body></html>')
 
@@ -399,7 +438,7 @@ class TestWebScrapping(unittest.TestCase):
         d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='get')
         self.assertEqual(d('input[name=q]:last').val(), 'inconsistency')
         self.assertEqual(d('.news-in-brief h3').text(), 'Slight Inconsistency Found In Bible')
-    
+
     @with_net
     def test_post(self):
         d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='post')
@@ -408,4 +447,4 @@ class TestWebScrapping(unittest.TestCase):
 if __name__ == '__main__':
     fails, total = unittest.main()
     if fails == 0:
-        print 'OK'
+        print('OK')

@@ -1,3 +1,14 @@
+0.7
+---
+
+Python 3 compatible
+
+Add __unicode__ method
+
+Add root and encoding attribute
+
+fix issues 19, 20, 22, 23 
+
 0.6.1
 ------
 

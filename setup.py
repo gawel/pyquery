@@ -49,6 +49,8 @@ setup(name='pyquery',
           'lxml>=2.1'
           # -*- Extra requirements: -*-
       ],
+      test_requires=['nose'],
+      test_suite='nose.collector',
       entry_points="""
       # -*- Entry points: -*-
       """,
