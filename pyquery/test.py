@@ -13,11 +13,13 @@ import os
 PY3k = sys.version_info >= (3,)
 
 if PY3k:
+    from io import StringIO
     import pyquery
     from pyquery.pyquery import PyQuery as pq
     from http.client import HTTPConnection
     pqa = pq
 else:
+    from cStringIO import StringIO
     import pyquery
     from httplib import HTTPConnection
     from webob import Request, Response, exc
@@ -170,8 +172,10 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
+    @not_py3k
     def test_get_root(self):
-        doc = pq('<?xml version="1.0" encoding="UTF-8"?><root/>')
+        doc = pq('<?xml version="1.0" encoding="UTF-8"?><root><p/></root>')
+        self.assertEqual(isinstance(doc.root, etree._ElementTree), True)
         self.assertEqual(doc.encoding, 'UTF-8')
 
     def test_selector_from_doc(self):

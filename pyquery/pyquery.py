@@ -277,13 +277,17 @@ class PyQuery(list):
     def root(self):
         """return the xml root element
         """
+        if self._parent is not no_default:
+            return self._parent.getroottree()
         return self[0].getroottree()
 
     @property
     def encoding(self):
         """return the xml encoding of the root element
         """
-        return self.root.docinfo.encoding
+        root = self.root
+        if root is not None:
+            return self.root.docinfo.encoding
 
     ##############
     # Traversing #
