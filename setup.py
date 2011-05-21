@@ -36,7 +36,12 @@ setup(name='pyquery',
       version=version,
       description='A jquery-like library for python',
       long_description=long_description,
-      classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+      classifiers=[
+        "Intended Audience :: Developers",
+        "Development Status :: 5 - Production/Stable",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        ],
       keywords='jquery html xml',
       author='Olivier Lauzanne',
       author_email='olauzanne@gmail.com',
@@ -47,7 +52,6 @@ setup(name='pyquery',
       zip_safe=False,
       install_requires=[
           'lxml>=2.1'
-          # -*- Extra requirements: -*-
       ],
       test_requires=['nose'],
       test_suite='nose.collector',
