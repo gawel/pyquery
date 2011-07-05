@@ -207,11 +207,17 @@ class AdvancedXPathExprOr(XPathExprOr):
     def __init__(self, items, prefix=None):
         self.prefix = prefix = prefix or ''
         self.items = items
+        self.prefix_prepended = False
 
     def __str__(self):
-        prefix = self.prefix or ''
-        for item in self.items:
-            item.prefix = prefix
+        if not self.prefix_prepended:
+            # We cannot prepend the prefix at __init__ since it's legal to
+            # modify it after construction. And because __str__ can be called
+            # multiple times we have to take care not to prepend it twice.
+            prefix = self.prefix or ''
+            for item in self.items:
+                item.prefix = prefix+(item.prefix or '')
+            self.prefix_prepended = True
         return ' | '.join([str(i) for i in self.items])
 
 cssselect.XPathExprOr = AdvancedXPathExprOr
