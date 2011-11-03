@@ -3,8 +3,7 @@ import sys
 from .pyquery import PyQuery as Base
 from .pyquery import no_default
 
-if sys.version_info < (3,):
-    from webob import Request, Response
+from webob import Request, Response
 
 try:
     from paste.proxy import Proxy

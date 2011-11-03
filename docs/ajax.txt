@@ -32,7 +32,7 @@ You can also request another path::
 
 If `Paste`_ is installed, you are able to get url directly with a `Proxy`_ app::
 
-    >>> a = d.get('http://pyquery.org/')
+    >>> a = d.get('http://packages.python.org/pyquery/')
     >>> a
     [<html>]
 

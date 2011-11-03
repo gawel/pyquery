@@ -3,6 +3,7 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
+from webob import Request, Response, exc
 from lxml import etree
 import unittest
 import doctest
@@ -16,21 +17,34 @@ if PY3k:
     from io import StringIO
     import pyquery
     from pyquery.pyquery import PyQuery as pq
+    from pyquery.ajax import PyQuery as pqa
     from http.client import HTTPConnection
-    pqa = pq
+    text_type = str
+    def u(value, encoding):
+        return str(value)
+    def b(value):
+        return value.encode('utf-8')
 else:
     from cStringIO import StringIO
     import pyquery
     from httplib import HTTPConnection
-    from webob import Request, Response, exc
     from pyquery import PyQuery as pq
     from ajax import PyQuery as pqa
+    text_type = unicode
+    def u(value, encoding):
+        return unicode(value, encoding)
+    def b(value):
+        return str(value)
 
-socket.setdefaulttimeout(1)
+def not_py3k(func):
+    if not PY3k:
+        return func
+
+socket.setdefaulttimeout(5)
 
 try:
-    conn = HTTPConnection("pyquery.org:80")
-    conn.request("GET", "/")
+    conn = HTTPConnection("packages.python.org:80")
+    conn.request("GET", "/pyquery/")
     response = conn.getresponse()
 except (socket.timeout, socket.error):
     GOT_NET=False
@@ -40,10 +54,6 @@ else:
 
 def with_net(func):
     if GOT_NET:
-        return func
-
-def not_py3k(func):
-    if not PY3k:
         return func
 
 dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
@@ -95,12 +105,14 @@ class TestTests(doctest.DocFileCase):
 
 class TestUnicode(unittest.TestCase):
 
-    @not_py3k
     def test_unicode(self):
-        xml = pq(unicode("<p>é</p>", 'utf-8'))
-        self.assertEqual(unicode(xml), unicode("<p>é</p>", 'utf-8'))
-        self.assertEqual(type(xml.html()), unicode)
-        self.assertEqual(str(xml), '<p>&#233;</p>')
+        xml = pq(u("<p>é</p>", 'utf-8'))
+        self.assertEqual(type(xml.html()), text_type)
+        if PY3k:
+            self.assertEqual(str(xml), '<p>é</p>')
+        else:
+            self.assertEqual(unicode(xml), u("<p>é</p>", 'utf-8'))
+            self.assertEqual(str(xml), '<p>&#233;</p>')
 
 
 class TestSelector(unittest.TestCase):
@@ -172,9 +184,8 @@ class TestSelector(unittest.TestCase):
            </html>
            """
 
-    @not_py3k
     def test_get_root(self):
-        doc = pq('<?xml version="1.0" encoding="UTF-8"?><root><p/></root>')
+        doc = pq(b('<?xml version="1.0" encoding="UTF-8"?><root><p/></root>'))
         self.assertEqual(isinstance(doc.root, etree._ElementTree), True)
         self.assertEqual(doc.encoding, 'UTF-8')
 
@@ -324,9 +335,9 @@ def application(environ, start_response):
     req = Request(environ)
     response = Response()
     if req.method == 'GET':
-        response.body = '<pre>Yeah !</pre>'
+        response.body = b('<pre>Yeah !</pre>')
     else:
-        response.body = '<a href="/plop">Yeah !</a>'
+        response.body = b('<a href="/plop">Yeah !</a>')
     return response(environ, start_response)
 
 def secure_application(environ, start_response):
@@ -341,16 +352,14 @@ class TestAjaxSelector(TestSelector):
     @with_net
     def test_proxy(self):
         e = self.klass([])
-        val = e.get('http://pyquery.org/')
+        val = e.get('http://packages.python.org/pyquery/')
         assert len(val('body')) == 1, (str(val.response), val)
 
-    @not_py3k
     def test_get(self):
         e = self.klass(app=application)
         val = e.get('/')
         assert len(val('pre')) == 1, val
 
-    @not_py3k
     def test_secure_get(self):
         e = self.klass(app=secure_application)
         val = e.get('/', environ=dict(REMOTE_USER='gawii'))
@@ -358,19 +367,16 @@ class TestAjaxSelector(TestSelector):
         val = e.get('/', REMOTE_USER='gawii')
         assert len(val('pre')) == 1, val
 
-    @not_py3k
     def test_secure_get_not_authorized(self):
         e = self.klass(app=secure_application)
         val = e.get('/')
         assert len(val('pre')) == 0, val
 
-    @not_py3k
     def test_post(self):
         e = self.klass(app=application)
         val = e.post('/')
         assert len(val('a')) == 1, val
 
-    @not_py3k
     def test_subquery(self):
         e = self.klass(app=application)
         n = e('div')
@@ -443,10 +449,11 @@ class TestWebScrapping(unittest.TestCase):
         self.assertEqual(d('input[name=q]:last').val(), 'inconsistency')
         self.assertEqual(d('.news-in-brief h3').text(), 'Slight Inconsistency Found In Bible')
 
-    @with_net
-    def test_post(self):
-        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='post')
-        self.assertEqual(d('input[name=q]:last').val(), '') # the onion does not search on post
+    # FIXME
+    #@with_net
+    #def test_post(self):
+    #    d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='post')
+    #    self.assertEqual(d('input[name=q]:last').val(), None) # the onion does not search on post
 
 if __name__ == '__main__':
     fails, total = unittest.main()

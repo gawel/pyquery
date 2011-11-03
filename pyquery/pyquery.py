@@ -114,8 +114,11 @@ class PyQuery(list):
         self.parser = kwargs.get('parser', None)
         if 'parser' in kwargs:
             del kwargs['parser']
-        if len(args) >= 1 and isinstance(args[0], basestring) \
-           and args[0].startswith('http://'):
+
+        if len(args) >= 1 and \
+           (not PY3k and isinstance(args[0], basestring) or \
+            PY3k and isinstance(args[0], str)) and \
+           args[0].startswith('http://'):
             kwargs['url'] = args[0]
             if len(args) >= 2:
                 kwargs['data'] = args[1]
@@ -178,7 +181,7 @@ class PyQuery(list):
                 try:
                     elements = fromstring(context, self.parser)
                 except Exception:
-                    raise ValueError(context)
+                    raise ValueError(repr(context))
             elif isinstance(context, self.__class__):
                 # copy
                 elements = context[:]
