@@ -1,5 +1,18 @@
+1.1.1
+-----
+
+Minor release. Include test file so you can run tests from the tarball.
+
+
+1.1
+---
+
+fix issues 30, 31, 32 - py3 improvements / webob 1.2+ support
+
+
 1.0
 ---
+
 fix issues 24
 
 0.7

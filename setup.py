@@ -30,7 +30,7 @@ News
 
 """ % read('README', 'CHANGES')
 
-version = '1.0'
+version = '1.1'
 
 setup(name='pyquery',
       version=version,
@@ -40,11 +40,16 @@ setup(name='pyquery',
         "Intended Audience :: Developers",
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.5",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         ],
       keywords='jquery html xml',
       author='Olivier Lauzanne',
       author_email='olauzanne@gmail.com',
+      maintainer='Gael Pasgrimaud',
+      maintainer_email='gael@gawel.org',
       url='http://www.bitbucket.org/olauzanne/pyquery/',
       license='BSD',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),

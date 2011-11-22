@@ -1,4 +1,5 @@
 recursive-include pyquery *.txt
+recursive-include pyquery *.html
 recursive-include docs *.txt
 include README.txt
 include CHANGES.txt
