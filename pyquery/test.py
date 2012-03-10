@@ -442,6 +442,31 @@ class TestHTMLParser(unittest.TestCase):
         val = d.__html__()
         assert val == expected, (repr(val), repr(expected))
 
+class TestXMLNamespace(unittest.TestCase):
+    xml = '''<?xml version="1.0" encoding="UTF-8" ?>
+    <foo xmlns:bar="http://example.com/bar">
+    <bar:blah>What</bar:blah>
+    <idiot>123</idiot>
+    </foo>'''
+
+    def test_selector(self):
+        expected = 'What'
+        d = pq(self.xml, parser='xml')
+        val = d('bar|blah', namespaces={'bar': 'http://example.com/bar'}).text()
+        self.assertEqual(repr(val), repr(expected))
+
+    def test_selector_with_xml(self):
+        expected = 'What'
+        d = pq('bar|blah', self.xml, parser='xml', namespaces={'bar': 'http://example.com/bar'})
+        val = d.text()
+        self.assertEqual(repr(val), repr(expected))
+
+    def test_selector_html(self):
+        expected = 'What'
+        d = pq('blah', self.xml, parser='html')
+        val = d.text()
+        self.assertEqual(repr(val), repr(expected))
+
 class TestWebScrapping(unittest.TestCase):
     @with_net
     def test_get(self):

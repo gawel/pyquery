@@ -129,6 +129,10 @@ class PyQuery(list):
         else:
             self._parent = no_default
 
+        namespaces = kwargs.get('namespaces', {})
+        if 'namespaces' in kwargs:
+            del kwargs['namespaces']
+
         if kwargs:
             # specific case to get the dom
             if 'filename' in kwargs:
@@ -193,7 +197,7 @@ class PyQuery(list):
             # select nodes
             if elements and selector is not no_default:
                 xpath = selector_to_xpath(selector)
-                results = [tag.xpath(xpath) for tag in elements]
+                results = [tag.xpath(xpath, namespaces=namespaces) for tag in elements]
                 # Flatten the results
                 elements = []
                 for r in results:
@@ -201,7 +205,7 @@ class PyQuery(list):
 
         list.__init__(self, elements)
 
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
         """return a new PyQuery instance
         """
         length = len(args)
@@ -211,7 +215,7 @@ class PyQuery(list):
             return self.__class__([])
         if len(args) == 1 and isinstance(args[0], str) and not args[0].startswith('<'):
             args += (self,)
-        result = self.__class__(*args, **dict(parent=self))
+        result = self.__class__(*args, parent=self, **kwargs)
         return result
 
     # keep original list api prefixed with _
