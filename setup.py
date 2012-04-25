@@ -5,20 +5,22 @@
 # Distributed under the BSD license, see LICENSE.txt
 
 from setuptools import setup, find_packages
-import sys, os
+import os
+
 
 def read(*names):
     values = dict()
     for name in names:
-        filename = name+'.txt'
+        filename = name + '.txt'
         if os.path.isfile(filename):
-            value = open(name+'.txt').read()
+            value = open(name + '.txt').read()
         else:
             value = ''
         values[name] = value
     return values
 
-long_description="""
+
+long_description = """
 %(README)s
 
 See http://packages.python.org/pyquery/ for the full documentation
@@ -56,7 +58,8 @@ setup(name='pyquery',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          'lxml>=2.1'
+          'lxml>=2.1',
+          'cssselect',
       ],
       test_requires=['nose'],
       test_suite='nose.collector',
