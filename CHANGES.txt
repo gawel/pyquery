@@ -1,3 +1,9 @@
+1.2
+---
+
+PyQuery now use `cssselect <http://pypi.python.org/pypi/cssselect>`_. See issue
+43.
+
 1.1.1
 -----
 
