@@ -4,6 +4,8 @@
 PyQuery now use `cssselect <http://pypi.python.org/pypi/cssselect>`_. See issue
 43.
 
+Fix issue 40: forward .html() extra arguments to ``lxml.etree.tostring``
+
 1.1.1
 -----
 

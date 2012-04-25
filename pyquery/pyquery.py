@@ -197,6 +197,7 @@ class PyQuery(list):
                 try:
                     elements = fromstring(context, self.parser)
                 except Exception:
+                    raise
                     raise ValueError(repr(context))
             elif isinstance(context, self.__class__):
                 # copy
@@ -209,11 +210,8 @@ class PyQuery(list):
             # select nodes
             if elements and selector is not no_default:
                 xpath = selector_to_xpath(selector)
-                try:
-                    results = [tag.xpath(xpath, namespaces=namespaces) \
+                results = [tag.xpath(xpath, namespaces=namespaces) \
                                                     for tag in elements]
-                except Exception, e:
-                    raise e.__class__(xpath)
                 # Flatten the results
                 elements = []
                 for r in results:

@@ -451,19 +451,19 @@ class TestXMLNamespace(unittest.TestCase):
 
     def test_selector(self):
         expected = 'What'
-        d = pq(self.xml, parser='xml')
+        d = pq(b(self.xml), parser='xml')
         val = d('bar|blah', namespaces={'bar': 'http://example.com/bar'}).text()
         self.assertEqual(repr(val), repr(expected))
 
     def test_selector_with_xml(self):
         expected = 'What'
-        d = pq('bar|blah', self.xml, parser='xml', namespaces={'bar': 'http://example.com/bar'})
+        d = pq('bar|blah', b(self.xml), parser='xml', namespaces={'bar': 'http://example.com/bar'})
         val = d.text()
         self.assertEqual(repr(val), repr(expected))
 
     def test_selector_html(self):
         expected = 'What'
-        d = pq('blah', self.xml, parser='html')
+        d = pq('blah', self.xml.split('?>', 1)[1], parser='html')
         val = d.text()
         self.assertEqual(repr(val), repr(expected))
 
