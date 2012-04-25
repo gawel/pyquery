@@ -18,15 +18,18 @@ if PY3k:
     basestring = (str, bytes)
     unicode = str
 else:
-    from urllib2 import urlopen
-    from urllib import urlencode
-    from urlparse import urljoin
+    from urllib2 import urlopen  # NOQA
+    from urllib import urlencode  # NOQA
+    from urlparse import urljoin  # NOQA
+
 
 def func_globals(f):
     return f.__globals__ if PY3k else f.func_globals
 
+
 def func_code(f):
     return f.__code__ if PY3k else f.func_code
+
 
 def fromstring(context, parser=None, custom_parser=None):
     """use html parser if we don't have clean xml
@@ -51,7 +54,7 @@ def fromstring(context, parser=None, custom_parser=None):
             custom_parser = getattr(lxml.html, meth)
         elif parser == 'soup':
             from  lxml.html import soupparser
-            custom_parser = getattr(lxml.html.soupparser, meth)
+            custom_parser = getattr(soupparser, meth)
         elif parser == 'html_fragments':
             custom_parser = lxml.html.fragments_fromstring
         else:
@@ -65,8 +68,10 @@ def fromstring(context, parser=None, custom_parser=None):
     else:
         return [result]
 
+
 def callback(func, *args):
     return func(*args[:func_code(func).co_argcount])
+
 
 class NoDefault(object):
     def __repr__(self):
@@ -76,12 +81,14 @@ class NoDefault(object):
 no_default = NoDefault()
 del NoDefault
 
+
 class FlexibleElement(object):
     """property to allow a flexible api"""
     def __init__(self, pget, pset=no_default, pdel=no_default):
         self.pget = pget
         self.pset = pset
         self.pdel = pdel
+
     def __get__(self, instance, klass):
         class _element(object):
             """real element to support set/get/del attr and item and js call
@@ -89,20 +96,24 @@ class FlexibleElement(object):
             def __call__(prop, *args, **kwargs):
                 return self.pget(instance, *args, **kwargs)
             __getattr__ = __getitem__ = __setattr__ = __setitem__ = __call__
+
             def __delitem__(prop, name):
                 if self.pdel is not no_default:
                     return self.pdel(instance, name)
                 else:
                     raise NotImplementedError()
             __delattr__ = __delitem__
+
             def __repr__(prop):
                 return '<flexible_element %s>' % self.pget.__name__
         return _element()
+
     def __set__(self, instance, value):
         if self.pset is not no_default:
             self.pset(instance, value)
         else:
             raise NotImplementedError()
+
 
 class PyQuery(list):
     """The main class
@@ -148,7 +159,8 @@ class PyQuery(list):
                     if type(data) in (dict, list, tuple):
                         data = urlencode(data)
 
-                    if isinstance(method, basestring) and method.lower() == 'get' and data:
+                    if isinstance(method, basestring) and \
+                       method.lower() == 'get' and data:
                         if '?' not in url:
                             url += '?'
                         elif url[-1] not in ('?', '&'):
@@ -172,9 +184,9 @@ class PyQuery(list):
             # determine context and selector if any
             selector = context = no_default
             length = len(args)
-            if len(args) == 1:
+            if length == 1:
                 context = args[0]
-            elif len(args) == 2:
+            elif length == 2:
                 selector, context = args
             else:
                 raise ValueError("You can't do that." +\
@@ -197,7 +209,11 @@ class PyQuery(list):
             # select nodes
             if elements and selector is not no_default:
                 xpath = selector_to_xpath(selector)
-                results = [tag.xpath(xpath, namespaces=namespaces) for tag in elements]
+                try:
+                    results = [tag.xpath(xpath, namespaces=namespaces) \
+                                                    for tag in elements]
+                except Exception, e:
+                    raise e.__class__(xpath)
                 # Flatten the results
                 elements = []
                 for r in results:
@@ -213,7 +229,9 @@ class PyQuery(list):
             raise ValueError('You must provide at least a selector')
         if args[0] == '':
             return self.__class__([])
-        if len(args) == 1 and isinstance(args[0], str) and not args[0].startswith('<'):
+        if len(args) == 1 and \
+           isinstance(args[0], str) and \
+           not args[0].startswith('<'):
             args += (self,)
         result = self.__class__(*args, parent=self, **kwargs)
         return result
@@ -234,7 +252,8 @@ class PyQuery(list):
     def __str__(self):
         """xml representation of current nodes::
 
-            >>> xml = PyQuery('<script><![[CDATA[ ]></script>', parser='html_fragments')
+            >>> xml = PyQuery(
+            ...   '<script><![[CDATA[ ]></script>', parser='html_fragments')
             >>> print(str(xml))
             <script>&lt;![[CDATA[ ]&gt;</script>
 
@@ -246,17 +265,20 @@ class PyQuery(list):
 
     def __unicode__(self):
         """xml representation of current nodes"""
-        return unicode('').join([etree.tostring(e, encoding=unicode) for e in self])
+        return unicode('').join([etree.tostring(e, encoding=unicode) \
+                                                        for e in self])
 
     def __html__(self):
         """html representation of current nodes::
 
-            >>> html = PyQuery('<script><![[CDATA[ ]></script>', parser='html_fragments')
+            >>> html = PyQuery(
+            ...   '<script><![[CDATA[ ]></script>', parser='html_fragments')
             >>> print(html.__html__())
             <script><![[CDATA[ ]></script>
 
         """
-        return unicode('').join([lxml.html.tostring(e, encoding=unicode) for e in self])
+        return unicode('').join([lxml.html.tostring(e, encoding=unicode) \
+                                                            for e in self])
 
     def __repr__(self):
         r = []
@@ -278,7 +300,6 @@ class PyQuery(list):
                     else:
                         r.append(el)
                 return repr(r)
-
 
     @property
     def root(self):
@@ -322,13 +343,20 @@ class PyQuery(list):
         return self.__class__(results, **dict(parent=self))
 
     def parent(self, selector=None):
-        return self._filter_only(selector, [e.getparent() for e in self if e.getparent() is not None], unique = True)
+        return self._filter_only(
+                   selector,
+                   [e.getparent() for e in self if e.getparent() is not None],
+                   unique=True)
 
     def prev(self, selector=None):
-        return self._filter_only(selector, [e.getprevious() for e in self if e.getprevious() is not None])
+        return self._filter_only(
+               selector,
+               [e.getprevious() for e in self if e.getprevious() is not None])
 
     def next(self, selector=None):
-        return self._filter_only(selector, [e.getnext() for e in self if e.getnext() is not None])
+        return self._filter_only(
+               selector,
+               [e.getnext() for e in self if e.getnext() is not None])
 
     def _traverse(self, method):
         for e in self:
@@ -353,9 +381,10 @@ class PyQuery(list):
 
     def nextAll(self, selector=None):
         """
-            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>')
-            >>> d('p:last').nextAll()
-            [<img>]
+        >>> h = '<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>'
+        >>> d = PyQuery(h)
+        >>> d('p:last').nextAll()
+        [<img>]
         """
         return self._filter_only(selector, self._nextAll())
 
@@ -364,40 +393,44 @@ class PyQuery(list):
 
     def prevAll(self, selector=None):
         """
-            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>')
-            >>> d('p:last').prevAll()
-            [<p.hello>]
+        >>> h = '<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>'
+        >>> d = PyQuery(h)
+        >>> d('p:last').prevAll()
+        [<p.hello>]
         """
-        return self._filter_only(selector, self._prevAll(), reverse = True)
+        return self._filter_only(selector, self._prevAll(), reverse=True)
 
     def siblings(self, selector=None):
         """
-            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>')
-            >>> d('.hello').siblings()
-            [<p>, <img>]
-            >>> d('.hello').siblings('img')
-            [<img>]
+         >>> h = '<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>'
+         >>> d = PyQuery(h)
+         >>> d('.hello').siblings()
+         [<p>, <img>]
+         >>> d('.hello').siblings('img')
+         [<img>]
+
         """
         return self._filter_only(selector, self._prevAll() + self._nextAll())
 
     def parents(self, selector=None):
         """
-            >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p></span>')
-            >>> d('p').parents()
-            [<span>]
-            >>> d('.hello').parents('span')
-            [<span>]
-            >>> d('.hello').parents('p')
-            []
+        >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p></span>')
+        >>> d('p').parents()
+        [<span>]
+        >>> d('.hello').parents('span')
+        [<span>]
+        >>> d('.hello').parents('p')
+        []
         """
         return self._filter_only(
                 selector,
                 [e for e in self._traverse_parent_topdown()],
-                unique = True
+                unique=True
             )
 
     def children(self, selector=None):
-        """Filter elements that are direct children of self using optional selector.
+        """Filter elements that are direct children of self using optional
+        selector:
 
             >>> d = PyQuery('<span><p class="hello">Hi</p><p>Bye</p></span>')
             >>> d
@@ -412,24 +445,27 @@ class PyQuery(list):
 
     def closest(self, selector=None):
         """
-            >>> d = PyQuery('<div class="hello"><p>This is a <strong class="hello">test</strong></p></div>')
-            >>> d('strong').closest('div')
-            [<div.hello>]
-            >>> d('strong').closest('.hello')
-            [<strong.hello>]
-            >>> d('strong').closest('form')
-            []
+        >>> d = PyQuery(
+        ...  '<div class="hello"><p>This is a '
+        ...  '<strong class="hello">test</strong></p></div>')
+        >>> d('strong').closest('div')
+        [<div.hello>]
+        >>> d('strong').closest('.hello')
+        [<strong.hello>]
+        >>> d('strong').closest('form')
+        []
         """
         result = []
         for current in self:
-            while current is not None and not self.__class__(current).is_(selector):
+            while current is not None and \
+                  not self.__class__(current).is_(selector):
                 current = current.getparent()
             if current is not None:
                 result.append(current)
         return self.__class__(result, **dict(parent=self))
 
     def filter(self, selector):
-        """Filter elements in self using selector (string or function).
+        """Filter elements in self using selector (string or function):
 
             >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p>')
             >>> d('p')
@@ -457,17 +493,19 @@ class PyQuery(list):
             return self.__class__(elements, **dict(parent=self))
 
     def not_(self, selector):
-        """Return elements that don't match the given selector.
+        """Return elements that don't match the given selector:
 
             >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
             >>> d('p').not_('.hello')
             [<p>]
         """
         exclude = set(self.__class__(selector, self))
-        return self.__class__([e for e in self if e not in exclude], **dict(parent=self))
+        return self.__class__([e for e in self if e not in exclude],
+                              **dict(parent=self))
 
     def is_(self, selector):
-        """Returns True if selector matches at least one current element, else False::
+        """Returns True if selector matches at least one current element, else
+        False:
 
             >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
             >>> d('p').eq(0).is_('.hello')
@@ -481,7 +519,7 @@ class PyQuery(list):
         return bool(self.__class__(selector, self))
 
     def find(self, selector):
-        """Find elements using selector traversing down from self::
+        """Find elements using selector traversing down from self:
 
             >>> m = '<p><span><em>Whoah!</em></span></p><p><em> there</em></p>'
             >>> d = PyQuery(m)
@@ -489,11 +527,10 @@ class PyQuery(list):
             [<em>, <em>]
             >>> d('p').eq(1).find('em')
             [<em>]
-
-        ..
         """
         xpath = selector_to_xpath(selector)
-        results = [child.xpath(xpath) for tag in self for child in tag.getchildren()]
+        results = [child.xpath(xpath) for tag in self \
+                        for child in tag.getchildren()]
         # Flatten the results
         elements = []
         for r in results:
@@ -514,7 +551,7 @@ class PyQuery(list):
         ..
         """
         # Use slicing to silently handle out of bounds indexes
-        items = self[index:index+1]
+        items = self[index:index + 1]
         return self.__class__(items, **dict(parent=self))
 
     def each(self, func):
@@ -814,7 +851,8 @@ class PyQuery(list):
             if not children:
                 return tag.text
             html = tag.text or ''
-            html += unicode('').join([etree.tostring(e, encoding=unicode) for e in children])
+            html += unicode('').join([etree.tostring(e, encoding=unicode) \
+                                                        for e in children])
             return html
         else:
             if isinstance(value, self.__class__):
@@ -829,7 +867,9 @@ class PyQuery(list):
             for tag in self:
                 for child in tag.getchildren():
                     tag.remove(child)
-                root = fromstring(unicode('<root>') + new_html + unicode('</root>'), self.parser)[0]
+                root = fromstring(
+                            unicode('<root>') + new_html + unicode('</root>'),
+                            self.parser)[0]
                 children = root.getchildren()
                 if children:
                     tag.extend(children)
@@ -909,14 +949,15 @@ class PyQuery(list):
 
     def _get_root(self, value):
         if  isinstance(value, basestring):
-            root = fromstring(unicode('<root>') + value + unicode('</root>'), self.parser)[0]
+            root = fromstring(unicode('<root>') + value + unicode('</root>'),
+                              self.parser)[0]
         elif isinstance(value, etree._Element):
             root = self.__class__(value)
         elif isinstance(value, PyQuery):
             root = value
         else:
             raise TypeError(
-            'Value must be string, PyQuery or Element. Got %r' %  value)
+            'Value must be string, PyQuery or Element. Got %r' % value)
         if hasattr(root, 'text') and isinstance(root.text, basestring):
             root_text = root.text
         else:
@@ -928,7 +969,7 @@ class PyQuery(list):
         """
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
-            if len(tag) > 0: # if the tag has children
+            if len(tag) > 0:  # if the tag has children
                 last_child = tag[-1]
                 if not last_child.tail:
                     last_child.tail = ''
@@ -1026,7 +1067,7 @@ class PyQuery(list):
 
     def wrap(self, value):
         """A string of HTML that will be created on the fly and wrapped around
-        each target::
+        each target:
 
             >>> d = PyQuery('<span>youhou</span>')
             >>> d.wrap('<div></div>')
@@ -1060,7 +1101,8 @@ class PyQuery(list):
         return self
 
     def wrapAll(self, value):
-        """Wrap all the elements in the matched set into a single wrapper element::
+        """Wrap all the elements in the matched set into a single wrapper
+        element::
 
             >>> d = PyQuery('<div><span>Hey</span><span>you !</span></div>')
             >>> print(d('span').wrapAll('<div id="wrapper"></div>'))
@@ -1107,7 +1149,8 @@ class PyQuery(list):
         """
         if hasattr(value, '__call__'):
             for i, element in enumerate(self):
-                self.__class__(element).before(value(i, element) + (element.tail or ''))
+                self.__class__(element).before(
+                        value(i, element) + (element.tail or ''))
                 parent = element.getparent()
                 parent.remove(element)
         else:
@@ -1141,13 +1184,14 @@ class PyQuery(list):
         return self
 
     def remove(self, expr=no_default):
-        """remove nodes
+        """Remove nodes:
 
-        >>> d = PyQuery('<div>Maybe <em>she</em> does <strong>NOT</strong> know</div>')
-        >>> d('strong').remove()
-        [<strong>]
-        >>> print(d)
-        <div>Maybe <em>she</em> does   know</div>
+         >>> h = '<div>Maybe <em>she</em> does <strong>NOT</strong> know</div>'
+         >>> d = PyQuery(h)
+         >>> d('strong').remove()
+         [<strong>]
+         >>> print(d)
+         <div>Maybe <em>she</em> does   know</div>
         """
         if expr is no_default:
             for tag in self:
@@ -1170,12 +1214,16 @@ class PyQuery(list):
         return self
 
     class Fn(object):
-        """Hook for defining custom function (like the jQuery.fn)
+        """Hook for defining custom function (like the jQuery.fn):
 
-        >>> PyQuery.fn.listOuterHtml = lambda: this.map(lambda i, el: PyQuery(this).outerHtml())
-        >>> S = PyQuery('<ol>   <li>Coffee</li>   <li>Tea</li>   <li>Milk</li>   </ol>')
-        >>> S('li').listOuterHtml()
-        ['<li>Coffee</li>', '<li>Tea</li>', '<li>Milk</li>']
+        .. sourcecode:: python
+
+         >>> fn = lambda: this.map(lambda i, el: PyQuery(this).outerHtml())
+         >>> PyQuery.fn.listOuterHtml = fn
+         >>> S = PyQuery(
+         ...   '<ol>   <li>Coffee</li>   <li>Tea</li>   <li>Milk</li>   </ol>')
+         >>> S('li').listOuterHtml()
+         ['<li>Coffee</li>', '<li>Tea</li>', '<li>Milk</li>']
 
         """
         def __setattr__(self, name, func):
@@ -1208,5 +1256,5 @@ class PyQuery(list):
                 raise ValueError('You need a base URL to make your links'
                  'absolute. It can be provided by the base_url parameter.')
 
-        self('a').each(lambda: self(this).attr('href', urljoin(base_url, self(this).attr('href'))))
+        self('a').each(lambda: self(this).attr('href', urljoin(base_url, self(this).attr('href')))) # NOQA
         return self
