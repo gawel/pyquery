@@ -827,7 +827,7 @@ class PyQuery(list):
         """
         return self.attr('value', value)
 
-    def html(self, value=no_default):
+    def html(self, value=no_default, **kwargs):
         """Get or set the html representation of sub nodes.
 
         Get the text value::
@@ -835,6 +835,14 @@ class PyQuery(list):
             >>> d = PyQuery('<div><span>toto</span></div>')
             >>> print(d.html())
             <span>toto</span>
+
+        Extra args are passed to ``lxml.etree.tostring::
+
+            >>> d = PyQuery('<div><span></span></div>')
+            >>> print(d.html())
+            <span/>
+            >>> print(d.html(method='html'))
+            <span></span>
 
         Set the text value::
 
@@ -851,8 +859,10 @@ class PyQuery(list):
             if not children:
                 return tag.text
             html = tag.text or ''
-            html += unicode('').join([etree.tostring(e, encoding=unicode) \
-                                                        for e in children])
+            if 'encoding' not in kwargs:
+                kwargs['encoding'] = unicode
+            html += unicode('').join([etree.tostring(e, **kwargs) \
+                                                  for e in children])
             return html
         else:
             if isinstance(value, self.__class__):
