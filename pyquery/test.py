@@ -94,6 +94,7 @@ for filename in os.listdir(docs):
         path = os.path.join(docs, filename)
         exec('%s = type("%s", (TestReadme,), dict(path=path))' % (klass_name, klass_name))
 
+
 class TestTests(doctest.DocFileCase):
     path = os.path.join(dirname, 'tests.txt')
 
@@ -102,6 +103,7 @@ class TestTests(doctest.DocFileCase):
         doc = open(self.path).read()
         test = parser.get_doctest(doc, globals(), '', self.path, 0)
         doctest.DocFileCase.__init__(self, test, optionflags=doctest.ELLIPSIS)
+
 
 class TestUnicode(unittest.TestCase):
 
@@ -113,6 +115,19 @@ class TestUnicode(unittest.TestCase):
         else:
             self.assertEqual(unicode(xml), u("<p>é</p>", 'utf-8'))
             self.assertEqual(str(xml), '<p>&#233;</p>')
+
+
+class TestAttributeCase(unittest.TestCase):
+
+    def test_xml_upper_element_name(self):
+        xml = pq('<X>foo</X>', parser='xml')
+        self.assertEqual(len(xml('X')), 1)
+        self.assertEqual(len(xml('x')), 0)
+
+    def test_html_upper_element_name(self):
+        xml = pq('<X>foo</X>', parser='html')
+        self.assertEqual(len(xml('X')), 1)
+        self.assertEqual(len(xml('x')), 1)
 
 
 class TestSelector(unittest.TestCase):

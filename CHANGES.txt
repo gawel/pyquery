@@ -1,3 +1,10 @@
+1.2.1
+-----
+
+Allow to use a custom css translator.
+
+Fix issue 44: case problem with xml documents
+
 1.2
 ---
 

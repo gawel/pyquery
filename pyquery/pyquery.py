@@ -3,7 +3,7 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-from .cssselectpatch import selector_to_xpath
+from .cssselectpatch import JQueryTranslator
 from copy import deepcopy
 from lxml import etree
 import lxml.html
@@ -140,6 +140,15 @@ class PyQuery(list):
         else:
             self._parent = no_default
 
+        if 'css_translator' in kwargs:
+            self._translator = kwargs.pop('css_translator')
+        elif self.parser in ('xml',):
+            self._translator = JQueryTranslator(xhtml=True)
+        elif self._parent is not no_default:
+            self._translator = self._parent._translator
+        else:
+            self._translator = JQueryTranslator(xhtml=False)
+
         namespaces = kwargs.get('namespaces', {})
         if 'namespaces' in kwargs:
             del kwargs['namespaces']
@@ -209,7 +218,7 @@ class PyQuery(list):
 
             # select nodes
             if elements and selector is not no_default:
-                xpath = selector_to_xpath(selector)
+                xpath = self._css_to_xpath(selector)
                 results = [tag.xpath(xpath, namespaces=namespaces) \
                                                     for tag in elements]
                 # Flatten the results
@@ -218,6 +227,10 @@ class PyQuery(list):
                     elements.extend(r)
 
         list.__init__(self, elements)
+
+    def _css_to_xpath(self, selector, prefix='descendant-or-self::'):
+        selector = selector.replace('[@', '[')
+        return self._translator.css_to_xpath(selector, prefix)
 
     def __call__(self, *args, **kwargs):
         """return a new PyQuery instance
@@ -326,7 +339,7 @@ class PyQuery(list):
         if selector is None:
             results = elements
         else:
-            xpath = selector_to_xpath(selector, 'self::')
+            xpath = self._css_to_xpath(selector, 'self::')
             results = []
             for tag in elements:
                 results.extend(tag.xpath(xpath))
@@ -526,7 +539,7 @@ class PyQuery(list):
             >>> d('p').eq(1).find('em')
             [<em>]
         """
-        xpath = selector_to_xpath(selector)
+        xpath = self._css_to_xpath(selector)
         results = [child.xpath(xpath) for tag in self \
                         for child in tag.getchildren()]
         # Flatten the results

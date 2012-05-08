@@ -203,10 +203,3 @@ class XPathExpr(XPathExprOrig):
         return res
 
 cssselect_xpath.XPathExpr = XPathExpr
-
-
-def selector_to_xpath(selector, prefix='descendant-or-self::'):
-    """JQuery selector to xpath.
-    """
-    selector = selector.replace('[@', '[')
-    return JQueryTranslator().css_to_xpath(selector, prefix)
