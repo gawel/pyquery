@@ -1193,8 +1193,7 @@ class PyQuery(list):
     def clone(self):
         """return a copy of nodes
         """
-        self[:] = [deepcopy(tag) for tag in self]
-        return self
+        return PyQuery([deepcopy(tag) for tag in self])
 
     def empty(self):
         """remove nodes content
