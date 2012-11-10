@@ -4,6 +4,7 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 from cssselect import xpath as cssselect_xpath
+from cssselect.xpath import ExpressionError
 
 
 class JQueryTranslator(cssselect_xpath.HTMLTranslator):
@@ -147,29 +148,53 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
     def xpath_eq_function(self, xpath, function):
         """Matches a single element by its index.
         """
+        if function.argument_types() != ['NUMBER']:
+            raise ExpressionError(
+                    "Expected a single integer for :eq(), got %r"
+                    % function.arguments
+                    )
+        value = int(function.arguments[0].value)
         xpath.add_post_condition(
-                'position() = %s' % (int(function.arguments) + 1))
+                'position() = %s' % (value + 1))
         return xpath
 
     def xpath_gt_function(self, xpath, function):
         """Matches all elements with an index over the given one.
         """
+        if function.argument_types() != ['NUMBER']:
+            raise ExpressionError(
+                    "Expected a single integer for :gt(), got %r"
+                    % function.arguments
+                    )
+        value = int(function.arguments[0].value)
         xpath.add_post_condition(
-                'position() > %s' % (int(function.arguments) + 1))
+                'position() > %s' % (value + 1))
         return xpath
 
     def xpath_lt_function(self, xpath, function):
         """Matches all elements with an index below the given one.
         """
+        if function.argument_types() != ['NUMBER']:
+            raise ExpressionError(
+                    "Expected a single integer for :gt(), got %r"
+                    % function.arguments
+                    )
+        value = int(function.arguments[0].value)
         xpath.add_post_condition(
-                'position() < %s' % (int(function.arguments) + 1))
+                'position() < %s' % (value + 1))
         return xpath
 
     def xpath_contains_function(self, xpath, function):
         """Matches all elements that contain the given text
         """
+        if function.argument_types() != ['STRING']:
+            raise ExpressionError(
+                    "Expected a single string for :contains(), got %r"
+                    % function.arguments
+                    )
+        value = str(function.arguments[0].value)
         xpath.add_post_condition(
-                "contains(text(), '%s')" % str(function.arguments))
+                "contains(text(), '%s')" % value)
         return xpath
 
 
