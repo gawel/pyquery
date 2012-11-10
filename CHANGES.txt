@@ -1,3 +1,10 @@
+1.2.2
+-----
+
+Fix cssselectpatch to match the newer implementation of cssselect. Fixes issue #62, #52 and #59 (Haoyu Bai)
+
+Fix issue #37 (Caleb Burns)
+
 1.2.1
 -----
 
