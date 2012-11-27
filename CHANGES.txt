@@ -1,3 +1,12 @@
+1.2.3
+-----
+
+Allow to pass this in .filter() callback
+
+Add .contents() .items()
+
+Bug fixes: fix #35 #55 #64 #66
+
 1.2.2
 -----
 
