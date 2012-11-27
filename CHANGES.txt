@@ -5,6 +5,8 @@ Allow to pass this in .filter() callback
 
 Add .contents() .items()
 
+Add tox.ini
+
 Bug fixes: fix #35 #55 #64 #66
 
 1.2.2
