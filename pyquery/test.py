@@ -347,6 +347,13 @@ class TestOpener(unittest.TestCase):
         assert len(doc('.node')) == 1, doc
 
 
+class TestComment(unittest.TestCase):
+
+    def test_comment(self):
+        doc = pq('<div><!-- foo --> bar</div>')
+        self.assertEqual(doc.text(), 'bar')
+
+
 class TestCallback(unittest.TestCase):
     html = """
         <ol>

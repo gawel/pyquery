@@ -718,9 +718,8 @@ class PyQuery(list):
         """
         for tag in self:
             values = value.split(' ')
-            classes = set((tag.get('class') or '').split())
-            classes = classes.union(values)
-            classes.difference_update([''])
+            classes = (tag.get('class') or '').split()
+            classes += [v for v in values if v not in classes]
             tag.set('class', ' '.join(classes))
         return self
 
@@ -947,7 +946,7 @@ class PyQuery(list):
             text = []
 
             def add_text(tag, no_tail=False):
-                if tag.text:
+                if tag.text and not isinstance(tag, lxml.etree._Comment):
                     text.append(tag.text)
                 for child in tag.getchildren():
                     add_text(child)

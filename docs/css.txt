@@ -9,7 +9,7 @@ CSS
 You can play with css classes::
 
     >>> p.addClass("toto")
-    [<p#hello.toto.hello>]
+    [<p#hello.hello.toto>]
     >>> p.toggleClass("titi toto")
     [<p#hello.titi.hello>]
     >>> p.removeClass("titi")
