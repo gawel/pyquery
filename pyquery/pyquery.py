@@ -209,7 +209,6 @@ class PyQuery(list):
                     elements = fromstring(context, self.parser)
                 except Exception:
                     raise
-                    raise ValueError(repr(context))
             elif isinstance(context, self.__class__):
                 # copy
                 elements = context[:]
