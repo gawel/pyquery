@@ -7,6 +7,7 @@ from .cssselectpatch import JQueryTranslator
 from copy import deepcopy
 from lxml import etree
 import lxml.html
+import inspect
 import sys
 
 PY3k = sys.version_info >= (3,)
@@ -515,15 +516,19 @@ class PyQuery(list):
             [<p>]
             >>> d('p').filter(lambda i: PyQuery(this).text() == 'Hi')
             [<p.hello>]
+            >>> d('p').filter(lambda i, this: PyQuery(this).text() == 'Hi')
+            [<p.hello>]
         """
         if not hasattr(selector, '__call__'):
             return self._filter_only(selector, self)
         else:
             elements = []
+            args = inspect.getargspec(callback).args
             try:
                 for i, this in enumerate(self):
-                    func_globals(selector)['this'] = this
-                    if callback(selector, i):
+                    if len(args) == 1:
+                        func_globals(selector)['this'] = this
+                    if callback(selector, i, this):
                         elements.append(this)
             finally:
                 f_globals = func_globals(selector)
