@@ -13,7 +13,9 @@ def read(*names):
     for name in names:
         filename = name + '.txt'
         if os.path.isfile(filename):
-            value = open(name + '.txt').read()
+            fd = open(name + '.txt')
+            value = fd.read()
+            fd.close()
         else:
             value = ''
         values[name] = value
