@@ -259,8 +259,22 @@ class PyQuery(list):
         return self.__class__(self[:] + other[:])
 
     def extend(self, other):
+        """Extend with anoter PyQuery object"""
         assert isinstance(other, self.__class__)
         self._extend(other[:])
+
+    def items(self, selector=None):
+        """Iter over elements. Return PyQuery objects:
+
+            >>> d = PyQuery('<div><span>foo</span><span>bar</span></div>')
+            >>> [i.text() for i in d.items('span')]
+            ['foo', 'bar']
+            >>> [i.text() for i in d('span').items()]
+            ['foo', 'bar']
+        """
+        elems = selector and self(selector) or self
+        for elem in elems:
+            yield self.__class__(elem)
 
     def __str__(self):
         """xml representation of current nodes::
@@ -476,6 +490,19 @@ class PyQuery(list):
             if current is not None:
                 result.append(current)
         return self.__class__(result, **dict(parent=self))
+
+    def contents(self):
+        """
+        Return contents (with text nodes):
+
+            >>> d = PyQuery('hello <b>bold</b>')
+            >>> d.contents()  # doctest: +ELLIPSIS
+            ['hello ', <Element b at ...>]
+        """
+        results = []
+        for elem in self:
+            results.extend(elem.xpath('child::text()|child::*'))
+        return self.__class__(results, **dict(parent=self))
 
     def filter(self, selector):
         """Filter elements in self using selector (string or function):
@@ -751,12 +778,12 @@ class PyQuery(list):
 
         """
         for tag in self:
-            values = set(value.split(' '))
-            classes = set((tag.get('class') or '').split())
-            values_to_add = values.difference(classes)
-            classes.difference_update(values)
-            classes = classes.union(values_to_add)
-            classes.difference_update([''])
+            values = value.split(' ')
+            classes = (tag.get('class') or '').split()
+            values_to_add = [v for v in values if v not in classes]
+            values_to_del = [v for v in values if v in classes]
+            classes = [v for v in classes if v not in values_to_del]
+            classes += values_to_add
             tag.set('class', ' '.join(classes))
         return self
 
