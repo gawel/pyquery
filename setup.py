@@ -61,8 +61,6 @@ setup(name='pyquery',
           'lxml>=2.1',
           'cssselect',
       ],
-      test_requires=['nose'],
-      test_suite='nose.collector',
       entry_points="""
       # -*- Entry points: -*-
       """,

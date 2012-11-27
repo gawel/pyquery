@@ -7,6 +7,7 @@ dist/
 build/
 parts/
 docs/_build/
+.tox/
 .installed.cfg
 *.egg-info
 *.pyc

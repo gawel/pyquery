@@ -20,21 +20,26 @@ if PY3k:
     from pyquery.ajax import PyQuery as pqa
     from http.client import HTTPConnection
     text_type = str
+
     def u(value, encoding):
         return str(value)
+
     def b(value):
         return value.encode('utf-8')
 else:
-    from cStringIO import StringIO
-    import pyquery
-    from httplib import HTTPConnection
-    from pyquery import PyQuery as pq
-    from ajax import PyQuery as pqa
+    from cStringIO import StringIO  # NOQA
+    import pyquery  # NOQA
+    from httplib import HTTPConnection  # NOQA
+    from pyquery import PyQuery as pq  # NOQA
+    from ajax import PyQuery as pqa  # NOQA
     text_type = unicode
-    def u(value, encoding):
+
+    def u(value, encoding):  # NOQA
         return unicode(value, encoding)
-    def b(value):
+
+    def b(value):  # NOQA
         return str(value)
+
 
 def not_py3k(func):
     if not PY3k:
@@ -47,9 +52,9 @@ try:
     conn.request("GET", "/pyquery/")
     response = conn.getresponse()
 except (socket.timeout, socket.error):
-    GOT_NET=False
+    GOT_NET = False
 else:
-    GOT_NET=True
+    GOT_NET = True
 
 
 def with_net(func):
@@ -59,6 +64,7 @@ def with_net(func):
 dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
 docs = os.path.join(os.path.dirname(dirname), 'docs')
 path_to_html_file = os.path.join(dirname, 'test.html')
+
 
 def input_app(environ, start_response):
     resp = Response()
@@ -70,6 +76,7 @@ def input_app(environ, start_response):
     else:
         resp.body = ''
     return resp(environ, start_response)
+
 
 class TestReadme(doctest.DocFileCase):
     path = os.path.join(dirname, '..', 'README.txt')
@@ -92,7 +99,8 @@ for filename in os.listdir(docs):
             continue
         klass_name = 'Test%s' % filename.replace('.txt', '').title()
         path = os.path.join(docs, filename)
-        exec('%s = type("%s", (TestReadme,), dict(path=path))' % (klass_name, klass_name))
+        exec('%s = type("%s", (TestReadme,), dict(path=path))' % (
+                                                       klass_name, klass_name))
 
 
 class TestTests(doctest.DocFileCase):
@@ -165,7 +173,8 @@ class TestSelector(unittest.TestCase):
             <body>
               <form action="/">
                 <input name="enabled" type="text" value="test"/>
-                <input name="disabled" type="text" value="disabled" disabled="disabled"/>
+                <input name="disabled" type="text"
+                       value="disabled" disabled="disabled"/>
                 <input name="file" type="file" />
                 <select name="select">
                   <option value="">Choose something</option>
@@ -174,10 +183,12 @@ class TestSelector(unittest.TestCase):
                   <option value="three">Three</option>
                 </select>
                 <input name="radio" type="radio" value="one"/>
-                <input name="radio" type="radio" value="two" checked="checked"/>
+                <input name="radio" type="radio"
+                       value="two" checked="checked"/>
                 <input name="radio" type="radio" value="three"/>
                 <input name="checkbox" type="checkbox" value="a"/>
-                <input name="checkbox" type="checkbox" value="b" checked="checked"/>
+                <input name="checkbox" type="checkbox"
+                       value="b" checked="checked"/>
                 <input name="checkbox" type="checkbox" value="c"/>
                 <input name="button" type="button" value="button" />
                 <button>button</button>
@@ -267,13 +278,15 @@ class TestSelector(unittest.TestCase):
         assert e('<p>Hello world</p>').text() == 'Hello world'
         assert e('').text() == None
 
+
 class TestTraversal(unittest.TestCase):
     klass = pq
     html = """
            <html>
             <body>
               <div id="node1"><span>node1</span></div>
-              <div id="node2" class="node3"><span>node2</span><span> booyah</span></div>
+              <div id="node2" class="node3">
+                        <span>node2</span><span> booyah</span></div>
             </body>
            </html>
            """
@@ -300,7 +313,7 @@ class TestTraversal(unittest.TestCase):
 
     def test_each(self):
         doc = self.klass(self.html)
-        doc('span').each(lambda: doc(this).wrap("<em></em>"))
+        doc('span').each(lambda: doc(this).wrap("<em></em>"))  # NOQA
         assert len(doc('em')) == 3
 
     def test_map(self):
@@ -309,7 +322,7 @@ class TestTraversal(unittest.TestCase):
         assert self.klass('div', self.html).map(ids_minus_one) == [0, 1]
 
         d = pq('<p>Hello <b>warming</b> world</p>')
-        self.assertEqual(d('strong').map(lambda i,el: pq(this).text()), [])
+        self.assertEqual(d('strong').map(lambda i, el: pq(this).text()), [])  # NOQA
 
     def test_end(self):
         assert len(self.klass('div', self.html).find('span').end()) == 2
@@ -317,8 +330,10 @@ class TestTraversal(unittest.TestCase):
 
     def test_closest(self):
         assert len(self.klass('#node1 span', self.html).closest('body')) == 1
-        assert self.klass('#node2', self.html).closest('.node3').attr('id') == 'node2'
+        assert self.klass('#node2', self.html).closest('.node3').attr('id') \
+                                                                    == 'node2'
         assert self.klass('.node3', self.html).closest('form') == []
+
 
 class TestOpener(unittest.TestCase):
 
@@ -328,6 +343,7 @@ class TestOpener(unittest.TestCase):
 
         doc = pq(url='http://example.com', opener=opener)
         assert len(doc('.node')) == 1, doc
+
 
 class TestCallback(unittest.TestCase):
     html = """
@@ -340,11 +356,14 @@ class TestCallback(unittest.TestCase):
 
     def test_S_this_inside_callback(self):
         S = pq(self.html)
-        self.assertEqual(S('li').map(lambda i, el: S(this).html()), ['Coffee', 'Tea', 'Milk'])
+        self.assertEqual(S('li').map(lambda i, el: S(this).html()),  # NOQA
+                                     ['Coffee', 'Tea', 'Milk'])
 
     def test_parameterless_callback(self):
         S = pq(self.html)
-        self.assertEqual(S('li').map(lambda: S(this).html()), ['Coffee', 'Tea', 'Milk'])
+        self.assertEqual(S('li').map(lambda: S(this).html()),  # NOQA
+                                     ['Coffee', 'Tea', 'Milk'])
+
 
 def application(environ, start_response):
     req = Request(environ)
@@ -355,10 +374,12 @@ def application(environ, start_response):
         response.body = b('<a href="/plop">Yeah !</a>')
     return response(environ, start_response)
 
+
 def secure_application(environ, start_response):
     if 'REMOTE_USER' not in environ:
         return exc.HTTPUnauthorized('vomis')(environ, start_response)
     return application(environ, start_response)
+
 
 class TestAjaxSelector(TestSelector):
     klass = pqa
@@ -398,6 +419,7 @@ class TestAjaxSelector(TestSelector):
         val = n.post('/')
         assert len(val('a')) == 1, val
 
+
 class TestManipulating(unittest.TestCase):
     html = '''
     <div class="portlet">
@@ -414,6 +436,7 @@ class TestManipulating(unittest.TestCase):
         val = d('a:last').html()
         assert val == ' My link text 2', repr(val)
 
+
 class TestHTMLParser(unittest.TestCase):
     xml = "<div>I'm valid XML</div>"
     html = '''
@@ -423,17 +446,20 @@ class TestHTMLParser(unittest.TestCase):
       Behind you, a three-headed HTML&dash;Entity!
     </div>
     '''
+
     def test_parser_persistance(self):
         d = pq(self.xml, parser='xml')
         self.assertRaises(etree.XMLSyntaxError, lambda: d.after(self.html))
         d = pq(self.xml, parser='html')
-        d.after(self.html) # this should not fail
-
+        d.after(self.html)  # this should not fail
 
     @not_py3k
     def test_soup_parser(self):
-        d = pq('<meta><head><title>Hello</head><body onload=crash()>Hi all<p>', parser='soup')
-        self.assertEqual(str(d), '<html><meta/><head><title>Hello</title></head><body onload="crash()">Hi all<p/></body></html>')
+        d = pq('<meta><head><title>Hello</head><body onload=crash()>Hi all<p>',
+               parser='soup')
+        self.assertEqual(str(d), (
+            '<html><meta/><head><title>Hello</title></head>'
+            '<body onload="crash()">Hi all<p/></body></html>'))
 
     def test_replaceWith(self):
         expected = '''<div class="portlet">
@@ -457,6 +483,7 @@ class TestHTMLParser(unittest.TestCase):
         val = d.__html__()
         assert val == expected, (repr(val), repr(expected))
 
+
 class TestXMLNamespace(unittest.TestCase):
     xml = '''<?xml version="1.0" encoding="UTF-8" ?>
     <foo xmlns:bar="http://example.com/bar">
@@ -467,12 +494,14 @@ class TestXMLNamespace(unittest.TestCase):
     def test_selector(self):
         expected = 'What'
         d = pq(b(self.xml), parser='xml')
-        val = d('bar|blah', namespaces={'bar': 'http://example.com/bar'}).text()
+        val = d('bar|blah',
+                namespaces={'bar': 'http://example.com/bar'}).text()
         self.assertEqual(repr(val), repr(expected))
 
     def test_selector_with_xml(self):
         expected = 'What'
-        d = pq('bar|blah', b(self.xml), parser='xml', namespaces={'bar': 'http://example.com/bar'})
+        d = pq('bar|blah', b(self.xml), parser='xml',
+               namespaces={'bar': 'http://example.com/bar'})
         val = d.text()
         self.assertEqual(repr(val), repr(expected))
 
@@ -482,20 +511,24 @@ class TestXMLNamespace(unittest.TestCase):
         val = d.text()
         self.assertEqual(repr(val), repr(expected))
 
+
 class TestWebScrapping(unittest.TestCase):
+
     @with_net
     def test_get(self):
-        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='get')
+        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'},
+               method='get')
         self.assertEqual(d('input[name=q]:last').val(), 'inconsistency')
         self.assertEqual(d('.news-in-brief h3').text(), (
                         'Slight Inconsistency Found In Bible Pep-Rally '
                         'Skit Rumored To Involve Cross-Dressing Principal'))
 
-    # FIXME
     @with_net
     def test_post(self):
-        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'}, method='post')
-        self.assertEqual(d('input[name=q]:last').val(), None) # the onion does not search on post
+        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'},
+               method='post')
+        # the onion does not search on post
+        self.assertEqual(d('input[name=q]:last').val(), None)
 
 if __name__ == '__main__':
     fails, total = unittest.main()

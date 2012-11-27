@@ -836,7 +836,7 @@ class PyQuery(list):
             'Youhou'
 
         """
-        return self.attr('value', value)
+        return self.attr('value', value) or None
 
     def html(self, value=no_default, **kwargs):
         """Get or set the html representation of sub nodes.
