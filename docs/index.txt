@@ -1,4 +1,4 @@
-.. include:: ../README.txt
+.. include:: ../README.rst
 
 Full documentation
 ==================
@@ -26,7 +26,7 @@ The reference I'm now using for the API is ... the `color cheat sheet`_.
 Then you can always look at the `code`_.
 
 .. _jquery website: http://docs.jquery.com/
-.. _code: http://www.bitbucket.org/olauzanne/pyquery/src/tip/pyquery/pyquery.py
+.. _code: https://github.com/gawel/pyquery
 .. _color cheat sheet: http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
 .. _here: http://packages.python.org/pyquery/
 

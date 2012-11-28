@@ -3,19 +3,13 @@ Testing
 
 If you want to run the tests that you can see above you should do::
 
-    $ hg clone https://bitbucket.org/olauzanne/pyquery/
+    $ git clone git://github.com/gawel/pyquery.git
     $ cd pyquery
     $ python bootstrap.py
-    $ bin/buildout
-    $ bin/test
+    $ bin/buildout install tox
+    $ bin/tox
 
 You can build the Sphinx documentation by doing::
 
     $ cd docs
     $ make html
-
-If you don't already have lxml installed use this line::
-
-    $ STATIC_DEPS=true bin/buildout
-
-

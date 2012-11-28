@@ -12,6 +12,8 @@ def read(*names):
     values = dict()
     for name in names:
         filename = name + '.txt'
+        if not os.path.isfile(filename):
+            filename = name + '.rst'
         if os.path.isfile(filename):
             fd = open(name + '.txt')
             value = fd.read()
