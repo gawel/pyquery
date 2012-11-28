@@ -3,3 +3,4 @@ recursive-include pyquery *.html
 recursive-include docs *.txt
 include README.txt
 include CHANGES.txt
+include tox.ini
