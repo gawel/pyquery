@@ -11,11 +11,9 @@ import os
 def read(*names):
     values = dict()
     for name in names:
-        filename = name + '.txt'
-        if not os.path.isfile(filename):
-            filename = name + '.rst'
+        filename = name + '.rst'
         if os.path.isfile(filename):
-            fd = open(name + '.txt')
+            fd = open(filename)
             value = fd.read()
             fd.close()
         else:
@@ -56,7 +54,7 @@ setup(name='pyquery',
       author_email='olauzanne@gmail.com',
       maintainer='Gael Pasgrimaud',
       maintainer_email='gael@gawel.org',
-      url='http://www.bitbucket.org/olauzanne/pyquery/',
+      url='https://github.com/gawel/pyquery',
       license='BSD',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,

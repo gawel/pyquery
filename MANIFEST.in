@@ -1,6 +1,6 @@
 recursive-include pyquery *.txt
 recursive-include pyquery *.html
 recursive-include docs *.txt
-include README.txt
-include CHANGES.txt
+include README.rst
+include CHANGES.rst
 include tox.ini
