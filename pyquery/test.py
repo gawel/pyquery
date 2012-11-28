@@ -110,7 +110,9 @@ class TestTests(doctest.DocFileCase):
 
     def __init__(self, *args, **kwargs):
         parser = doctest.DocTestParser()
-        doc = open(self.path).read()
+        fd = open(self.path)
+        doc = fd.read()
+        fd.close()
         test = parser.get_doctest(doc, globals(), '', self.path, 0)
         doctest.DocFileCase.__init__(self, test, optionflags=doctest.ELLIPSIS)
 
