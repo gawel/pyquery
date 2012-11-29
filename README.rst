@@ -14,9 +14,9 @@ use it for templating with pure http templates that you modify using pyquery.
 I can also be used for web scrapping or for theming applications with
 `Deliverance`_.
 
-The `project`_ is being actively developped on a mercurial repository on
-Github. I have the policy of giving push access to anyone who wants it
-and then to review what he does. So if you want to contribute just email me.
+The `project`_ is being actively developped on a git repository on Github. I
+have the policy of giving push access to anyone who wants it and then to review
+what he does. So if you want to contribute just email me.
 
 Please report bugs on the `github
 <https://github.com/gawel/pyquery/issues>`_ issue
