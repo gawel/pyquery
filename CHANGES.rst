@@ -1,3 +1,12 @@
+1.2.4
+-----
+
+Moved to github. So a few files are renamed from .txt to .rst
+
+Added .xhtml_to_html() and .remove_namespaces()
+
+python2.5 is no longer supported (may work, but tests are broken)
+
 1.2.3
 -----
 
