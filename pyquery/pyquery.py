@@ -221,12 +221,10 @@ class PyQuery(list):
             # select nodes
             if elements and selector is not no_default:
                 xpath = self._css_to_xpath(selector)
-                results = [tag.xpath(xpath, namespaces=namespaces) \
-                                                    for tag in elements]
-                # Flatten the results
-                elements = []
-                for r in results:
-                    elements.extend(r)
+                results = []
+                for tag in elements:
+                    results.extend(tag.xpath(xpath, namespaces=namespaces))
+                elements = results
 
         list.__init__(self, elements)
 
@@ -275,6 +273,43 @@ class PyQuery(list):
         elems = selector and self(selector) or self
         for elem in elems:
             yield self.__class__(elem)
+
+    def xhtml_to_html(self):
+        """Remove xhtml namespace:
+
+            >>> doc = PyQuery(
+            ...         '<html xmlns="http://www.w3.org/1999/xhtml"></html>')
+            >>> doc
+            [<{http://www.w3.org/1999/xhtml}html>]
+            >>> doc.remove_namespaces()
+            [<html>]
+        """
+        try:
+            root = self[0].getroottree()
+        except IndexError:
+            pass
+        else:
+            lxml.html.xhtml_to_html(root)
+        return self
+
+    def remove_namespaces(self):
+        """Remove all namespaces:
+
+            >>> doc = PyQuery('<foo xmlns="http://example.com/foo"></foo>')
+            >>> doc
+            [<{http://example.com/foo}foo>]
+            >>> doc.remove_namespaces()
+            [<foo>]
+        """
+        try:
+            root = self[0].getroottree()
+        except IndexError:
+            pass
+        else:
+            for el in root.iter('{*}*'):
+                if el.tag.startswith('{'):
+                    el.tag = el.tag.split('}', 1)[1]
+        return self
 
     def __str__(self):
         """xml representation of current nodes::

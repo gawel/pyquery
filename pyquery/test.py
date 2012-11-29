@@ -502,6 +502,13 @@ class TestXMLNamespace(unittest.TestCase):
     <idiot>123</idiot>
     </foo>'''
 
+    xhtml = '''
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <body>
+    <div>What</div>
+    </body>
+    </html>'''
+
     def test_selector(self):
         expected = 'What'
         d = pq(b(self.xml), parser='xml')
@@ -520,6 +527,26 @@ class TestXMLNamespace(unittest.TestCase):
         expected = 'What'
         d = pq('blah', self.xml.split('?>', 1)[1], parser='html')
         val = d.text()
+        self.assertEqual(repr(val), repr(expected))
+
+    def test_xhtml_namespace(self):
+        expected = 'What'
+        d = pq(b(self.xhtml), parser='xml')
+        d.xhtml_to_html()
+        val = d('div').text()
+        self.assertEqual(repr(val), repr(expected))
+
+    def test_xhtml_namespace_html_parser(self):
+        expected = 'What'
+        d = pq(self.xhtml, parser='html')
+        d.xhtml_to_html()
+        val = d('div').text()
+        self.assertEqual(repr(val), repr(expected))
+
+    def test_remove_namespaces(self):
+        expected = 'What'
+        d = pq(b(self.xml), parser='xml').remove_namespaces()
+        val = d('blah').text()
         self.assertEqual(repr(val), repr(expected))
 
 
