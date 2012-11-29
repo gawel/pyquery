@@ -56,6 +56,12 @@ except (socket.timeout, socket.error):
 else:
     GOT_NET = True
 
+try:
+    import requests # NOQA
+    HAS_REQUEST = True
+except ImportError:
+    HAS_REQUEST = False
+
 
 def with_net(func):
     if GOT_NET:
@@ -95,9 +101,11 @@ class TestReadme(doctest.DocFileCase):
 
 for filename in os.listdir(docs):
     if filename.endswith('.txt'):
-        if not GOT_NET and filename in ('ajax.txt', 'tips.txt'):
+        if not GOT_NET and filename in ('ajax.txt', 'tips.txt', 'scrap.txt'):
             continue
-        if PY3k and filename in ('ajax.txt',):
+        if not HAS_REQUEST and filename in ('scrap.txt',):
+            continue
+        if PY3k and filename in ('ajax.txt'):
             continue
         klass_name = 'Test%s' % filename.replace('.txt', '').title()
         path = os.path.join(docs, filename)

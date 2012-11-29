@@ -130,8 +130,8 @@ class PyQuery(list):
 
         if len(args) >= 1 and \
            (not PY3k and isinstance(args[0], basestring) or \
-            PY3k and isinstance(args[0], str)) and \
-           args[0].startswith('http://'):
+           (PY3k and isinstance(args[0], str))) and \
+           args[0].split('://', 1)[0] in ('http', 'https'):
             kwargs['url'] = args[0]
             if len(args) >= 2:
                 kwargs['data'] = args[1]
@@ -904,7 +904,7 @@ class PyQuery(list):
             >>> print(d.html())
             <span>toto</span>
 
-        Extra args are passed to ``lxml.etree.tostring::
+        Extra args are passed to ``lxml.etree.tostring``::
 
             >>> d = PyQuery('<div><span></span></div>')
             >>> print(d.html())

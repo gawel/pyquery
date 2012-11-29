@@ -11,6 +11,7 @@ Full documentation
    manipulating
    traversing
    api
+   scrap
    ajax
    tips
    testing

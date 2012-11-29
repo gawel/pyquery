@@ -9,6 +9,8 @@ Use requests to fetch urls (if available)
 
 Use restkit's proxy instead of Paste (which will die with py3)
 
+Allow to open https urls
+
 python2.5 is no longer supported (may work, but tests are broken)
 
 1.2.3
