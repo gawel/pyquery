@@ -40,7 +40,7 @@ class PyQuery(Base):
                 app = HostProxy(path_info)
                 path_info = '/'
             else:
-                raise ImportError('Paste is not installed')
+                raise ImportError('restkit is not installed')
 
         environ = kwargs.pop('environ').copy()
         environ.update(kwargs)

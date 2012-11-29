@@ -9,9 +9,9 @@ install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install beautifulsoup; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install beautifulsoup; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install beautifulsoup; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install paste; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install paste; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install paste; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install restkit; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install restkit; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install restkit; fi"
   - python setup.py develop
 script:
   - nosetests -s -v
