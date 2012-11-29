@@ -30,7 +30,7 @@ You can also request another path::
     >>> print d
     <form><input name="youyou" type="text" value=""/><input type="submit" value="OK"/></form>
 
-If `Paste`_ is installed, you are able to get url directly with a `Proxy`_ app::
+If `restkit`_ is installed, you are able to get url directly with a `HostProxy`_ app::
 
     >>> a = d.get('http://packages.python.org/pyquery/')
     >>> a
@@ -45,8 +45,8 @@ The response attribute is a `WebOb`_ `Response`_
 
 .. _webob: http://pythonpaste.org/webob/
 .. _response: http://pythonpaste.org/webob/#response
-.. _paste: http://pythonpaste.org/
-.. _proxy: http://pythonpaste.org/modules/proxy.html#paste.proxy.Proxy
+.. _restkit: http://benoitc.github.com/restkit/
+.. _hostproxy: http://benoitc.github.com/restkit/wsgi_proxy.html
 
 Api
 ---

@@ -4,6 +4,7 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 from .cssselectpatch import JQueryTranslator
+from .openers import url_opener
 from copy import deepcopy
 from lxml import etree
 import lxml.html
@@ -13,13 +14,11 @@ import sys
 PY3k = sys.version_info >= (3,)
 
 if PY3k:
-    from urllib.request import urlopen
     from urllib.parse import urlencode
     from urllib.parse import urljoin
     basestring = (str, bytes)
     unicode = str
 else:
-    from urllib2 import urlopen  # NOQA
     from urllib import urlencode  # NOQA
     from urlparse import urljoin  # NOQA
 
@@ -66,8 +65,10 @@ def fromstring(context, parser=None, custom_parser=None):
         return result
     elif isinstance(result, etree._ElementTree):
         return [result.getroot()]
-    else:
+    elif result is not None:
         return [result]
+    else:
+        return []
 
 
 def callback(func, *args):
@@ -157,39 +158,28 @@ class PyQuery(list):
         if kwargs:
             # specific case to get the dom
             if 'filename' in kwargs:
-                fd = open(kwargs['filename'])
-                html = fd.read()
-                fd.close()
+                html = open(kwargs['filename'])
             elif 'url' in kwargs:
                 url = kwargs.pop('url')
                 if 'opener' in kwargs:
                     opener = kwargs.pop('opener')
-                    html = opener(url)
+                    html = opener(url, **kwargs)
                 else:
-                    method = kwargs.get('method')
-                    data = kwargs.get('data')
-                    if type(data) in (dict, list, tuple):
-                        data = urlencode(data)
-
-                    if isinstance(method, basestring) and \
-                       method.lower() == 'get' and data:
-                        if '?' not in url:
-                            url += '?'
-                        elif url[-1] not in ('?', '&'):
-                            url += '&'
-                        url += data
-                        data = None
-
-                    if data and PY3k:
-                        data = data.encode('utf-8')
-
-                    html = urlopen(url, data)
-                    if not self.parser:
-                        self.parser = 'html'
+                    html = url_opener(url, kwargs)
+                if not self.parser:
+                    self.parser = 'html'
                 self._base_url = url
             else:
                 raise ValueError('Invalid keyword arguments %s' % kwargs)
+
             elements = fromstring(html, self.parser)
+            # close open descriptor if possible
+            if hasattr(html, 'close'):
+                try:
+                    html.close()
+                except:
+                    pass
+
         else:
             # get nodes
 

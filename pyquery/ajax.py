@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import sys
 from .pyquery import PyQuery as Base
 from .pyquery import no_default
 
 from webob import Request, Response
 
 try:
-    from paste.proxy import Proxy
+    from restkit.contrib.wsgi_proxy import HostProxy
 except ImportError:
-    Proxy = no_default
+    HostProxy = no_default # NOQA
+
 
 class PyQuery(Base):
 
@@ -36,27 +36,23 @@ class PyQuery(Base):
             else:
                 raise ValueError('There is no app available')
         else:
-            if Proxy is not no_default:
-                app = Proxy(path_info)
+            if HostProxy is not no_default:
+                app = HostProxy(path_info)
                 path_info = '/'
             else:
                 raise ImportError('Paste is not installed')
 
-        if 'environ' in kwargs:
-            environ = kwargs.pop('environ').copy()
-        else:
-            environ = {}
-        if path_info:
-            kwargs['PATH_INFO'] = path_info
+        environ = kwargs.pop('environ').copy()
         environ.update(kwargs)
 
         # unsuported (came from Deliverance)
-        for key in ['HTTP_ACCEPT_ENCODING', 'HTTP_IF_MATCH', 'HTTP_IF_UNMODIFIED_SINCE',
-                    'HTTP_RANGE', 'HTTP_IF_RANGE']:
+        for key in ['HTTP_ACCEPT_ENCODING', 'HTTP_IF_MATCH',
+                    'HTTP_IF_UNMODIFIED_SINCE', 'HTTP_RANGE', 'HTTP_IF_RANGE']:
             if key in environ:
                 del environ[key]
 
-        req = Request(environ)
+        req = Request.blank(path_info)
+        req.environ.update(environ)
         resp = req.get_response(app)
         status = resp.status.split()
         ctype = resp.content_type.split(';')[0]
@@ -66,18 +62,21 @@ class PyQuery(Base):
             body = []
         result = self.__class__(body,
                                 parent=self._parent,
-                                app=self.app, # always return self.app
+                                app=self.app,  # always return self.app
                                 response=resp)
         return result
 
     def get(self, path_info, **kwargs):
         """GET a path from wsgi app or url
         """
-        kwargs['REQUEST_METHOD'] = 'GET'
+        environ = kwargs.setdefault('environ', {})
+        environ['REQUEST_METHOD'] = 'GET'
+        environ['CONTENT_LENGTH'] = '0'
         return self._wsgi_get(path_info, **kwargs)
 
     def post(self, path_info, **kwargs):
         """POST a path from wsgi app or url
         """
-        kwargs['REQUEST_METHOD'] = 'POST'
+        environ = kwargs.setdefault('environ', {})
+        environ['REQUEST_METHOD'] = 'POST'
         return self._wsgi_get(path_info, **kwargs)

@@ -6,13 +6,13 @@ Making links absolute
 
 You can make links absolute which can be usefull for screen scrapping::
 
-    >>> d = pq(url='http://www.w3.org/', parser='html')
-    >>> d('a[accesskey="0"]').attr('href')
-    '/Help/'
+    >>> d = pq(url='http://duckduckgo.com/', parser='html')
+    >>> d('a[tabindex="-1"]').attr('href')
+    '/about.html'
     >>> d.make_links_absolute()
     [<html>]
-    >>> d('a[accesskey="0"]').attr('href')
-    'http://www.w3.org/Help/'
+    >>> d('a[tabindex="-1"]').attr('href')
+    'http://duckduckgo.com/about.html'
 
 Using different parsers
 -----------------------

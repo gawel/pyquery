@@ -4,10 +4,9 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 
-import sys
-
 try:
     import webob
+    import restkit
 except ImportError:
     from .pyquery import PyQuery
 else:

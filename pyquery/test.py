@@ -554,19 +554,16 @@ class TestWebScrapping(unittest.TestCase):
 
     @with_net
     def test_get(self):
-        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'},
+        d = pq('http://duckduckgo.com/', {'q': 'foo'},
                method='get')
-        self.assertEqual(d('input[name=q]:last').val(), 'inconsistency')
-        self.assertEqual(d('.news-in-brief h3').text(), (
-                        'Slight Inconsistency Found In Bible Pep-Rally '
-                        'Skit Rumored To Involve Cross-Dressing Principal'))
+        print(d)
+        self.assertEqual(d('input[name=q]:last').val(), 'foo')
 
     @with_net
     def test_post(self):
-        d = pq('http://www.theonion.com/search/', {'q': 'inconsistency'},
+        d = pq('http://duckduckgo.com/', {'q': 'foo'},
                method='post')
-        # the onion does not search on post
-        self.assertEqual(d('input[name=q]:last').val(), None)
+        self.assertEqual(d('input[name=q]:last').val(), 'foo')
 
 if __name__ == '__main__':
     fails, total = unittest.main()
