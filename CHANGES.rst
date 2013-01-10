@@ -1,3 +1,8 @@
+1.2.5
+-----
+
+cssselect compat. See https://github.com/SimonSapin/cssselect/pull/22
+
 1.2.4
 -----
 
