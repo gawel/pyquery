@@ -565,13 +565,14 @@ class TestWebScrapping(unittest.TestCase):
         d = pq('http://duckduckgo.com/', {'q': 'foo'},
                method='get')
         print(d)
-        self.assertEqual(d('input[name=q]:last').val(), 'foo')
+        self.assertEqual(d('input[name=q]:first').val(), 'foo')
 
     @with_net
     def test_post(self):
         d = pq('http://duckduckgo.com/', {'q': 'foo'},
                method='post')
-        self.assertEqual(d('input[name=q]:last').val(), 'foo')
+        print(d)
+        self.assertEqual(d('input[name=q]:first').val(), None)
 
 if __name__ == '__main__':
     fails, total = unittest.main()

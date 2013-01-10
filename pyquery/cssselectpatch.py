@@ -6,12 +6,45 @@
 from cssselect import xpath as cssselect_xpath
 from cssselect.xpath import ExpressionError
 
+XPathExprOrig = cssselect_xpath.XPathExpr
+
+
+class XPathExpr(XPathExprOrig):
+
+    def __init__(self, path='', element='*', condition='', star_prefix=False):
+        self.path = path
+        self.element = element
+        self.condition = condition
+        self.post_condition = None
+
+    def add_post_condition(self, post_condition):
+        if self.post_condition:
+            self.post_condition = '%s and (%s)' % (self.post_condition,
+                                                   post_condition)
+        else:
+            self.post_condition = post_condition
+
+    def __str__(self):
+        path = XPathExprOrig.__str__(self)
+        if self.post_condition:
+            path = '%s[%s]' % (path, self.post_condition)
+        return path
+
+    def join(self, combiner, other):
+        res = XPathExprOrig.join(self, combiner, other)
+        self.post_condition = other.post_condition
+        return res
+
+cssselect_xpath.XPathExpr = XPathExpr
+
 
 class JQueryTranslator(cssselect_xpath.HTMLTranslator):
     """This class is used to implement the css pseudo classes
     (:first, :last, ...) that are not defined in the css standard,
     but are defined in the jquery API.
     """
+
+    xpathexpr_cls = XPathExpr
 
     def xpath_first_pseudo(self, xpath):
         """Matches the first selected element.
@@ -196,35 +229,3 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         xpath.add_post_condition(
                 "contains(text(), '%s')" % value)
         return xpath
-
-
-XPathExprOrig = cssselect_xpath.XPathExpr
-
-
-class XPathExpr(XPathExprOrig):
-
-    def __init__(self, path='', element='*', condition='', star_prefix=False):
-        self.path = path
-        self.element = element
-        self.condition = condition
-        self.post_condition = None
-
-    def add_post_condition(self, post_condition):
-        if self.post_condition:
-            self.post_condition = '%s and (%s)' % (self.post_condition,
-                                                   post_condition)
-        else:
-            self.post_condition = post_condition
-
-    def __str__(self):
-        path = XPathExprOrig.__str__(self)
-        if self.post_condition:
-            path = '%s[%s]' % (path, self.post_condition)
-        return path
-
-    def join(self, combiner, other):
-        res = XPathExprOrig.join(self, combiner, other)
-        self.post_condition = other.post_condition
-        return res
-
-cssselect_xpath.XPathExpr = XPathExpr

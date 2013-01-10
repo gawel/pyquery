@@ -8,11 +8,11 @@ You can make links absolute which can be usefull for screen scrapping::
 
     >>> d = pq(url='http://duckduckgo.com/', parser='html')
     >>> d('a[tabindex="-1"]').attr('href')
-    '/about.html'
+    '/about'
     >>> d.make_links_absolute()
     [<html>]
     >>> d('a[tabindex="-1"]').attr('href')
-    'http://duckduckgo.com/about.html'
+    'http://duckduckgo.com/about'
 
 Using different parsers
 -----------------------
