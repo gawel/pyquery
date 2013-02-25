@@ -574,6 +574,16 @@ class TestWebScrapping(unittest.TestCase):
         print(d)
         self.assertEqual(d('input[name=q]:first').val(), None)
 
+class TestWebScrappingEncoding(unittest.TestCase):
+
+    @with_net
+    def test_get(self):
+        d = pq(u'http://ru.wikipedia.org/wiki/Заглавная_страница',
+               method='get')
+        print(d)
+        self.assertEqual(d('#n-mainpage a').text(), u'Заглавная страница')
+
+        
 if __name__ == '__main__':
     fails, total = unittest.main()
     if fails == 0:
