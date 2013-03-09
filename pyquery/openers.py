@@ -58,7 +58,7 @@ def _requests(url, kwargs):
     resp = meth(url=url, **kw)
     if encoding:
         resp.encoding = encoding
-    html = resp.content
+    html = resp.text
     return html
 
 
