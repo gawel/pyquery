@@ -57,7 +57,7 @@ else:
     GOT_NET = True
 
 try:
-    import requests # NOQA
+    import requests  # NOQA
     HAS_REQUEST = True
 except ImportError:
     HAS_REQUEST = False
@@ -110,7 +110,7 @@ for filename in os.listdir(docs):
         klass_name = 'Test%s' % filename.replace('.txt', '').title()
         path = os.path.join(docs, filename)
         exec('%s = type("%s", (TestReadme,), dict(path=path))' % (
-                                                       klass_name, klass_name))
+             klass_name, klass_name))
 
 
 class TestTests(doctest.DocFileCase):
@@ -288,7 +288,7 @@ class TestSelector(unittest.TestCase):
     def test_on_the_fly_dom_creation(self):
         e = self.klass(self.html)
         assert e('<p>Hello world</p>').text() == 'Hello world'
-        assert e('').text() == None
+        assert e('').text() is None
 
 
 class TestTraversal(unittest.TestCase):
@@ -342,12 +342,16 @@ class TestTraversal(unittest.TestCase):
 
     def test_closest(self):
         assert len(self.klass('#node1 span', self.html).closest('body')) == 1
-        assert self.klass('#node2', self.html).closest('.node3').attr('id') \
-                                                                    == 'node2'
+        assert self.klass('#node2',
+                          self.html).closest('.node3').attr('id') == 'node2'
         assert self.klass('.node3', self.html).closest('form') == []
 
 
 class TestOpener(unittest.TestCase):
+
+    def test_open_filename(self):
+        doc = pq(filename=path_to_html_file)
+        self.assertEqual(len(doc('p#test').text()), 14)
 
     def test_custom_opener(self):
         def opener(url):

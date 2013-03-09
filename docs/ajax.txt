@@ -33,7 +33,7 @@ You can also request another path::
 
 If `restkit`_ is installed, you are able to get url directly with a `HostProxy`_ app::
 
-    >>> a = d.get('http://packages.python.org/pyquery/')
+    >>> a = d.get('http://pythonhosted.org/pyquery/')
     >>> a
     [<html>]
 
