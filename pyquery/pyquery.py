@@ -53,7 +53,7 @@ def fromstring(context, parser=None, custom_parser=None):
         elif parser == 'html':
             custom_parser = getattr(lxml.html, meth)
         elif parser == 'soup':
-            from  lxml.html import soupparser
+            from lxml.html import soupparser
             custom_parser = getattr(soupparser, meth)
         elif parser == 'html_fragments':
             custom_parser = lxml.html.fragments_fromstring
@@ -128,10 +128,10 @@ class PyQuery(list):
         if 'parser' in kwargs:
             del kwargs['parser']
 
-        if len(args) >= 1 and \
-           (not PY3k and isinstance(args[0], basestring) or \
-           (PY3k and isinstance(args[0], str))) and \
-           args[0].split('://', 1)[0] in ('http', 'https'):
+        if (len(args) >= 1 and
+                (not PY3k and isinstance(args[0], basestring) or
+                (PY3k and isinstance(args[0], str))) and
+                args[0].split('://', 1)[0] in ('http', 'https')):
             kwargs['url'] = args[0]
             if len(args) >= 2:
                 kwargs['data'] = args[1]
@@ -191,8 +191,8 @@ class PyQuery(list):
             elif length == 2:
                 selector, context = args
             else:
-                raise ValueError("You can't do that." +\
-                        " Please, provide arguments")
+                raise ValueError(
+                    "You can't do that. Please, provide arguments")
 
             # get context
             if isinstance(context, basestring):
@@ -317,8 +317,8 @@ class PyQuery(list):
 
     def __unicode__(self):
         """xml representation of current nodes"""
-        return unicode('').join([etree.tostring(e, encoding=unicode) \
-                                                        for e in self])
+        return unicode('').join([etree.tostring(e, encoding=unicode)
+                                 for e in self])
 
     def __html__(self):
         """html representation of current nodes::
@@ -329,8 +329,8 @@ class PyQuery(list):
             <script><![[CDATA[ ]></script>
 
         """
-        return unicode('').join([lxml.html.tostring(e, encoding=unicode) \
-                                                            for e in self])
+        return unicode('').join([lxml.html.tostring(e, encoding=unicode)
+                                 for e in self])
 
     def __repr__(self):
         r = []
@@ -396,19 +396,19 @@ class PyQuery(list):
 
     def parent(self, selector=None):
         return self._filter_only(
-                   selector,
-                   [e.getparent() for e in self if e.getparent() is not None],
-                   unique=True)
+            selector,
+            [e.getparent() for e in self if e.getparent() is not None],
+            unique=True)
 
     def prev(self, selector=None):
         return self._filter_only(
-               selector,
-               [e.getprevious() for e in self if e.getprevious() is not None])
+            selector,
+            [e.getprevious() for e in self if e.getprevious() is not None])
 
     def next(self, selector=None):
         return self._filter_only(
-               selector,
-               [e.getnext() for e in self if e.getnext() is not None])
+            selector,
+            [e.getnext() for e in self if e.getnext() is not None])
 
     def _traverse(self, method):
         for e in self:
@@ -475,10 +475,10 @@ class PyQuery(list):
         []
         """
         return self._filter_only(
-                selector,
-                [e for e in self._traverse_parent_topdown()],
-                unique=True
-            )
+            selector,
+            [e for e in self._traverse_parent_topdown()],
+            unique=True
+        )
 
     def children(self, selector=None):
         """Filter elements that are direct children of self using optional
@@ -509,8 +509,8 @@ class PyQuery(list):
         """
         result = []
         for current in self:
-            while current is not None and \
-                  not self.__class__(current).is_(selector):
+            while (current is not None and
+                    not self.__class__(current).is_(selector)):
                 current = current.getparent()
             if current is not None:
                 result.append(current)
@@ -598,8 +598,8 @@ class PyQuery(list):
             [<em>]
         """
         xpath = self._css_to_xpath(selector)
-        results = [child.xpath(xpath) for tag in self \
-                        for child in tag.getchildren()]
+        results = [child.xpath(xpath) for tag in self
+                   for child in tag.getchildren()]
         # Flatten the results
         elements = []
         for r in results:
@@ -629,7 +629,7 @@ class PyQuery(list):
         try:
             for i, element in enumerate(self):
                 func_globals(func)['this'] = element
-                if callback(func, i, element) == False:
+                if callback(func, i, element) is False:
                     break
         finally:
             f_globals = func_globals(func)
@@ -846,10 +846,11 @@ class PyQuery(list):
         elif isinstance(value, basestring):
             attr = attr.replace('_', '-')
             for tag in self:
-                current = [el.strip()
-                           for el in (tag.get('style') or '').split(';')
-                           if el.strip()
-                              and not el.split(':')[0].strip() == attr.strip()]
+                current = [
+                    el.strip()
+                    for el in (tag.get('style') or '').split(';')
+                    if (el.strip() and
+                        not el.split(':')[0].strip() == attr.strip())]
                 current.append('%s: %s' % (attr, value))
                 tag.set('style', '; '.join(current))
         return self
@@ -929,8 +930,8 @@ class PyQuery(list):
             html = tag.text or ''
             if 'encoding' not in kwargs:
                 kwargs['encoding'] = unicode
-            html += unicode('').join([etree.tostring(e, **kwargs) \
-                                                  for e in children])
+            html += unicode('').join([etree.tostring(e, **kwargs)
+                                      for e in children])
             return html
         else:
             if isinstance(value, self.__class__):
@@ -946,8 +947,8 @@ class PyQuery(list):
                 for child in tag.getchildren():
                     tag.remove(child)
                 root = fromstring(
-                            unicode('<root>') + new_html + unicode('</root>'),
-                            self.parser)[0]
+                    unicode('<root>') + new_html + unicode('</root>'),
+                    self.parser)[0]
                 children = root.getchildren()
                 if children:
                     tag.extend(children)
@@ -1026,7 +1027,7 @@ class PyQuery(list):
     ################
 
     def _get_root(self, value):
-        if  isinstance(value, basestring):
+        if isinstance(value, basestring):
             root = fromstring(unicode('<root>') + value + unicode('</root>'),
                               self.parser)[0]
         elif isinstance(value, etree._Element):
@@ -1035,7 +1036,7 @@ class PyQuery(list):
             root = value
         else:
             raise TypeError(
-            'Value must be string, PyQuery or Element. Got %r' % value)
+                'Value must be string, PyQuery or Element. Got %r' % value)
         if hasattr(root, 'text') and isinstance(root.text, basestring):
             root_text = root.text
         else:
@@ -1120,7 +1121,7 @@ class PyQuery(list):
         root, root_text = self._get_root(value)
         for i, tag in enumerate(self):
             previous = tag.getprevious()
-            if previous != None:
+            if previous is not None:
                 if not previous.tail:
                     previous.tail = ''
                 previous.tail += root_text
@@ -1228,7 +1229,7 @@ class PyQuery(list):
         if hasattr(value, '__call__'):
             for i, element in enumerate(self):
                 self.__class__(element).before(
-                        value(i, element) + (element.tail or ''))
+                    value(i, element) + (element.tail or ''))
                 parent = element.getparent()
                 parent.remove(element)
         else:
@@ -1243,7 +1244,7 @@ class PyQuery(list):
         """
         if self._parent is no_default:
             raise ValueError(
-                    'replaceAll can only be used with an object with parent')
+                'replaceAll can only be used with an object with parent')
         self._parent(expr).replaceWith(self)
         return self
 
@@ -1330,8 +1331,9 @@ class PyQuery(list):
         if base_url is None:
             base_url = self.base_url
             if base_url is None:
-                raise ValueError('You need a base URL to make your links'
-                 'absolute. It can be provided by the base_url parameter.')
+                raise ValueError((
+                    'You need a base URL to make your links'
+                    'absolute. It can be provided by the base_url parameter.'))
 
-        self('a').each(lambda: self(this).attr('href', urljoin(base_url, self(this).attr('href')))) # NOQA
+        self('a').each(lambda: self(this).attr('href', urljoin(base_url, self(this).attr('href'))))  # NOQA
         return self
