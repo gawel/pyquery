@@ -11,6 +11,7 @@ import lxml.html
 import inspect
 import sys
 
+
 PY3k = sys.version_info >= (3,)
 
 if PY3k:
@@ -120,6 +121,9 @@ class FlexibleElement(object):
 class PyQuery(list):
     """The main class
     """
+
+    _translator_class = JQueryTranslator
+
     def __init__(self, *args, **kwargs):
         html = None
         elements = []
@@ -145,11 +149,11 @@ class PyQuery(list):
         if 'css_translator' in kwargs:
             self._translator = kwargs.pop('css_translator')
         elif self.parser in ('xml',):
-            self._translator = JQueryTranslator(xhtml=True)
+            self._translator = self._translator_class(xhtml=True)
         elif self._parent is not no_default:
             self._translator = self._parent._translator
         else:
-            self._translator = JQueryTranslator(xhtml=False)
+            self._translator = self._translator_class(xhtml=False)
 
         namespaces = kwargs.get('namespaces', {})
         if 'namespaces' in kwargs:

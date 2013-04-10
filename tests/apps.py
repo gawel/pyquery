@@ -9,11 +9,11 @@ def input_app(environ, start_response):
     resp = Response()
     req = Request(environ)
     if req.path_info == '/':
-        resp.body = '<input name="youyou" type="text" value="" />'
+        resp.body = b('<input name="youyou" type="text" value="" />')
     elif req.path_info == '/submit':
-        resp.body = '<input type="submit" value="OK" />'
-    elif req.path_info == '/html/':
-        resp.body = '<html><p>Success</p></html>'
+        resp.body = b('<input type="submit" value="OK" />')
+    elif req.path_info.startswith('/html'):
+        resp.body = b('<html><p>Success</p></html>')
     else:
         resp.body = ''
     return resp(environ, start_response)

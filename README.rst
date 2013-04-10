@@ -33,7 +33,7 @@ document, from a file or from an url::
     >>> d = pq(etree.fromstring("<html></html>"))
     >>> d = pq(url=your_url)
     >>> d = pq(url=your_url,
-    ...        opener=lambda url, **kw: urllib.urlopen(url).read())
+    ...        opener=lambda url, **kw: urlopen(url).read())
     >>> d = pq(filename=path_to_html_file)
 
 Now d is like the $ in jquery::

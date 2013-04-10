@@ -35,8 +35,8 @@ class XPathExpr(XPathExprOrig):
         self.post_condition = other.post_condition
         return res
 
+
 # keep cssselect < 0.8 compat for now
-cssselect_xpath.XPathExpr = XPathExpr
 
 
 class JQueryTranslator(cssselect_xpath.HTMLTranslator):

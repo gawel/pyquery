@@ -3,6 +3,9 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from lxml import etree
 from pyquery.pyquery import PyQuery as pq
 from pyquery.ajax import PyQuery as pqa
@@ -14,8 +17,7 @@ from .compat import PY3k
 from .compat import u
 from .compat import b
 from .compat import text_type
-import unittest
-import os
+from .compat import TestCase
 
 
 def not_py3k(func):
@@ -34,7 +36,7 @@ docs = os.path.join(os.path.dirname(dirname), 'docs')
 path_to_html_file = os.path.join(dirname, 'test.html')
 
 
-class TestUnicode(unittest.TestCase):
+class TestUnicode(TestCase):
 
     def test_unicode(self):
         xml = pq(u("<p>é</p>", 'utf-8'))
@@ -46,7 +48,7 @@ class TestUnicode(unittest.TestCase):
             self.assertEqual(str(xml), '<p>&#233;</p>')
 
 
-class TestAttributeCase(unittest.TestCase):
+class TestAttributeCase(TestCase):
 
     def test_xml_upper_element_name(self):
         xml = pq('<X>foo</X>', parser='xml')
@@ -59,7 +61,7 @@ class TestAttributeCase(unittest.TestCase):
         self.assertEqual(len(xml('x')), 1)
 
 
-class TestSelector(unittest.TestCase):
+class TestSelector(TestCase):
     klass = pq
     html = """
            <html>
@@ -200,7 +202,7 @@ class TestSelector(unittest.TestCase):
         assert e('').text() is None
 
 
-class TestTraversal(unittest.TestCase):
+class TestTraversal(TestCase):
     klass = pq
     html = """
            <html>
@@ -256,7 +258,7 @@ class TestTraversal(unittest.TestCase):
         assert self.klass('.node3', self.html).closest('form') == []
 
 
-class TestOpener(unittest.TestCase):
+class TestOpener(TestCase):
 
     def test_open_filename(self):
         doc = pq(filename=path_to_html_file)
@@ -270,14 +272,14 @@ class TestOpener(unittest.TestCase):
         assert len(doc('.node')) == 1, doc
 
 
-class TestComment(unittest.TestCase):
+class TestComment(TestCase):
 
     def test_comment(self):
         doc = pq('<div><!-- foo --> bar</div>')
         self.assertEqual(doc.text(), 'bar')
 
 
-class TestCallback(unittest.TestCase):
+class TestCallback(TestCase):
     html = """
         <ol>
             <li>Coffee</li>
@@ -343,7 +345,7 @@ class TestAjaxSelector(TestSelector):
         self.s.shutdown()
 
 
-class TestManipulating(unittest.TestCase):
+class TestManipulating(TestCase):
     html = '''
     <div class="portlet">
       <a href="/toto">Test<img src ="myimage" />My link text</a>
@@ -360,7 +362,7 @@ class TestManipulating(unittest.TestCase):
         assert val == ' My link text 2', repr(val)
 
 
-class TestHTMLParser(unittest.TestCase):
+class TestHTMLParser(TestCase):
     xml = "<div>I'm valid XML</div>"
     html = '''
     <div class="portlet">
@@ -407,7 +409,7 @@ class TestHTMLParser(unittest.TestCase):
         assert val == expected, (repr(val), repr(expected))
 
 
-class TestXMLNamespace(unittest.TestCase):
+class TestXMLNamespace(TestCase):
     xml = '''<?xml version="1.0" encoding="UTF-8" ?>
     <foo xmlns:bar="http://example.com/bar">
     <bar:blah>What</bar:blah>
@@ -462,7 +464,7 @@ class TestXMLNamespace(unittest.TestCase):
         self.assertEqual(repr(val), repr(expected))
 
 
-class TestWebScrapping(unittest.TestCase):
+class TestWebScrapping(TestCase):
 
     def setUp(self):
         self.s = http.StopableWSGIServer.create(debug_app)
@@ -486,7 +488,7 @@ class TestWebScrapping(unittest.TestCase):
         self.s.shutdown()
 
 
-class TestWebScrappingEncoding(unittest.TestCase):
+class TestWebScrappingEncoding(TestCase):
 
     def test_get(self):
         if not HAS_REQUEST:

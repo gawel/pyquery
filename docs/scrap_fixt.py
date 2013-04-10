@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from webtest import http
-from webtest.debugapp import debug_app
+from tests.apps import input_app
 
 
 def setup_test(test):
-    server = http.StopableWSGIServer.create(debug_app)
+    server = http.StopableWSGIServer.create(input_app)
     server.wait()
-    path_to_html_file = os.path.join('tests', 'test.html')
     test.globs.update(
         server=server,
-        your_url=server.application_url,
-        path_to_html_file=path_to_html_file,
+        your_url=server.application_url.rstrip('/') + '/html',
     )
 setup_test.__test__ = False
 

@@ -16,7 +16,7 @@ submit button at `/submit`::
     >>> d = pq('<form></form>', app=input_app)
     >>> d.append(d.get('/'))
     [<form>]
-    >>> print d
+    >>> print(d)
     <form><input name="youyou" type="text" value=""/></form>
 
 The app is also available in new nodes::
@@ -28,7 +28,7 @@ You can also request another path::
 
     >>> d.append(d.get('/submit'))
     [<form>]
-    >>> print d
+    >>> print(d)
     <form><input name="youyou" type="text" value=""/><input type="submit" value="OK"/></form>
 
 If `restkit`_ is installed, you are able to get url directly with a `HostProxy`_ app::
@@ -39,7 +39,7 @@ If `restkit`_ is installed, you are able to get url directly with a `HostProxy`_
 
 You can retrieve the app response::
 
-    >>> print a.response.status
+    >>> print(a.response.status)
     200 OK
 
 The response attribute is a `WebOb`_ `Response`_

@@ -9,7 +9,7 @@ You can also add content to the end of tags::
     >>> d = pq('<p class="hello" id="hello">you know Python rocks</p>')
     >>> d('p').append(' check out <a href="http://reddit.com/r/python"><span>reddit</span></a>')
     [<p#hello.hello>]
-    >>> print d
+    >>> print(d)
     <p class="hello" id="hello">you know Python rocks check out <a href="http://reddit.com/r/python"><span>reddit</span></a></p>
 
 Or to the beginning::
@@ -17,30 +17,30 @@ Or to the beginning::
     >>> p = d('p')
     >>> p.prepend('check out <a href="http://reddit.com/r/python">reddit</a>')
     [<p#hello.hello>]
-    >>> p.html()
-    u'check out <a href="http://reddit.com/r/python">reddit</a>you know ...'
+    >>> print(p.html())
+    check out <a href="http://reddit.com/r/python">reddit</a>you know ...
 
 Prepend or append an element into an other::
 
     >>> d = pq('<html><body><div id="test"><a href="http://python.org">python</a> !</div></body></html>')
     >>> p.prependTo(d('#test'))
     [<p#hello.hello>]
-    >>> d('#test').html()
-    u'<p class="hello" ...'
+    >>> print(d('#test').html())
+    <p class="hello" ...
 
 Insert an element after another::
 
     >>> p.insertAfter(d('#test'))
     [<p#hello.hello>]
-    >>> d('#test').html()
-    u'<a href="http://python.org">python</a> !'
+    >>> print(d('#test').html())
+    <a href="http://python.org">python</a> !
 
 Or before::
 
     >>> p.insertBefore(d('#test'))
     [<p#hello.hello>]
-    >>> d('body').html()
-    u'<p class="hello" id="hello">...'
+    >>> print(d('body').html())
+    <p class="hello" id="hello">...
 
 Doing something for each elements::
 
@@ -62,13 +62,13 @@ Remove what's inside the selection::
 
 And you can get back the modified html::
 
-    >>> print d
+    >>> print(d)
     <html><body><p/></body></html>
 
 You can generate html stuff::
 
     >>> from pyquery import PyQuery as pq
-    >>> print pq('<div>Yeah !</div>').addClass('myclass') + pq('<b>cool</b>')
+    >>> print(pq('<div>Yeah !</div>').addClass('myclass') + pq('<b>cool</b>'))
     <div class="myclass">Yeah !</div><b>cool</b>
 
 
