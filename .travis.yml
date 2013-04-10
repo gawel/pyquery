@@ -6,6 +6,7 @@ python:
 install:
   - pip install nose
   - pip install webob
+  - pip install webtest
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install beautifulsoup; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install beautifulsoup; fi"
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install beautifulsoup; fi"
