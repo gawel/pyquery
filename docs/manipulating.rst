@@ -1,6 +1,9 @@
 Manipulating
 ------------
 
+..
+    >>> from pyquery import PyQuery as pq
+
 You can also add content to the end of tags::
 
     >>> d = pq('<p class="hello" id="hello">you know Python rocks</p>')
@@ -41,8 +44,8 @@ Or before::
 
 Doing something for each elements::
 
-    >>> p.each(lambda e: e.addClass('hello2'))
-    [<p#hello.hello2.hello>]
+    >>> p.each(lambda i, e: pq(e).addClass('hello2'))
+    [<p#hello.hello.hello2>]
 
 Remove an element::
 

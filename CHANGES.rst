@@ -3,6 +3,8 @@
 
 cssselect compat. See https://github.com/SimonSapin/cssselect/pull/22
 
+tests improvments. no longer require a eth connection.
+
 1.2.4
 -----
 

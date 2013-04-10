@@ -7,7 +7,7 @@
 
 .. fake imports
 
-    >>> from ajax import PyQuery as pq
+    >>> from pyquery.ajax import PyQuery as pq
 
 You can query some wsgi app if `WebOb`_ is installed (it's not a pyquery
 dependencie). IN this example the test app returns a simple input at `/` and a
@@ -33,7 +33,7 @@ You can also request another path::
 
 If `restkit`_ is installed, you are able to get url directly with a `HostProxy`_ app::
 
-    >>> a = d.get('http://pythonhosted.org/pyquery/')
+    >>> a = d.get(your_url)
     >>> a
     [<html>]
 

@@ -1,6 +1,9 @@
 Traversing
 ----------
 
+..
+    >>> from pyquery import PyQuery as pq
+
 Some jQuery traversal methods are supported.  Here are a few examples.
 
 You can filter the selection list using a string selector::

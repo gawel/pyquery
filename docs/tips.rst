@@ -1,18 +1,19 @@
 Tips
 ====
 
+..
+    >>> from pyquery import PyQuery as pq
+
 Making links absolute
 ---------------------
 
 You can make links absolute which can be usefull for screen scrapping::
 
-    >>> d = pq(url='http://duckduckgo.com/', parser='html')
-    >>> d('a[tabindex="-1"]').attr('href')
-    '/about'
+    >>> d = pq(url=your_url, parser='html')
+    >>> d('form').attr('action')
+    '/form-submit'
     >>> d.make_links_absolute()
     [<html>]
-    >>> d('a[tabindex="-1"]').attr('href')
-    'http://duckduckgo.com/about'
 
 Using different parsers
 -----------------------

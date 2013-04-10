@@ -1,6 +1,8 @@
 Attributes
 ----------
 
+..
+    >>> from pyquery import PyQuery as pq
 
 You can play with the attributes with the jquery API::
 
