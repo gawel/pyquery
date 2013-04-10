@@ -1,6 +1,7 @@
-recursive-include pyquery *.txt
-recursive-include pyquery *.html
-recursive-include docs *.txt
-include README.rst
-include CHANGES.rst
-include tox.ini
+graft docs
+prune docs/_build
+graft pyquery
+graft tests
+include *.rst *.cfg *.ini
+global-exclude *.pyc
+global-exclude __pycache__

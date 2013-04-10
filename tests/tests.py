@@ -84,47 +84,6 @@ def input_app(environ, start_response):
     return resp(environ, start_response)
 
 
-class TestReadme(doctest.DocFileCase):
-    path = os.path.join(dirname, '..', 'README.rst')
-
-    def __init__(self, *args, **kwargs):
-        parser = doctest.DocTestParser()
-        fd = open(self.path)
-        doc = fd.read()
-        fd.close()
-        test = parser.get_doctest(doc, globals(), '', self.path, 0)
-        doctest.DocFileCase.__init__(self, test, optionflags=doctest.ELLIPSIS)
-
-    def setUp(self):
-        test = self._dt_test
-        test.globs.update(globals())
-
-for filename in os.listdir(docs):
-    if filename.endswith('.txt'):
-        if not GOT_NET and filename in ('ajax.txt', 'tips.txt', 'scrap.txt'):
-            continue
-        if not HAS_REQUEST and filename in ('scrap.txt',):
-            continue
-        if PY3k and filename in ('ajax.txt'):
-            continue
-        klass_name = 'Test%s' % filename.replace('.txt', '').title()
-        path = os.path.join(docs, filename)
-        exec('%s = type("%s", (TestReadme,), dict(path=path))' % (
-             klass_name, klass_name))
-
-
-class TestTests(doctest.DocFileCase):
-    path = os.path.join(dirname, 'tests.txt')
-
-    def __init__(self, *args, **kwargs):
-        parser = doctest.DocTestParser()
-        fd = open(self.path)
-        doc = fd.read()
-        fd.close()
-        test = parser.get_doctest(doc, globals(), '', self.path, 0)
-        doctest.DocFileCase.__init__(self, test, optionflags=doctest.ELLIPSIS)
-
-
 class TestUnicode(unittest.TestCase):
 
     def test_unicode(self):
