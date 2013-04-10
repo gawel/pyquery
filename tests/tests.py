@@ -31,7 +31,7 @@ else:
     import pyquery  # NOQA
     from httplib import HTTPConnection  # NOQA
     from pyquery import PyQuery as pq  # NOQA
-    from ajax import PyQuery as pqa  # NOQA
+    from pyquery.ajax import PyQuery as pqa  # NOQA
     text_type = unicode
 
     def u(value, encoding):  # NOQA
@@ -67,7 +67,7 @@ def with_net(func):
     if GOT_NET:
         return func
 
-dirname = os.path.dirname(os.path.abspath(pyquery.__file__))
+dirname = os.path.dirname(os.path.abspath(__file__))
 docs = os.path.join(os.path.dirname(dirname), 'docs')
 path_to_html_file = os.path.join(dirname, 'test.html')
 
