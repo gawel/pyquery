@@ -234,9 +234,10 @@ class PyQuery(list):
             raise ValueError('You must provide at least a selector')
         if args[0] == '':
             return self.__class__([])
-        if len(args) == 1 and \
-           isinstance(args[0], str) and \
-           not args[0].startswith('<'):
+        if (len(args) == 1 and
+                (not PY3k and isinstance(args[0], basestring) or
+                (PY3k and isinstance(args[0], str))) and
+                not args[0].startswith('<')):
             args += (self,)
         result = self.__class__(*args, parent=self, **kwargs)
         return result
