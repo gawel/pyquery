@@ -224,6 +224,6 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
                 "Expected a single string for :contains(), got %r" % (
                     function.arguments,))
 
-        value = function.arguments[0].value
-        xpath.add_post_condition("contains(text(), '%s')" % value)
+        value = self.xpath_literal(function.arguments[0].value)
+        xpath.add_post_condition("contains(text(), %s)" % value)
         return xpath
