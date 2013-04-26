@@ -3,6 +3,7 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
+from __future__ import unicode_literals
 from cssselect import xpath as cssselect_xpath
 from cssselect.xpath import ExpressionError
 
@@ -223,6 +224,6 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
                 "Expected a single string for :contains(), got %r" % (
                     function.arguments,))
 
-        value = str(function.arguments[0].value)
+        value = function.arguments[0].value
         xpath.add_post_condition("contains(text(), '%s')" % value)
         return xpath

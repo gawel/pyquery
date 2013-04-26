@@ -39,13 +39,18 @@ path_to_html_file = os.path.join(dirname, 'test.html')
 class TestUnicode(TestCase):
 
     def test_unicode(self):
-        xml = pq(u("<p>é</p>", 'utf-8'))
+        xml = pq(u("<html><p>é</p></html>", 'utf-8'))
         self.assertEqual(type(xml.html()), text_type)
         if PY3k:
-            self.assertEqual(str(xml), '<p>é</p>')
+            self.assertEqual(str(xml), '<html><p>é</p></html>')
+            self.assertEqual(str(xml('p:contains("é")')), '<p>é</p>')
         else:
-            self.assertEqual(unicode(xml), u("<p>é</p>", 'utf-8'))
-            self.assertEqual(str(xml), '<p>&#233;</p>')
+            self.assertEqual(unicode(xml), u("<html><p>é</p></html>", 'utf-8'))
+            self.assertEqual(str(xml), '<html><p>&#233;</p></html>')
+            self.assertEqual(str(xml(u('p:contains("é")', 'utf8'))),
+                             '<p>&#233;</p>')
+            self.assertEqual(unicode(xml(u('p:contains("é")', 'utf8'))),
+                             u('<p>é</p>', 'utf8'))
 
 
 class TestAttributeCase(TestCase):
