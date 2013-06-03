@@ -128,9 +128,7 @@ class PyQuery(list):
         html = None
         elements = []
         self._base_url = None
-        self.parser = kwargs.get('parser', None)
-        if 'parser' in kwargs:
-            del kwargs['parser']
+        self.parser = kwargs.pop('parser', None)
 
         if (len(args) >= 1 and
                 (not PY3k and isinstance(args[0], basestring) or
@@ -155,9 +153,7 @@ class PyQuery(list):
         else:
             self._translator = self._translator_class(xhtml=False)
 
-        namespaces = kwargs.get('namespaces', {})
-        if 'namespaces' in kwargs:
-            del kwargs['namespaces']
+        namespaces = kwargs.pop('namespaces', {})
 
         if kwargs:
             # specific case to get the dom
