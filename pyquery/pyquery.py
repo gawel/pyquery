@@ -53,6 +53,9 @@ def fromstring(context, parser=None, custom_parser=None):
             custom_parser = getattr(etree, meth)
         elif parser == 'html':
             custom_parser = getattr(lxml.html, meth)
+        elif parser == 'html5':
+            from lxml.html import html5parser
+            custom_parser = getattr(html5parser, meth)
         elif parser == 'soup':
             from lxml.html import soupparser
             custom_parser = getattr(soupparser, meth)
