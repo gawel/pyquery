@@ -59,7 +59,7 @@ def fromstring(context, parser=None, custom_parser=None):
         elif parser == 'html_fragments':
             custom_parser = lxml.html.fragments_fromstring
         else:
-            ValueError('No such parser: "%s"' % parser)
+            raise ValueError('No such parser: "%s"' % parser)
 
     result = custom_parser(context)
     if type(result) is list:
