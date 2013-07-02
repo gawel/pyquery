@@ -53,13 +53,16 @@ def fromstring(context, parser=None, custom_parser=None):
             custom_parser = getattr(etree, meth)
         elif parser == 'html':
             custom_parser = getattr(lxml.html, meth)
+        elif parser == 'html5':
+            from lxml.html import html5parser
+            custom_parser = getattr(html5parser, meth)
         elif parser == 'soup':
             from lxml.html import soupparser
             custom_parser = getattr(soupparser, meth)
         elif parser == 'html_fragments':
             custom_parser = lxml.html.fragments_fromstring
         else:
-            ValueError('No such parser: "%s"' % parser)
+            raise ValueError('No such parser: "%s"' % parser)
 
     result = custom_parser(context)
     if type(result) is list:
