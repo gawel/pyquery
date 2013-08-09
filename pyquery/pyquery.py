@@ -263,8 +263,13 @@ class PyQuery(list):
             ['foo', 'bar']
             >>> [i.text() for i in d('span').items()]
             ['foo', 'bar']
+            >>> list(d.items('a')) == list(d('a').items())
+            True
         """
-        elems = selector and self(selector) or self
+        if selector:
+            elems = self(selector) or []
+        else:
+            elems = self
         for elem in elems:
             yield self.__class__(elem)
 
