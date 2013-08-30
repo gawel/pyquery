@@ -221,8 +221,8 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() not in (['STRING'], ['IDENT']):
             raise ExpressionError(
-                "Expected a single string for :contains(), got %r" % (
-                    function.arguments,))
+                "Expected a single string or identifier for "
+                ":contains(), got %r" % (function.arguments,))
 
         value = self.xpath_literal(function.arguments[0].value)
         xpath.add_post_condition("contains(text(), %s)" % value)
