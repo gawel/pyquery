@@ -219,7 +219,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
     def xpath_contains_function(self, xpath, function):
         """Matches all elements that contain the given text
         """
-        if function.argument_types() != ['STRING']:
+        if function.argument_types() not in (['STRING'], ['IDENT']):
             raise ExpressionError(
                 "Expected a single string for :contains(), got %r" % (
                     function.arguments,))
