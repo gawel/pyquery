@@ -1,5 +1,5 @@
-1.2.5
------
+1.2.5 (unreleased)
+------------------
 
 cssselect compat. See https://github.com/SimonSapin/cssselect/pull/22
 
