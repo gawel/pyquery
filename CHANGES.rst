@@ -1,7 +1,7 @@
 1.2.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+README_fixt.py was not include in the release. Fix #54.
 
 
 1.2.5 (2013-10-10)
