@@ -444,7 +444,7 @@ class PyQuery(list):
         """
         >>> h = '<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>'
         >>> d = PyQuery(h)
-        >>> d('p:last').next_all()
+        >>> d('p:last').next_all() #  or d('p:last').nextAll()
         [<img>]
         """
         return self._filter_only(selector, self._next_all())
@@ -458,7 +458,7 @@ class PyQuery(list):
         """
         >>> h = '<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>'
         >>> d = PyQuery(h)
-        >>> d('p:last').prev_all()
+        >>> d('p:last').prev_all()  # or d('p:last').prevAll()
         [<p.hello>]
         """
         return self._filter_only(selector, self._prev_all(), reverse=True)
@@ -743,7 +743,7 @@ class PyQuery(list):
         """Remove an attribute::
 
             >>> d = PyQuery('<div id="myid"></div>')
-            >>> d.remove_attr('id')
+            >>> d.remove_attr('id')  # or d.removeAttr('id')
             [<div>]
 
         ..
@@ -772,7 +772,7 @@ class PyQuery(list):
         """Return True if element has class::
 
             >>> d = PyQuery('<div class="myclass"></div>')
-            >>> d.has_class('myclass')
+            >>> d.has_class('myclass')  # or d.hasClass('myclass')
             True
 
         ..
@@ -785,7 +785,7 @@ class PyQuery(list):
         """Add a css class to elements::
 
             >>> d = PyQuery('<div></div>')
-            >>> d.add_class('myclass')
+            >>> d.add_class('myclass')  # or d.addClass('myclass')
             [<div.myclass>]
 
         ..
@@ -803,7 +803,7 @@ class PyQuery(list):
         """Remove a css class to elements::
 
             >>> d = PyQuery('<div class="myclass"></div>')
-            >>> d.remove_class('myclass')
+            >>> d.remove_class('myclass')  # or d.removeClass('myclass')
             [<div>]
 
         ..
@@ -822,7 +822,7 @@ class PyQuery(list):
         """Toggle a css class to elements
 
             >>> d = PyQuery('<div></div>')
-            >>> d.toggle_class('myclass')
+            >>> d.toggle_class('myclass')  # or d.toggleClass('myclass')
             [<div.myclass>]
 
         """
@@ -984,11 +984,11 @@ class PyQuery(list):
             >>> d = PyQuery('<div><span class="red">toto</span> rocks</div>')
             >>> print(d('span'))
             <span class="red">toto</span> rocks
-            >>> print(d('span').outer_html())
+            >>> print(d('span').outer_html())  # or d('span').outerHtml()
             <span class="red">toto</span>
 
             >>> S = PyQuery('<p>Only <b>me</b> & myself</p>')
-            >>> print(S('b').outer_html())
+            >>> print(S('b').outer_html())  # or S('b').outerHtml()
             <b>me</b>
 
         ..
@@ -1216,6 +1216,7 @@ class PyQuery(list):
         element::
 
             >>> d = PyQuery('<div><span>Hey</span><span>you !</span></div>')
+            >>> # d('span').wrapAll('<div id="wrapper"></div>') works too
             >>> print(d('span').wrap_all('<div id="wrapper"></div>'))
             <div id="wrapper"><span>Hey</span><span>you !</span></div>
 
