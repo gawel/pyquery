@@ -437,29 +437,33 @@ class PyQuery(list):
             for j in this_list:
                 yield j
 
-    def _nextAll(self):
+    def _next_all(self):
         return [e for e in self._traverse('getnext')]
 
-    def nextAll(self, selector=None):
+    def next_all(self, selector=None):
         """
         >>> h = '<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>'
         >>> d = PyQuery(h)
-        >>> d('p:last').nextAll()
+        >>> d('p:last').next_all() #  or d('p:last').nextAll()
         [<img>]
         """
-        return self._filter_only(selector, self._nextAll())
+        return self._filter_only(selector, self._next_all())
 
-    def _prevAll(self):
+    nextAll = next_all
+
+    def _prev_all(self):
         return [e for e in self._traverse('getprevious')]
 
-    def prevAll(self, selector=None):
+    def prev_all(self, selector=None):
         """
         >>> h = '<span><p class="hello">Hi</p><p>Bye</p><img scr=""/></span>'
         >>> d = PyQuery(h)
-        >>> d('p:last').prevAll()
+        >>> d('p:last').prev_all()  # or d('p:last').prevAll()
         [<p.hello>]
         """
-        return self._filter_only(selector, self._prevAll(), reverse=True)
+        return self._filter_only(selector, self._prev_all(), reverse=True)
+
+    prevAll = prev_all
 
     def siblings(self, selector=None):
         """
@@ -471,7 +475,7 @@ class PyQuery(list):
          [<img>]
 
         """
-        return self._filter_only(selector, self._prevAll() + self._nextAll())
+        return self._filter_only(selector, self._prev_all() + self._next_all())
 
     def parents(self, selector=None):
         """
@@ -729,17 +733,17 @@ class PyQuery(list):
         elif value is no_default:
             return self[0].get(attr)
         elif value is None or value == '':
-            return self.removeAttr(attr)
+            return self.remove_attr(attr)
         else:
             for tag in self:
                 tag.set(attr, value)
         return self
 
-    def removeAttr(self, name):
+    def remove_attr(self, name):
         """Remove an attribute::
 
             >>> d = PyQuery('<div id="myid"></div>')
-            >>> d.removeAttr('id')
+            >>> d.remove_attr('id')  # or d.removeAttr('id')
             [<div>]
 
         ..
@@ -748,7 +752,8 @@ class PyQuery(list):
             del tag.attrib[name]
         return self
 
-    attr = FlexibleElement(pget=attr, pdel=removeAttr)
+    removeAttr = remove_attr
+    attr = FlexibleElement(pget=attr, pdel=remove_attr)
 
     #######
     # CSS #
@@ -763,22 +768,24 @@ class PyQuery(list):
         """
         return self.attr('width', value)
 
-    def hasClass(self, name):
+    def has_class(self, name):
         """Return True if element has class::
 
             >>> d = PyQuery('<div class="myclass"></div>')
-            >>> d.hasClass('myclass')
+            >>> d.has_class('myclass')  # or d.hasClass('myclass')
             True
 
         ..
         """
         return self.is_('.%s' % name)
 
-    def addClass(self, value):
+    hasClass = has_class
+
+    def add_class(self, value):
         """Add a css class to elements::
 
             >>> d = PyQuery('<div></div>')
-            >>> d.addClass('myclass')
+            >>> d.add_class('myclass')  # or d.addClass('myclass')
             [<div.myclass>]
 
         ..
@@ -790,11 +797,13 @@ class PyQuery(list):
             tag.set('class', ' '.join(classes))
         return self
 
-    def removeClass(self, value):
+    addClass = add_class
+
+    def remove_class(self, value):
         """Remove a css class to elements::
 
             >>> d = PyQuery('<div class="myclass"></div>')
-            >>> d.removeClass('myclass')
+            >>> d.remove_class('myclass')  # or d.removeClass('myclass')
             [<div>]
 
         ..
@@ -807,11 +816,13 @@ class PyQuery(list):
             tag.set('class', ' '.join(classes))
         return self
 
-    def toggleClass(self, value):
+    removeClass = remove_class
+
+    def toggle_class(self, value):
         """Toggle a css class to elements
 
             >>> d = PyQuery('<div></div>')
-            >>> d.toggleClass('myclass')
+            >>> d.toggle_class('myclass')  # or d.toggleClass('myclass')
             [<div.myclass>]
 
         """
@@ -824,6 +835,8 @@ class PyQuery(list):
             classes += values_to_add
             tag.set('class', ' '.join(classes))
         return self
+
+    toggleClass = toggle_class
 
     def css(self, *args, **kwargs):
         """css attributes manipulation
@@ -965,17 +978,17 @@ class PyQuery(list):
                 tag.tail = root.tail
         return self
 
-    def outerHtml(self):
+    def outer_html(self):
         """Get the html representation of the first selected element::
 
             >>> d = PyQuery('<div><span class="red">toto</span> rocks</div>')
             >>> print(d('span'))
             <span class="red">toto</span> rocks
-            >>> print(d('span').outerHtml())
+            >>> print(d('span').outer_html())  # or d('span').outerHtml()
             <span class="red">toto</span>
 
             >>> S = PyQuery('<p>Only <b>me</b> & myself</p>')
-            >>> print(S('b').outerHtml())
+            >>> print(S('b').outer_html())  # or S('b').outerHtml()
             <b>me</b>
 
         ..
@@ -988,6 +1001,8 @@ class PyQuery(list):
             e0 = deepcopy(e0)
             e0.tail = ''
         return lxml.html.tostring(e0, encoding=unicode)
+
+    outerHtml = outer_html
 
     def text(self, value=no_default):
         """Get or set the text representation of sub nodes.
@@ -1072,11 +1087,13 @@ class PyQuery(list):
             root = tag[-len(root):]
         return self
 
-    def appendTo(self, value):
+    def append_to(self, value):
         """append nodes to value
         """
         value.append(self)
         return self
+
+    appendTo = append_to
 
     def prepend(self, value):
         """prepend value to nodes
@@ -1096,11 +1113,13 @@ class PyQuery(list):
             root = tag[:len(root)]
         return self
 
-    def prependTo(self, value):
+    def prepend_to(self, value):
         """prepend nodes to value
         """
         value.prepend(self)
         return self
+
+    prependTo = prepend_to
 
     def after(self, value):
         """add value after nodes
@@ -1118,11 +1137,13 @@ class PyQuery(list):
             root = parent[index:len(root)]
         return self
 
-    def insertAfter(self, value):
+    def insert_after(self, value):
         """insert nodes after value
         """
         value.after(self)
         return self
+
+    insertAfter = insert_after
 
     def before(self, value):
         """insert value before nodes
@@ -1147,11 +1168,13 @@ class PyQuery(list):
             root = parent[index:len(root)]
         return self
 
-    def insertBefore(self, value):
+    def insert_before(self, value):
         """insert nodes before value
         """
         value.before(self)
         return self
+
+    insertBefore = insert_before
 
     def wrap(self, value):
         """A string of HTML that will be created on the fly and wrapped around
@@ -1188,12 +1211,13 @@ class PyQuery(list):
         self[:] = nodes
         return self
 
-    def wrapAll(self, value):
+    def wrap_all(self, value):
         """Wrap all the elements in the matched set into a single wrapper
         element::
 
             >>> d = PyQuery('<div><span>Hey</span><span>you !</span></div>')
-            >>> print(d('span').wrapAll('<div id="wrapper"></div>'))
+            >>> # d('span').wrapAll('<div id="wrapper"></div>') works too
+            >>> print(d('span').wrap_all('<div id="wrapper"></div>'))
             <div id="wrapper"><span>Hey</span><span>you !</span></div>
 
         ..
@@ -1232,7 +1256,9 @@ class PyQuery(list):
         self[:] = [wrapper]
         return self
 
-    def replaceWith(self, value):
+    wrapAll = wrap_all
+
+    def replace_with(self, value):
         """replace nodes by value
         """
         if hasattr(value, '__call__'):
@@ -1248,14 +1274,18 @@ class PyQuery(list):
                 parent.remove(tag)
         return self
 
-    def replaceAll(self, expr):
+    replaceWith = replace_with
+
+    def replace_all(self, expr):
         """replace nodes by expr
         """
         if self._parent is no_default:
             raise ValueError(
                 'replaceAll can only be used with an object with parent')
-        self._parent(expr).replaceWith(self)
+        self._parent(expr).replace_with(self)
         return self
+
+    replaceAll = replace_all
 
     def clone(self):
         """return a copy of nodes

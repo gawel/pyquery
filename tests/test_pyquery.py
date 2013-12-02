@@ -398,7 +398,7 @@ class TestHTMLParser(TestCase):
       Behind you, a three-headed HTML&amp;dash;Entity!
     </div>'''
         d = pq(self.html)
-        d('img').replaceWith('image')
+        d('img').replace_with('image')
         val = d.__html__()
         assert val == expected, (repr(val), repr(expected))
 
@@ -409,7 +409,7 @@ class TestHTMLParser(TestCase):
       Behind you, a three-headed HTML&amp;dash;Entity!
     </div>'''
         d = pq(self.html)
-        d('a').replaceWith(lambda i, e: pq(e).html())
+        d('a').replace_with(lambda i, e: pq(e).html())
         val = d.__html__()
         assert val == expected, (repr(val), repr(expected))
 

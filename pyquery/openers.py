@@ -6,12 +6,10 @@ PY3k = sys.version_info >= (3,)
 if PY3k:
     from urllib.request import urlopen
     from urllib.parse import urlencode
-    from urllib.parse import urljoin
     basestring = (str, bytes)
 else:
     from urllib2 import urlopen  # NOQA
     from urllib import urlencode  # NOQA
-    from urlparse import urljoin  # NOQA
 
 try:
     import requests
