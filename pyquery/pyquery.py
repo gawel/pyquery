@@ -846,7 +846,9 @@ class PyQuery(list):
             classes = set((tag.get('class') or '').split())
             classes.difference_update(values)
             classes.difference_update([''])
-            tag.set('class', ' '.join(classes))
+            classes = ' '.join(classes)
+            if classes.strip():
+                tag.set('class', classes)
         return self
 
     @with_camel_case_alias
@@ -1057,7 +1059,7 @@ class PyQuery(list):
 
         if value is no_default:
             if not self:
-                return None
+                return ''
 
             text = []
 

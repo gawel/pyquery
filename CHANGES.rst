@@ -1,7 +1,15 @@
 1.2.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Use pep8 name for methods but keep an alias for camel case method.
+  Eg: remove_attr and removeAttr works
+  Fix #57
+
+- .text() now return an empty string instead of None if there is no text node.
+  Fix #45
+
+- Fixed #23: removeClass adds class attribute to elements which previously
+  lacked one
 
 
 1.2.6 (2013-10-11)

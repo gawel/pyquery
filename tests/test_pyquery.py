@@ -176,7 +176,7 @@ class TestSelector(TestCase):
         self.assertEqual(e('div:first').text(), 'node1')
         self.assertEqual(e('div:last').text(), 'node3')
         self.assertEqual(e('div:even').text(), 'node1 node3')
-        self.assertEqual(e('div div:even').text(), None)
+        self.assertEqual(e('div div:even').text(), '')
         self.assertEqual(e('body div:even').text(), 'node1 node3')
         self.assertEqual(e('div:gt(0)').text(), 'node2 node3')
         self.assertEqual(e('div:lt(1)').text(), 'node1')
@@ -204,7 +204,7 @@ class TestSelector(TestCase):
     def test_on_the_fly_dom_creation(self):
         e = self.klass(self.html)
         assert e('<p>Hello world</p>').text() == 'Hello world'
-        assert e('').text() is None
+        assert e('').text() == ''
 
 
 class TestTraversal(TestCase):
@@ -365,6 +365,11 @@ class TestManipulating(TestCase):
         assert val == 'Test My link text', repr(val)
         val = d('a:last').html()
         assert val == ' My link text 2', repr(val)
+
+    def test_class(self):
+        d = pq('<div></div>')
+        d.removeClass('xx')
+        assert 'class' not in str(d), str(d)
 
 
 class TestHTMLParser(TestCase):
