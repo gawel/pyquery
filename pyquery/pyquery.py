@@ -849,6 +849,8 @@ class PyQuery(list):
             classes = ' '.join(classes)
             if classes.strip():
                 tag.set('class', classes)
+            elif tag.get('class'):
+                tag.set('class', classes)
         return self
 
     @with_camel_case_alias

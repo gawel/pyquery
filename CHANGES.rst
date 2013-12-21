@@ -1,7 +1,7 @@
 1.2.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bug fix in .remove_class()
 
 
 1.2.7 (2013-12-21)
