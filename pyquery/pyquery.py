@@ -65,6 +65,8 @@ def fromstring(context, parser=None, custom_parser=None):
             try:
                 result = getattr(etree, meth)(context)
             except etree.XMLSyntaxError:
+                if hasattr(context, 'seek'):
+                    context.seek(0)
                 result = getattr(lxml.html, meth)(context)
             if isinstance(result, etree._ElementTree):
                 return [result.getroot()]

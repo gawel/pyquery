@@ -1,0 +1,11 @@
+<html>
+<body>
+<p class="hello" id="hello">Hello world !</p>
+
+<p id="test">
+hello <a href="http://python.org">python</a> !
+</p>
+
+<p>
+</body>
+</html>

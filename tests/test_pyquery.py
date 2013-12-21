@@ -34,6 +34,7 @@ except ImportError:
 dirname = os.path.dirname(os.path.abspath(__file__))
 docs = os.path.join(os.path.dirname(dirname), 'docs')
 path_to_html_file = os.path.join(dirname, 'test.html')
+path_to_invalid_file = os.path.join(dirname, 'invalid.xml')
 
 
 class TestUnicode(TestCase):
@@ -267,6 +268,10 @@ class TestOpener(TestCase):
 
     def test_open_filename(self):
         doc = pq(filename=path_to_html_file)
+        self.assertEqual(len(doc('p#test').text()), 14)
+
+    def test_invalid_filename(self):
+        doc = pq(filename=path_to_invalid_file)
         self.assertEqual(len(doc('p#test').text()), 14)
 
     def test_custom_opener(self):
