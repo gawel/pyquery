@@ -25,7 +25,7 @@ def read(*names):
 long_description = """
 %(README)s
 
-See http://packages.python.org/pyquery/ for the full documentation
+See http://pyquery.rtfd.org/ for the full documentation
 
 News
 ====

@@ -30,7 +30,7 @@ Then you can always look at the `code`_.
 .. _jquery website: http://docs.jquery.com/
 .. _code: https://github.com/gawel/pyquery
 .. _color cheat sheet: http://colorcharge.com/wp-content/uploads/2007/12/jquery12_colorcharge.png
-.. _here: http://packages.python.org/pyquery/
+.. _here: http://pyquery.rtfd.org/
 
 Indices and tables
 ==================
