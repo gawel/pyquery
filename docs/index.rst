@@ -8,6 +8,7 @@ Full documentation
 
    attributes
    css
+   pseudo_classes
    manipulating
    traversing
    api
