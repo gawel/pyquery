@@ -1,4 +1,4 @@
-1.2.7 (unreleased)
+1.2.7 (2013-12-21)
 ------------------
 
 - Use pep8 name for methods but keep an alias for camel case method.
