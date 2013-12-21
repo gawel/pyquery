@@ -1,6 +1,8 @@
 1.2.8 (unreleased)
 ------------------
 
+- Fixed #22: Open by filename fails when file contains invalid xml
+
 - Bug fix in .remove_class()
 
 
