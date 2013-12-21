@@ -1,4 +1,4 @@
-1.2.8 (unreleased)
+1.2.8 (2013-12-21)
 ------------------
 
 - Fixed #22: Open by filename fails when file contains invalid xml
