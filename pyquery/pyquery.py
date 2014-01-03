@@ -614,16 +614,19 @@ class PyQuery(list):
         """Returns True if selector matches at least one current element, else
         False:
 
-            >>> d = PyQuery('<p class="hello">Hi</p><p>Bye</p><div></div>')
+            >>> d = PyQuery('<p class="hello"><span>Hi</span></p><p>Bye</p>')
             >>> d('p').eq(0).is_('.hello')
             True
+
+            >>> d('p').eq(0).is_('span')
+            False
 
             >>> d('p').eq(1).is_('.hello')
             False
 
         ..
         """
-        return bool(self.__class__(selector, self))
+        return bool(self._filter_only(selector, self))
 
     def find(self, selector):
         """Find elements using selector traversing down from self:
