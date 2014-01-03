@@ -1255,8 +1255,11 @@ class PyQuery(list):
         element::
 
             >>> d = PyQuery('<div><span>Hey</span><span>you !</span></div>')
-            >>> # d('span').wrapAll('<div id="wrapper"></div>') works too
             >>> print(d('span').wrap_all('<div id="wrapper"></div>'))
+            <div id="wrapper"><span>Hey</span><span>you !</span></div>
+
+            >>> d = PyQuery('<div><span>Hey</span><span>you !</span></div>')
+            >>> print(d('span').wrapAll('<div id="wrapper"></div>'))
             <div id="wrapper"><span>Hey</span><span>you !</span></div>
 
         ..
@@ -1302,7 +1305,7 @@ class PyQuery(list):
             >>> doc = PyQuery("<html><div /></html>")
             >>> node = PyQuery("<span />")
             >>> child = doc.find('div')
-            >>> child.replaceWith(node)
+            >>> child.replace_with(node)
             [<div>]
             >>> print(doc)
             <html><span/></html>
