@@ -1,7 +1,9 @@
 1.2.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed #19. ``is_()`` was broken.
+
+- Fixed #9. ``.replaceWith(PyQuery element)`` raises error
 
 
 1.2.8 (2013-12-21)

@@ -1297,8 +1297,19 @@ class PyQuery(list):
 
     @with_camel_case_alias
     def replace_with(self, value):
-        """replace nodes by value
+        """replace nodes by value::
+
+            >>> doc = PyQuery("<html><div /></html>")
+            >>> node = PyQuery("<span />")
+            >>> child = doc.find('div')
+            >>> child.replaceWith(node)
+            [<div>]
+            >>> print(doc)
+            <html><span/></html>
+
         """
+        if isinstance(value, PyQuery):
+            value = str(value)
         if hasattr(value, '__call__'):
             for i, element in enumerate(self):
                 self.__class__(element).before(
