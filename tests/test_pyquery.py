@@ -379,13 +379,11 @@ class TestManipulating(TestCase):
 
 class TestHTMLParser(TestCase):
     xml = "<div>I'm valid XML</div>"
-    html = '''
-    <div class="portlet">
+    html = '''<div class="portlet">
       <a href="/toto">TestimageMy link text</a>
       <a href="/toto2">imageMy link text 2</a>
       Behind you, a three-headed HTML&dash;Entity!
-    </div>
-    '''
+    </div>'''
 
     def test_parser_persistance(self):
         d = pq(self.xml, parser='xml')
