@@ -303,7 +303,7 @@ class PyQuery(list):
             ...         '<html xmlns="http://www.w3.org/1999/xhtml"></html>')
             >>> doc
             [<{http://www.w3.org/1999/xhtml}html>]
-            >>> doc.remove_namespaces()
+            >>> doc.xhtml_to_html()
             [<html>]
         """
         try:
