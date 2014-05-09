@@ -4,12 +4,12 @@ Scraping
 ..
   >>> from pyquery.ajax import PyQuery as pq
 
-PyQuery is able to load html document from urls::
+PyQuery is able to load an html document from a url::
 
   >>> pq(your_url)
   [<html>]
 
-By default it use python's urllib.
+By default it uses python's urllib.
 
 If `requests`_ is installed then it will use it. This allow you to use most of `requests`_ parameters::
 
