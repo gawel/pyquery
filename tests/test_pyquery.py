@@ -377,6 +377,25 @@ class TestManipulating(TestCase):
         assert 'class' not in str(d), str(d)
 
 
+class TestMakeLinks(TestCase):
+
+    html = '''
+    <html>
+    <div>
+    <a href="/path_info">with href</a>
+    <a>without href</a>
+    </div>
+    </html>
+    '''
+
+    def test_make_link(self):
+        d = pq(self.html, parser='xml')
+        d.make_links_absolute(base_url='http://example.com')
+        self.assertTrue(len(d('a[href]')), 1)
+        self.assertEqual(d('a[href]').attr('href'),
+                         'http://example.com/path_info')
+
+
 class TestHTMLParser(TestCase):
     xml = "<div>I'm valid XML</div>"
     html = '''<div class="portlet">

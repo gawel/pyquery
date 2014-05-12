@@ -1,6 +1,9 @@
 1.2.9 (unreleased)
 ------------------
 
+- Fixed #65 PyQuery.make_links_absolute() no longer creates 'href' attribute
+  when it isn't there
+
 - Fixed #19. ``is_()`` was broken.
 
 - Fixed #9. ``.replaceWith(PyQuery element)`` raises error

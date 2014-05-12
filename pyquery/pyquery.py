@@ -1423,7 +1423,12 @@ class PyQuery(list):
                     'You need a base URL to make your links'
                     'absolute. It can be provided by the base_url parameter.'))
 
-        self('a').each(lambda: self(this).attr('href', urljoin(base_url, self(this).attr('href'))))  # NOQA
+        def repl(i, e):
+            return self(e).attr(
+                'href',
+                urljoin(base_url, self(e).attr('href')))
+
+        self('a').each(repl)
         return self
 
 build_camel_case_aliases(PyQuery)
