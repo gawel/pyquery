@@ -1393,9 +1393,9 @@ class PyQuery(list):
 
         """
         def __setattr__(self, name, func):
-            def fn(self, *args):
+            def fn(self, *args, **kwargs):
                 func_globals(func)['this'] = self
-                return func(*args)
+                return func(*args, **kwargs)
             fn.__name__ = name
             setattr(PyQuery, name, fn)
     fn = Fn()
