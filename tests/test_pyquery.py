@@ -309,6 +309,32 @@ class TestCallback(TestCase):
                                      ['Coffee', 'Tea', 'Milk'])
 
 
+class TestHook(TestCase):
+    html = """
+        <ol>
+            <li>Coffee</li>
+            <li>Tea</li>
+            <li>Milk</li>
+        </ol>
+    """
+
+    def test_fn(self):
+        "Example from `PyQuery.Fn` docs."
+        fn = lambda: this.map(lambda i, el: pq(this).outerHtml())
+        pq.fn.listOuterHtml = fn
+        S = pq(self.html)
+        self.assertEqual(S('li').listOuterHtml(),
+                         ['<li>Coffee</li>', '<li>Tea</li>', '<li>Milk</li>'])
+
+    def test_fn_with_kwargs(self):
+        "fn() with keyword arguments."
+        pq.fn.test = lambda p=1: pq(this).eq(p)
+        S = pq(self.html)
+        self.assertEqual(S('li').test(0).text(), 'Coffee')
+        self.assertEqual(S('li').test().text(), 'Tea')
+        self.assertEqual(S('li').test(p=2).text(), 'Milk')
+
+
 class TestAjaxSelector(TestSelector):
     klass = pqa
 
