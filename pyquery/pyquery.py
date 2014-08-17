@@ -294,7 +294,7 @@ class PyQuery(list):
         else:
             elems = self
         for elem in elems:
-            yield self.__class__(elem)
+            yield self.__class__(elem, **dict(parent=self))
 
     def xhtml_to_html(self):
         """Remove xhtml namespace:
