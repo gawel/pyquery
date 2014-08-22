@@ -1,6 +1,10 @@
 1.2.9 (unreleased)
 ------------------
 
+- Support for keyword arguments in PyQuery custom functions
+
+- Fixed #78: items must take care or the parent
+
 - Fixed #65 PyQuery.make_links_absolute() no longer creates 'href' attribute
   when it isn't there
 
