@@ -12,6 +12,8 @@
 
 - Fixed #9. ``.replaceWith(PyQuery element)`` raises error
 
+- Remove official python3.2 support (mostly because of 3rd party semi-deps)
+
 
 1.2.8 (2013-12-21)
 ------------------
