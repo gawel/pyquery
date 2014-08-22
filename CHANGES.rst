@@ -1,4 +1,4 @@
-1.2.9 (unreleased)
+1.2.9 (2014-08-22)
 ------------------
 
 - Support for keyword arguments in PyQuery custom functions
