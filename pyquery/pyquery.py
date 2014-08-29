@@ -660,8 +660,12 @@ class PyQuery(list):
 
         ..
         """
-        # Use slicing to silently handle out of bounds indexes
-        items = self[index:index + 1]
+        # Slicing will return empty list when index=-1
+        # we should handle out of bound by ourselves
+        try:
+            items = self[index]
+        except IndexError:
+            items = []
         return self.__class__(items, **dict(parent=self))
 
     def each(self, func):
