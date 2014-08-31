@@ -1130,7 +1130,6 @@ class PyQuery(list):
             if i > 0:
                 root = deepcopy(list(root))
             tag.extend(root)
-            root = tag[-len(root):]
         return self
 
     @with_camel_case_alias
