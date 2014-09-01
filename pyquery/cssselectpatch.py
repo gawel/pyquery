@@ -341,7 +341,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("count(child::*) = 0")
+        xpath.add_condition("not(node())")
         return xpath
 
     def xpath_eq_function(self, xpath, function):
