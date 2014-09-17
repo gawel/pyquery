@@ -71,4 +71,11 @@ You can generate html stuff::
     >>> print(pq('<div>Yeah !</div>').addClass('myclass') + pq('<b>cool</b>'))
     <div class="myclass">Yeah !</div><b>cool</b>
 
+Remove all namespaces::
+
+    >>> d = pq('<foo xmlns="http://example.com/foo"></foo>')
+    >>> d
+    [<{http://example.com/foo}foo>]
+    >>> d.remove_namespaces()
+    [<foo>]
 
