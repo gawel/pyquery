@@ -82,7 +82,7 @@ Match all elements that do not contain other elements::
         >>> from pyquery import PyQuery
         >>> d = PyQuery('<div><h1><span>title</span></h1><h2/></div>')
         >>> d(':empty')
-        [<span>, <h2>]
+        [<h2>]
 
     
 
