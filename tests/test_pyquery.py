@@ -135,6 +135,7 @@ class TestSelector(TestCase):
               <h4>Heading 4</h4>
               <h5>Heading 5</h5>
               <h6>Heading 6</h6>
+              <div></div>
             </body>
            </html>
            """
@@ -199,7 +200,7 @@ class TestSelector(TestCase):
         e = self.klass(self.html5)
         assert len(e(":header")) == 6
         assert len(e(":parent")) == 2
-        assert len(e(":empty")) == 6
+        assert len(e(":empty")) == 1
         assert len(e(":contains('Heading')")) == 6
 
     def test_on_the_fly_dom_creation(self):

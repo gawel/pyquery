@@ -337,11 +337,11 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><h1><span>title</span></h1><h2/></div>')
             >>> d(':empty')
-            [<span>, <h2>]
+            [<h2>]
 
         ..
         """
-        xpath.add_condition("count(child::*) = 0")
+        xpath.add_condition("not(node())")
         return xpath
 
     def xpath_eq_function(self, xpath, function):
