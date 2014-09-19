@@ -4,6 +4,14 @@ Attributes
 ..
     >>> from pyquery import PyQuery as pq
 
+Using attribute to select specific tag
+In attribute selectors, the value should be a valid CSS identifier or quoted as string::
+
+    >>> d = pq("<option value='1'><option value='2'>")
+    >>> d('option[value="1"]')
+    [<option>]
+
+
 You can play with the attributes with the jquery API::
 
     >>> p = pq('<p id="hello" class="hello"></p>')('p')
