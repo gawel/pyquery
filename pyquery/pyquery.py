@@ -1426,12 +1426,22 @@ class PyQuery(list):
                     'You need a base URL to make your links'
                     'absolute. It can be provided by the base_url parameter.'))
 
-        def repl(i, e):
-            return self(e).attr(
-                'href',
-                urljoin(base_url, self(e).attr('href')))
+        def repl(attr):
+            def rep(i, e):
+                attr_value = self(e).attr(attr)
+                # when label hasn't such attr, pass
+                if attr_value is None:
+                    return None
+                return self(e).attr(attr,
+                    urljoin(base_url, attr_value))
+            return rep
 
-        self('a').each(repl)
+        self('a').each(repl('href'))
+        self('link').each(repl('href'))
+        self('script').each(repl('src'))
+        self('img').each(repl('src'))
+        self('iframe').each(repl('src'))
+
         return self
 
 build_camel_case_aliases(PyQuery)
