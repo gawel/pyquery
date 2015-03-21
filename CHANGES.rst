@@ -1,7 +1,7 @@
 1.2.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fixed #98: contains act like jQuery
 
 
 1.2.9 (2014-08-22)

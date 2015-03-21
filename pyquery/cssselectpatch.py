@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 #
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
@@ -406,16 +406,16 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><h1/><h1 class="title">title</h1></div>')
-            >>> d(':contains("title")')
+            >>> d('h1:contains("title")')
             [<h1.title>]
 
         ..
         """
-        if function.argument_types() != ['STRING']:
+        if function.argument_types() not in (['STRING'], ['IDENT']):
             raise ExpressionError(
-                "Expected a single string for :contains(), got %r" % (
+                "Expected a single string or ident for :contains(), got %r" % (
                     function.arguments,))
 
         value = self.xpath_literal(function.arguments[0].value)
-        xpath.add_post_condition("contains(text(), %s)" % value)
+        xpath.add_post_condition('contains(., %s)' % value)
         return xpath

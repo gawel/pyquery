@@ -184,7 +184,7 @@ class TestSelector(TestCase):
         self.assertEqual(e('div:lt(1)').text(), 'node1')
         self.assertEqual(e('div:eq(2)').text(), 'node3')
 
-        #test on the form
+        # test on the form
         e = self.klass(self.html4)
         assert len(e(':disabled')) == 1
         assert len(e('input:enabled')) == 9
@@ -196,12 +196,12 @@ class TestSelector(TestCase):
         assert len(e(':radio')) == 3
         assert len(e(':checkbox')) == 3
 
-        #test on other elements
+        # test on other elements
         e = self.klass(self.html5)
         assert len(e(":header")) == 6
         assert len(e(":parent")) == 2
         assert len(e(":empty")) == 1
-        assert len(e(":contains('Heading')")) == 6
+        assert len(e(":contains('Heading')")) == 8
 
     def test_on_the_fly_dom_creation(self):
         e = self.klass(self.html)
