@@ -1441,6 +1441,7 @@ class PyQuery(list):
         self('script').each(repl('src'))
         self('img').each(repl('src'))
         self('iframe').each(repl('src'))
+        self('form').each(repl('action'))
 
         return self
 

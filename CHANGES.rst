@@ -1,6 +1,8 @@
 1.2.10 (unreleased)
 -------------------
 
+- Fixed #112: make_links_absolute does not apply to form actions
+
 - Fixed #98: contains act like jQuery
 
 
