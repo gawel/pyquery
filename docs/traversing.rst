@@ -34,3 +34,9 @@ Breaking out of a level of traversal is also supported using end::
     [<p#hello.hello>, <p#test>]
 
 
+If you want to select a dotted id you need to escape the dot::
+
+    >>> d = pq('<p id="hello.you"><a/></p><p id="test"><a/></p>')
+    >>> d('#hello\.you')
+    [<p#hello.you>]
+
