@@ -9,6 +9,7 @@ from copy import deepcopy
 from lxml import etree
 import lxml.html
 import inspect
+import re
 import types
 import sys
 
@@ -96,6 +97,14 @@ def fromstring(context, parser=None, custom_parser=None):
         return [result]
     else:
         return []
+
+
+def strip(text):
+    """Removes whitespace from a string similar to the way browsers render text.
+    """
+    text = re.sub(r'\s+', ' ', text)
+    text = re.sub(u'\xa0', ' ', text)
+    return text.strip()
 
 
 def callback(func, *args):
@@ -1050,14 +1059,29 @@ class PyQuery(list):
             e0.tail = ''
         return lxml.html.tostring(e0, encoding=unicode)
 
-    def text(self, value=no_default):
+    def text(self, value=no_default, raw=False):
         """Get or set the text representation of sub nodes.
+
+        The text representation is similar to how a browser renders text,
+        consecutive spaces are truncated for example.
 
         Get the text value::
 
-            >>> doc = PyQuery('<div><span>toto</span><span>tata</span></div>')
+            >>> doc = PyQuery('<div><span>toto</span> <span>tata</span></div>')
             >>> print(doc.text())
             toto tata
+
+        If the raw keyword argument is set to True, all whitespace will be
+        preserved:
+
+            >>> doc = PyQuery(\"\"\"
+            ... <div>
+            ...   <div>One</div>
+            ...   <div>Two</div>
+            ... </div>
+            ... \"\"\")
+            >>> doc.text(raw=True)
+            '\\n  One\\n  Two\\n'
 
         Set the text value::
 
@@ -1084,7 +1108,17 @@ class PyQuery(list):
 
             for tag in self:
                 add_text(tag, no_tail=True)
-            return ' '.join([t.strip() for t in text if t.strip()])
+
+            if self.length > 1:
+                # Assume this is just a list of nodes from a query and add
+                # spaces for readability
+                text = ' '.join(text)
+            else:
+                text = ''.join(text)
+
+            if not raw:
+                text = strip(text)
+            return text
 
         for tag in self:
             for child in tag.getchildren():

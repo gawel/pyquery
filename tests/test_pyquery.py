@@ -5,6 +5,7 @@
 # Distributed under the BSD license, see LICENSE.txt
 import os
 import sys
+import textwrap
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from lxml import etree
 from pyquery.pyquery import PyQuery as pq
@@ -207,6 +208,76 @@ class TestSelector(TestCase):
         e = self.klass(self.html)
         assert e('<p>Hello world</p>').text() == 'Hello world'
         assert e('').text() == ''
+
+
+class TestTextRepresentation(TestCase):
+    klass = pq
+    html = textwrap.dedent("""
+    <html>
+     <body>
+      <div id="test1">too easy</div>
+
+      <div id="test2"><span>foo</span><span>bar</span>: <span>baz</span></div>
+
+      <div id="test3">five     spaces</div>
+
+      <div id="test4">spaces 	 	tabs</div>
+
+      <div id="test5">
+       a
+       new
+       line
+      </div>
+
+      <div id="test6">non-breaking&nbsp;&nbsp;spaces</div>
+
+      <div id="test7">mixed non-breaking and regular&nbsp; &nbsp; &nbsp; spaces</div>
+
+      <div id="test8">
+       <ul>
+        <li>item	one</li>
+        <li>item&nbsp;two</li>
+       </ul>
+      </div>
+     </body>
+    </html>
+    """)
+
+    e = klass(html)
+
+    def assert_node_text(self, node, expected):
+        self.assertEqual(self.e(node).text(), expected)
+
+    def test_simple(self):
+        self.assert_node_text('#test1', 'too easy')
+
+    def test_child_elements(self):
+        # Child elements should be rendered with their original whitespace
+        self.assert_node_text('#test2', 'foobar: baz')
+
+    def test_query(self):
+        # The result of a query is just an array, so make sure spaces are added
+        # for readability
+        self.assertEqual(self.e('#test2').find('span').text(), 'foo bar baz')
+
+    def test_consecutive_spaces(self):
+        self.assert_node_text('#test3', 'five spaces')
+
+    def test_spaces_vs_tabs(self):
+        self.assert_node_text('#test4', 'spaces tabs')
+
+    def test_newline(self):
+        self.assert_node_text('#test5', 'a new line')
+
+    def test_newline(self):
+        self.assert_node_text('#test6', 'non-breaking  spaces')
+
+    def test_non_breaking_vs_regular_spaces(self):
+        self.assert_node_text('#test7', 'mixed non-breaking and regular      spaces')
+
+    def test_raw(self):
+        expected = u'\n   \n    item\tone\n    item\xa0two\n   \n  '
+        self.assertEqual(self.e('#test8').text(raw=True), expected)
 
 
 class TestTraversal(TestCase):
