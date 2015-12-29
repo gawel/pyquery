@@ -6,10 +6,12 @@ PY3k = sys.version_info >= (3,)
 if PY3k:
     from urllib.request import urlopen
     from urllib.parse import urlencode
+    from urllib.error import HTTPError
     basestring = (str, bytes)
 else:
     from urllib2 import urlopen  # NOQA
     from urllib import urlencode  # NOQA
+    from urllib2 import HTTPError
 
 try:
     import requests
@@ -54,6 +56,8 @@ def _requests(url, kwargs):
         if k in kwargs:
             kw[k] = kwargs[k]
     resp = meth(url=url, **kw)
+    if resp.status_code != 200:
+        raise HTTPError(resp.url, resp.status_code, resp.reason, resp.headers, None)
     if encoding:
         resp.encoding = encoding
     html = resp.text
