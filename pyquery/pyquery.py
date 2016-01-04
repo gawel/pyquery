@@ -1048,7 +1048,7 @@ class PyQuery(list):
         if e0.tail:
             e0 = deepcopy(e0)
             e0.tail = ''
-        return lxml.html.tostring(e0, encoding=unicode)
+        return etree.tostring(e0, encoding=unicode)
 
     def text(self, value=no_default):
         """Get or set the text representation of sub nodes.
