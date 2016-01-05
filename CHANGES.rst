@@ -1,6 +1,10 @@
 1.2.10 (unreleased)
 -------------------
 
+- Fixed #118: implemented usage `lxml.etree.tostring` within `outer_html` method
+
+- Fixed #117: Raise HTTP Error if HTTP status code is not equal to 200
+
 - Fixed #112: make_links_absolute does not apply to form actions
 
 - Fixed #98: contains act like jQuery
