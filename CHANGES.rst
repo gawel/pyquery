@@ -1,4 +1,4 @@
-1.2.10 (unreleased)
+1.2.10 (2016-01-05)
 -------------------
 
 - Fixed #118: implemented usage `lxml.etree.tostring` within `outer_html` method
