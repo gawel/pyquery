@@ -1,21 +1,11 @@
 language: python
-python:
-  - 2.6
-  - 2.7
-  - 3.3
-  - 3.4
+sudo: false
 install:
-  - pip install nose
-  - pip install webob
-  - pip install webtest
-  - pip install requests
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install unittest2; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install beautifulsoup; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install beautifulsoup; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install beautifulsoup; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.5' ]]; then pip install restkit; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install restkit; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install restkit; fi"
-  - python setup.py develop
+  - pip install tox
 script:
-  - nosetests -s -v
+  - tox
+env:
+  - TOXENV=py26
+  - TOXENV=py27
+  - TOXENV=py33
+  - TOXENV=py34

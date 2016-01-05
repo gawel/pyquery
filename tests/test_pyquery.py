@@ -1,11 +1,10 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 #
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
 import os
 import sys
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from lxml import etree
 from pyquery.pyquery import PyQuery as pq
 from pyquery.ajax import PyQuery as pqa
@@ -18,6 +17,8 @@ from .compat import u
 from .compat import b
 from .compat import text_type
 from .compat import TestCase
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 
 def not_py3k(func):
@@ -46,7 +47,8 @@ class TestUnicode(TestCase):
             self.assertEqual(str(xml), '<html><p>é</p></html>')
             self.assertEqual(str(xml('p:contains("é")')), '<p>é</p>')
         else:
-            self.assertEqual(unicode(xml), u("<html><p>é</p></html>", 'utf-8'))
+            self.assertEqual(unicode(xml),
+                             u("<html><p>é</p></html>", 'utf-8'))
             self.assertEqual(str(xml), '<html><p>&#233;</p></html>')
             self.assertEqual(str(xml(u('p:contains("é")', 'utf8'))),
                              '<p>&#233;</p>')
@@ -321,7 +323,7 @@ class TestHook(TestCase):
 
     def test_fn(self):
         "Example from `PyQuery.Fn` docs."
-        fn = lambda: this.map(lambda i, el: pq(this).outerHtml())
+        fn = lambda: this.map(lambda i, el: pq(this).outerHtml())  # NOQA
         pq.fn.listOuterHtml = fn
         S = pq(self.html)
         self.assertEqual(S('li').listOuterHtml(),
@@ -329,7 +331,7 @@ class TestHook(TestCase):
 
     def test_fn_with_kwargs(self):
         "fn() with keyword arguments."
-        pq.fn.test = lambda p=1: pq(this).eq(p)
+        pq.fn.test = lambda p=1: pq(this).eq(p)  # NOQA
         S = pq(self.html)
         self.assertEqual(S('li').test(0).text(), 'Coffee')
         self.assertEqual(S('li').test().text(), 'Tea')
@@ -436,14 +438,6 @@ class TestHTMLParser(TestCase):
         self.assertRaises(etree.XMLSyntaxError, lambda: d.after(self.html))
         d = pq(self.xml, parser='html')
         d.after(self.html)  # this should not fail
-
-    @not_py3k
-    def test_soup_parser(self):
-        d = pq('<meta><head><title>Hello</head><body onload=crash()>Hi all<p>',
-               parser='soup')
-        self.assertEqual(str(d), (
-            '<html><meta/><head><title>Hello</title></head>'
-            '<body onload="crash()">Hi all<p/></body></html>'))
 
     def test_replaceWith(self):
         expected = '''<div class="portlet">

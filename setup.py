@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 #
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
@@ -6,6 +6,12 @@
 
 from setuptools import setup, find_packages
 import os
+
+
+install_requires = [
+    'lxml>=2.1',
+    'cssselect>0.7.9',
+]
 
 
 def read(*names):
@@ -62,10 +68,7 @@ setup(name='pyquery',
       ]),
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          'lxml>=2.1',
-          'cssselect',
-      ],
+      install_requires=install_requires,
       entry_points="""
       # -*- Entry points: -*-
       """,
