@@ -2,6 +2,8 @@ graft docs
 prune docs/_build
 graft pyquery
 graft tests
+include *.py
+include *.txt
 include *_fixt.py *.rst *.cfg *.ini
 global-exclude *.pyc
 global-exclude __pycache__
