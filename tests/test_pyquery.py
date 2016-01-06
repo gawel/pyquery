@@ -467,6 +467,9 @@ class TestXMLNamespace(TestCase):
     <foo xmlns:bar="http://example.com/bar">
     <bar:blah>What</bar:blah>
     <idiot>123</idiot>
+    <baz xmlns="http://example.com/baz" a="b">
+          <subbaz/>
+    </baz>
     </foo>'''
 
     xhtml = '''
@@ -476,17 +479,19 @@ class TestXMLNamespace(TestCase):
     </body>
     </html>'''
 
+    namespaces = {'bar': 'http://example.com/bar', 'baz': 'http://example.com/baz'}
+
     def test_selector(self):
         expected = 'What'
         d = pq(b(self.xml), parser='xml')
         val = d('bar|blah',
-                namespaces={'bar': 'http://example.com/bar'}).text()
+                namespaces=self.namespaces).text()
         self.assertEqual(repr(val), repr(expected))
 
     def test_selector_with_xml(self):
         expected = 'What'
         d = pq('bar|blah', b(self.xml), parser='xml',
-               namespaces={'bar': 'http://example.com/bar'})
+               namespaces=self.namespaces)
         val = d.text()
         self.assertEqual(repr(val), repr(expected))
 
@@ -515,6 +520,16 @@ class TestXMLNamespace(TestCase):
         d = pq(b(self.xml), parser='xml').remove_namespaces()
         val = d('blah').text()
         self.assertEqual(repr(val), repr(expected))
+
+    def test_persistent_namespaces(self):
+        d = pq(b(self.xml), parser='xml', namespaces=self.namespaces)
+        val = d('bar|blah').text()
+        self.assertEqual(repr(val), repr('What'))
+
+    def test_namespace_traversal(self):
+        d = pq(b(self.xml), parser='xml', namespaces=self.namespaces)
+        val = d('baz|subbaz').closest('baz|baz').attr('a')
+        self.assertEqual(repr(val), repr('b'))
 
 
 class TestWebScrapping(TestCase):
