@@ -1,4 +1,4 @@
-1.2.11 (unreleased)
+1.2.11 (2016-02-02)
 -------------------
 
 - Preserve namespaces attribute on PyQuery copies.
