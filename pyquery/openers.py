@@ -56,8 +56,9 @@ def _requests(url, kwargs):
         if k in kwargs:
             kw[k] = kwargs[k]
     resp = meth(url=url, **kw)
-    if resp.status_code != 200:
-        raise HTTPError(resp.url, resp.status_code, resp.reason, resp.headers, None)
+    if not (200 <= resp.status_code < 300):
+        raise HTTPError(resp.url, resp.status_code,
+                        resp.reason, resp.headers, None)
     if encoding:
         resp.encoding = encoding
     html = resp.text
