@@ -1,8 +1,9 @@
 1.2.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Preserve namespaces attribute on PyQuery copies.
 
+- Do not raise an error when the http response code is 2XX
 
 1.2.10 (2016-01-05)
 -------------------
