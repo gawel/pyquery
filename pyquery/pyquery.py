@@ -1436,8 +1436,9 @@ class PyQuery(list):
                 # when label hasn't such attr, pass
                 if attr_value is None:
                     return None
+
                 return self(e).attr(attr,
-                    urljoin(base_url, attr_value))
+                    urljoin(base_url, attr_value.strip()))
             return rep
 
         self('a').each(repl('href'))
