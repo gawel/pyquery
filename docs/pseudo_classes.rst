@@ -160,6 +160,25 @@ Matches all elements with an index over the given one::
 
 
 
+:has()
+==================
+Matches elements which contain at least one element that matches the
+specified selector. https://api.jquery.com/has-selector/
+
+        >>> from pyquery import PyQuery
+        >>> d = PyQuery('<div class="foo"><div class="bar"></div></div>')
+        >>> d('.foo:has(".baz")')
+        []
+        >>> d('.foo:has(".foo")')
+        []
+        >>> d('.foo:has(".bar")')
+        [<div.foo>]
+        >>> d('.foo:has(div)')
+        [<div.foo>]
+
+
+
+
 :header
 ==================
 

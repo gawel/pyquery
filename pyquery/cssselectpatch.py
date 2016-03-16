@@ -419,3 +419,30 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         value = self.xpath_literal(function.arguments[0].value)
         xpath.add_post_condition('contains(., %s)' % value)
         return xpath
+
+    def xpath_has_function(self, xpath, function):
+        """Matches elements which contain at least one element that matches
+        the specified selector. https://api.jquery.com/has-selector/
+
+            >>> from pyquery import PyQuery
+            >>> d = PyQuery('<div class="foo"><div class="bar"></div></div>')
+            >>> d('.foo:has(".baz")')
+            []
+            >>> d('.foo:has(".foo")')
+            []
+            >>> d('.foo:has(".bar")')
+            [<div.foo>]
+            >>> d('.foo:has(div)')
+            [<div.foo>]
+
+        ..
+        """
+        if function.argument_types() not in (['STRING'], ['IDENT']):
+            raise ExpressionError(
+                "Expected a single string or ident for :contains(), got %r" % (
+                    function.arguments,))
+        value = self.css_to_xpath(
+            function.arguments[0].value, prefix='descendant::',
+        )
+        xpath.add_post_condition(value)
+        return xpath
