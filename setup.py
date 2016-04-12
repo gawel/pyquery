@@ -40,7 +40,7 @@ News
 
 """ % read('README', 'CHANGES')
 
-version = '1.2.12'
+version = '1.2.13'
 
 setup(name='pyquery',
       version=version,

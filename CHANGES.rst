@@ -1,3 +1,8 @@
+1.2.13 (unreleased)
+-------------------
+
+- Note explicit support for Python 3.5
+
 1.2.12 (2016-04-12)
 -------------------
 
