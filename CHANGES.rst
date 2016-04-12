@@ -1,4 +1,4 @@
-1.2.12 (unreleased)
+1.2.12 (2016-04-12)
 -------------------
 
 - make_links_absolute now take care of whitespaces
