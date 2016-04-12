@@ -1,4 +1,4 @@
-1.2.13 (unreleased)
+1.2.13 (2016-04-12)
 -------------------
 
 - Note explicit support for Python 3.5
