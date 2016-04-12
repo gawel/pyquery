@@ -1,7 +1,11 @@
 1.2.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- make_links_absolute now take care of whitespaces
+
+- added pseudo selector :has()
+
+- add cookies arguments as allowed arguments for requests
 
 
 1.2.11 (2016-02-02)
