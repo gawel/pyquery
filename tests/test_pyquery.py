@@ -455,25 +455,26 @@ class TestManipulating(TestCase):
 
     def test_val_for_textarea(self):
         d = pq(self.html3)
-        self.assertIsNone(d('textarea').val()) # Quirk.
+        self.assertEqual(d('textarea').val(), 'Spam')
         self.assertEqual(d('textarea').text(), 'Spam')
         d('textarea').val('42')
         self.assertEqual(d('textarea').val(), '42')
-        self.assertEqual(d('textarea').text(), 'Spam')
+        # Note: jQuery still returns 'Spam' here.
+        self.assertEqual(d('textarea').text(), '42')
 
     def test_val_for_select(self):
         d = pq(self.html4)
         self.assertIsNone(d('#first').val())
-        self.assertIsNone(d('#second').val()) # Quirk.
+        self.assertEqual(d('#second').val(), 'eggs')
         self.assertIsNone(d('#third').val())
         d('#first').val('spam')
         d('#second').val('bacon')
-        d('#third').val('eggs')
+        d('#third').val('eggs') # Selecting non-existing option.
         self.assertEqual(d('#first').val(), 'spam')
         self.assertEqual(d('#second').val(), 'bacon')
-        self.assertEqual(d('#third').val(), 'eggs') # Quirk.
-        d('#first').val('bacon')
-        self.assertEqual(d('#first').val(), 'bacon') # Quirk.
+        self.assertIsNone(d('#third').val())
+        d('#first').val('bacon') # Selecting non-existing option.
+        self.assertIsNone(d('#first').val())
 
     def test_val_for_multiple_elements(self):
         d = pq(self.html5)
