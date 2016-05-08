@@ -392,6 +392,39 @@ class TestManipulating(TestCase):
     </div>
     '''
 
+    html2 = '''
+        <input name="spam" value="Spam">
+        <input name="eggs" value="Eggs">
+        <input type="checkbox" value="Bacon">
+        <input type="radio" value="Ham">
+    '''
+
+    html3 = '''
+        <textarea>Spam</textarea>
+    '''
+
+    html4 = '''
+        <select id="first">
+            <option value="spam">Spam</option>
+            <option value="eggs">Eggs</option>
+        </select>
+        <select id="second">
+            <option value="spam">Spam</option>
+            <option value="eggs" selected>Eggs</option>
+            <option value="bacon">Bacon</option>
+        </select>
+        <select id="third">
+        </select>
+    '''
+
+    html5 = '''
+        <div>
+            <input id="first" value="spam">
+            <input id="second" value="eggs">
+            <textarea id="third">bacon</textarea>
+        </div>
+    '''
+
     def test_remove(self):
         d = pq(self.html)
         d('img').remove()
@@ -404,6 +437,53 @@ class TestManipulating(TestCase):
         d = pq('<div></div>')
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
+
+    def test_val_for_inputs(self):
+        d = pq(self.html2)
+        self.assertEqual(d('input[name="spam"]').val(), 'Spam')
+        self.assertEqual(d('input[name="eggs"]').val(), 'Eggs')
+        self.assertEqual(d('input:checkbox').val(), 'Bacon')
+        self.assertEqual(d('input:radio').val(), 'Ham')
+        d('input[name="spam"]').val('42')
+        d('input[name="eggs"]').val('43')
+        d('input:checkbox').val('44')
+        d('input:radio').val('45')
+        self.assertEqual(d('input[name="spam"]').val(), '42')
+        self.assertEqual(d('input[name="eggs"]').val(), '43')
+        self.assertEqual(d('input:checkbox').val(), '44')
+        self.assertEqual(d('input:radio').val(), '45')
+
+    def test_val_for_textarea(self):
+        d = pq(self.html3)
+        self.assertIsNone(d('textarea').val()) # Quirk.
+        self.assertEqual(d('textarea').text(), 'Spam')
+        d('textarea').val('42')
+        self.assertEqual(d('textarea').val(), '42')
+        self.assertEqual(d('textarea').text(), 'Spam')
+
+    def test_val_for_select(self):
+        d = pq(self.html4)
+        self.assertIsNone(d('#first').val())
+        self.assertIsNone(d('#second').val()) # Quirk.
+        self.assertIsNone(d('#third').val())
+        d('#first').val('spam')
+        d('#second').val('bacon')
+        d('#third').val('eggs')
+        self.assertEqual(d('#first').val(), 'spam')
+        self.assertEqual(d('#second').val(), 'bacon')
+        self.assertEqual(d('#third').val(), 'eggs') # Quirk.
+        d('#first').val('bacon')
+        self.assertEqual(d('#first').val(), 'bacon') # Quirk.
+
+    def test_val_for_multiple_elements(self):
+        d = pq(self.html5)
+        # "Get" returns *first* value.
+        self.assertEqual(d('div > *').val(), 'spam')
+        # "Set" updates *every* value.
+        d('div > *').val('42')
+        self.assertEqual(d('#first').val(), '42')
+        self.assertEqual(d('#second').val(), '42')
+        self.assertEqual(d('#third').val(), '42')
 
 
 class TestMakeLinks(TestCase):
