@@ -965,7 +965,44 @@ class PyQuery(list):
             'Youhou'
 
         """
-        return self.attr('value', value) or None
+        def _get_value(tag):
+            # <textarea>
+            if tag.tag == 'textarea':
+                return self._copy(tag).text()
+            # <select>
+            if tag.tag == 'select':
+                selected_option = self._copy(tag)('option[selected]:last')
+                if selected_option:
+                    return selected_option.attr('value')
+                return None
+            # <input> and everything else.
+            return self._copy(tag).attr('value') or None
+
+        def _set_value(pq, value):
+            for tag in pq:
+                # <textarea>
+                if tag.tag == 'textarea':
+                    self._copy(tag).text(value)
+                    continue
+                # <select>
+                if tag.tag == 'select':
+                    def _make_option_selected(_, elem):
+                        pq = self._copy(elem)
+                        if pq.attr('value') == value:
+                            pq.attr('selected', 'selected')
+                        else:
+                            pq.removeAttr('selected')
+                    tag_pq = self._copy(tag)('option') \
+                                 .each(_make_option_selected)
+                    continue
+                # <input> and everything else.
+                self._copy(tag).attr('value', value)
+
+        if value is no_default:
+            return _get_value(self[0])
+        else:
+            _set_value(self, value)
+            return self
 
     def html(self, value=no_default, **kwargs):
         """Get or set the html representation of sub nodes.

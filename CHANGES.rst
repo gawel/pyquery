@@ -1,7 +1,7 @@
 1.2.14 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- fix val() for <textarea> and <select>, to match jQuery behavior
 
 
 1.2.13 (2016-04-12)
