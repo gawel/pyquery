@@ -1,7 +1,7 @@
 1.2.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- improve .extend() by returning self
 
 
 1.2.14 (2016-10-10)

@@ -281,6 +281,7 @@ class PyQuery(list):
         """Extend with anoter PyQuery object"""
         assert isinstance(other, self.__class__)
         self._extend(other[:])
+        return self
 
     def items(self, selector=None):
         """Iter over elements. Return PyQuery objects:
