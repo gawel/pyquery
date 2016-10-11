@@ -1,4 +1,4 @@
-1.2.15 (unreleased)
+1.2.15 (2016-10-11)
 -------------------
 
 - .val() should never raise
