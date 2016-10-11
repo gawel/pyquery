@@ -439,7 +439,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() not in (['STRING'], ['IDENT']):
             raise ExpressionError(
-                "Expected a single string or ident for :contains(), got %r" % (
+                "Expected a single string or ident for :has(), got %r" % (
                     function.arguments,))
         value = self.css_to_xpath(
             function.arguments[0].value, prefix='descendant::',
