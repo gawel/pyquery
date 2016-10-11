@@ -769,7 +769,7 @@ class PyQuery(list):
                     tag.set(key, value)
         elif value is no_default:
             return self[0].get(attr)
-        elif value is None or value == '':
+        elif value is None:
             return self.remove_attr(attr)
         else:
             for tag in self:
