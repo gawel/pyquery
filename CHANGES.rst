@@ -1,6 +1,8 @@
 1.2.15 (unreleased)
 -------------------
 
+- .val() should never raise
+
 - drop py26 support
 
 - improve .extend() by returning self

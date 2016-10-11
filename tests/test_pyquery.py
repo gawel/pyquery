@@ -440,6 +440,7 @@ class TestManipulating(TestCase):
 
     def test_val_for_inputs(self):
         d = pq(self.html2)
+        self.assertIsNone(d('input[name="none"]').val())
         self.assertEqual(d('input[name="spam"]').val(), 'Spam')
         self.assertEqual(d('input[name="eggs"]').val(), 'Eggs')
         self.assertEqual(d('input:checkbox').val(), 'Bacon')

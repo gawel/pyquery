@@ -993,14 +993,14 @@ class PyQuery(list):
                             pq.attr('selected', 'selected')
                         else:
                             pq.removeAttr('selected')
-                    tag_pq = self._copy(tag)('option') \
-                                 .each(_make_option_selected)
+                    self._copy(tag)('option').each(_make_option_selected)
                     continue
                 # <input> and everything else.
                 self._copy(tag).attr('value', value)
 
         if value is no_default:
-            return _get_value(self[0])
+            if len(self):
+                return _get_value(self[0])
         else:
             _set_value(self, value)
             return self
