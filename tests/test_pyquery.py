@@ -425,6 +425,11 @@ class TestManipulating(TestCase):
         </div>
     '''
 
+    def test_attr_empty_string(self):
+        d = pq('<div>')
+        d.attr('value', '')
+        self.assertEqual(d.outer_html(), '<div value=""/>')
+
     def test_remove(self):
         d = pq(self.html)
         d('img').remove()
