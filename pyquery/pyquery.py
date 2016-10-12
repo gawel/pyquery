@@ -971,11 +971,18 @@ class PyQuery(list):
             if tag.tag == 'textarea':
                 return self._copy(tag).text()
             # <select>
-            if tag.tag == 'select':
+            elif tag.tag == 'select':
                 selected_option = self._copy(tag)('option[selected]:last')
                 if selected_option:
                     return selected_option.attr('value')
                 return None
+            # <input type="checkbox">
+            elif self.is_(':checkbox'):
+                val = self._copy(tag).attr('value')
+                if val is None:
+                    return 'on'
+                else:
+                    return val
             # <input> and everything else.
             return self._copy(tag).attr('value') or None
 

@@ -492,6 +492,12 @@ class TestManipulating(TestCase):
         self.assertEqual(d('#second').val(), '42')
         self.assertEqual(d('#third').val(), '42')
 
+    def test_val_checkbox_no_value_attribute(self):
+        d = pq('<input type="checkbox">')
+        self.assertEqual(d.val(), 'on')
+        d = pq('<input type="checkbox" value="">')
+        self.assertEqual(d.val(), '')
+
 
 class TestMakeLinks(TestCase):
 
