@@ -498,6 +498,10 @@ class TestManipulating(TestCase):
         d = pq('<input type="checkbox" value="">')
         self.assertEqual(d.val(), '')
 
+    def test_val_radio_no_value_attribute(self):
+        d = pq('<input type="radio">')
+        self.assertEqual(d.val(), 'on')
+
 
 class TestMakeLinks(TestCase):
 

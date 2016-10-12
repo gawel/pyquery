@@ -976,8 +976,8 @@ class PyQuery(list):
                 if selected_option:
                     return selected_option.attr('value')
                 return None
-            # <input type="checkbox">
-            elif self.is_(':checkbox'):
+            # <input type="checkbox"> or <input type="radio">
+            elif self.is_(':checkbox,:radio'):
                 val = self._copy(tag).attr('value')
                 if val is None:
                     return 'on'
