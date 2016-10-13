@@ -975,7 +975,8 @@ class PyQuery(list):
                 selected_option = self._copy(tag)('option[selected]:last')
                 if selected_option:
                     return selected_option.attr('value')
-                return None
+                else:
+                    return self._copy(tag)('option').attr('value')
             # <input type="checkbox"> or <input type="radio">
             elif self.is_(':checkbox,:radio'):
                 val = self._copy(tag).attr('value')
