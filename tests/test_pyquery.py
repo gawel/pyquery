@@ -470,17 +470,17 @@ class TestManipulating(TestCase):
 
     def test_val_for_select(self):
         d = pq(self.html4)
-        self.assertIsNone(d('#first').val())
+        self.assertEqual(d('#first').val(), 'spam')
         self.assertEqual(d('#second').val(), 'eggs')
         self.assertIsNone(d('#third').val())
-        d('#first').val('spam')
+        d('#first').val('eggs')
         d('#second').val('bacon')
         d('#third').val('eggs') # Selecting non-existing option.
-        self.assertEqual(d('#first').val(), 'spam')
+        self.assertEqual(d('#first').val(), 'eggs')
         self.assertEqual(d('#second').val(), 'bacon')
         self.assertIsNone(d('#third').val())
         d('#first').val('bacon') # Selecting non-existing option.
-        self.assertIsNone(d('#first').val())
+        self.assertEqual(d('#first').val(), 'spam')
 
     def test_val_for_multiple_elements(self):
         d = pq(self.html5)
