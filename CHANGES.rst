@@ -1,4 +1,4 @@
-1.2.16 (unreleased)
+1.2.16 (2016-10-14)
 -------------------
 
 - ``.attr('value', '')`` no longer removes the ``value`` attribute
