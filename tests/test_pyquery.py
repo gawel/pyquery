@@ -502,6 +502,14 @@ class TestManipulating(TestCase):
         d = pq('<input type="radio">')
         self.assertEqual(d.val(), 'on')
 
+    def test_val_value_is_empty_string(self):
+        d = pq('<input value="">')
+        self.assertEqual(d.val(), '')
+
+    def test_val_input_has_no_value_attr(self):
+        d = pq('<input>')
+        self.assertEqual(d.val(), '')
+
 
 class TestMakeLinks(TestCase):
 
