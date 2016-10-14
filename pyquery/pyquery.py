@@ -985,7 +985,7 @@ class PyQuery(list):
                 else:
                     return val
             # <input> and everything else.
-            return self._copy(tag).attr('value') or None
+            return self._copy(tag).attr('value') or ''
 
         def _set_value(pq, value):
             for tag in pq:

@@ -1,7 +1,8 @@
 1.2.17 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- ``PyQuery('<input value="">').val()`` is ``''``
+- ``PyQuery('<input>').val()`` is ``''``
 
 
 1.2.16 (2016-10-14)
