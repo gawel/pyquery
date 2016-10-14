@@ -61,7 +61,7 @@
 1.2.10 (2016-01-05)
 -------------------
 
-- Fixed #118: implemented usage `lxml.etree.tostring` within `outer_html` method
+- Fixed #118: implemented usage ``lxml.etree.tostring`` within ``outer_html`` method
 
 - Fixed #117: Raise HTTP Error if HTTP status code is not equal to 200
 
@@ -167,7 +167,7 @@
 1.2
 ---
 
-- PyQuery now use `cssselect <http://pypi.python.org/pypi/cssselect>`_. See issue 43.
+- PyQuery now uses `cssselect <http://pypi.python.org/pypi/cssselect>`_. See issue 43.
 
 - Fix issue 40: forward .html() extra arguments to ``lxml.etree.tostring``
 
