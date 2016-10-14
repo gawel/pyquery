@@ -1,7 +1,16 @@
 1.2.16 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- ``.attr('value', '')`` no longer removes the ``value`` attribute
+
+- ``<input type="checkbox">`` without ``value="..."`` have a ``.val()`` of
+  ``'on'``
+
+- ``<input type="radio">`` without ``value="..."`` have a ``.val()`` of
+  ``'on'``
+
+- ``<select>`` without ``<option selected>`` have the value of their first
+  ``<option>`` (or ``None`` if there are no options)
 
 
 1.2.15 (2016-10-11)
