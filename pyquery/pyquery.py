@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 #
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
@@ -19,10 +19,12 @@ if PY3k:
     from urllib.parse import urlencode
     from urllib.parse import urljoin
     basestring = (str, bytes)
+    string_types = (str,)
     unicode = str
 else:
     from urllib import urlencode  # NOQA
     from urlparse import urljoin  # NOQA
+    string_types = (unicode, str)
 
 
 def func_globals(f):
@@ -157,8 +159,7 @@ class PyQuery(list):
         self.parser = kwargs.pop('parser', None)
 
         if (len(args) >= 1 and
-                (not PY3k and isinstance(args[0], basestring) or
-                (PY3k and isinstance(args[0], str))) and
+                isinstance(args[0], string_types) and
                 args[0].split('://', 1)[0] in ('http', 'https')):
             kwargs['url'] = args[0]
             if len(args) >= 2:
@@ -239,7 +240,8 @@ class PyQuery(list):
                 xpath = self._css_to_xpath(selector)
                 results = []
                 for tag in elements:
-                    results.extend(tag.xpath(xpath, namespaces=self.namespaces))
+                    results.extend(
+                        tag.xpath(xpath, namespaces=self.namespaces))
                 elements = results
 
         list.__init__(self, elements)
@@ -261,8 +263,7 @@ class PyQuery(list):
         if args[0] == '':
             return self._copy([])
         if (len(args) == 1 and
-                (not PY3k and isinstance(args[0], basestring) or
-                (PY3k and isinstance(args[0], str))) and
+                isinstance(args[0], string_types) and
                 not args[0].startswith('<')):
             args += (self,)
         result = self._copy(*args, parent=self, **kwargs)
@@ -427,7 +428,7 @@ class PyQuery(list):
             result_list = results
             results = []
             for item in result_list:
-                if not item in results:
+                if item not in results:
                     results.append(item)
         return self._copy(results, parent=self)
 
@@ -569,7 +570,8 @@ class PyQuery(list):
         """
         results = []
         for elem in self:
-            results.extend(elem.xpath('child::text()|child::*', namespaces=self.namespaces))
+            results.extend(elem.xpath('child::text()|child::*',
+                           namespaces=self.namespaces))
         return self._copy(results, parent=self)
 
     def filter(self, selector):
@@ -613,7 +615,7 @@ class PyQuery(list):
         """
         exclude = set(self._copy(selector, self))
         return self._copy([e for e in self if e not in exclude],
-                              parent=self)
+                          parent=self)
 
     def is_(self, selector):
         """Returns True if selector matches at least one current element, else
@@ -644,7 +646,8 @@ class PyQuery(list):
             [<em>]
         """
         xpath = self._css_to_xpath(selector)
-        results = [child.xpath(xpath, namespaces=self.namespaces) for tag in self
+        results = [child.xpath(xpath, namespaces=self.namespaces)
+                   for tag in self
                    for child in tag.getchildren()]
         # Flatten the results
         elements = []
@@ -1484,7 +1487,7 @@ class PyQuery(list):
                     return None
 
                 return self(e).attr(attr,
-                    urljoin(base_url, attr_value.strip()))
+                                    urljoin(base_url, attr_value.strip()))
             return rep
 
         self('a').each(repl('href'))
