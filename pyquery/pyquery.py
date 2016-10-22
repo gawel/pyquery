@@ -27,6 +27,23 @@ else:
     string_types = (unicode, str)
 
 
+def getargspec(func):
+    if PY3k:
+        args = inspect.signature(func).parameters.values()
+        args = [p.name for p in args
+                if p.kind == p.POSITIONAL_OR_KEYWORD]
+    else:
+        args = list(inspect.getargspec(func).args)
+    return args
+
+
+def getdefaultsspec(func):
+    if PY3k:
+        return func.__defaults__
+    else:
+        return inspect.getargspec(func).defaults
+
+
 def func_globals(f):
     return f.__globals__ if PY3k else f.func_globals
 
@@ -49,7 +66,7 @@ def build_camel_case_aliases(PyQuery):
         name = parts[0] + ''.join([p.title() for p in parts[1:]])
         func = getattr(PyQuery, alias)
         f = types.FunctionType(func_code(func), func_globals(func),
-                               name, inspect.getargspec(func).defaults)
+                               name, getdefaultsspec(func))
         f.__doc__ = (
             'Alias for :func:`~pyquery.pyquery.PyQuery.%s`') % func.__name__
         setattr(PyQuery, name, f.__get__(None, PyQuery))
@@ -593,7 +610,7 @@ class PyQuery(list):
             return self._filter_only(selector, self)
         else:
             elements = []
-            args = inspect.getargspec(callback).args
+            args = getargspec(callback)
             try:
                 for i, this in enumerate(self):
                     if len(args) == 1:
