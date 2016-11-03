@@ -251,6 +251,8 @@ class PyQuery(list):
                 elements = context
             elif isinstance(context, etree._Element):
                 elements = [context]
+            else:
+                raise TypeError(context)
 
             # select nodes
             if elements and selector is not no_default:

@@ -285,6 +285,12 @@ class TestOpener(TestCase):
         assert len(doc('.node')) == 1, doc
 
 
+class TestConstruction(TestCase):
+
+    def test_typeerror_on_invalid_value(self):
+        self.assertRaises(TypeError, pq, object())
+
+
 class TestComment(TestCase):
 
     def test_comment(self):
