@@ -13,7 +13,7 @@ This is not (or at least not yet) a library to produce or interact with
 javascript code. I just liked the jquery API and I missed it in python so I
 told myself "Hey let's make jquery in python". This is the result.
 
-The `project`_ is being actively developped on a git repository on Github. I
+The `project`_ is being actively developed on a git repository on Github. I
 have the policy of giving push access to anyone who wants it and then to review
 what he does. So if you want to contribute just email me.
 
@@ -23,6 +23,14 @@ tracker.
 
 .. _deliverance: http://www.gawel.org/weblog/en/2008/12/skinning-with-pyquery-and-deliverance
 .. _project: https://github.com/gawel/pyquery/
+
+Install
+=======
+        sudo apt-get update
+
+        sudo apt-get install libxml2-dev libxslt1-dev python-dev pip
+
+        pip install pyquery
 
 Quickstart
 ==========
