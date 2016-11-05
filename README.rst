@@ -26,9 +26,23 @@ tracker.
 
 Install
 =======
+
+- Linux
         sudo apt-get update
 
         sudo apt-get install libxml2-dev libxslt1-dev python-dev pip
+
+        pip install pyquery
+- Mac
+        sudo easy_install pip
+
+        pip install pyquery
+- Win
+http://docs.python-guide.org/en/latest/starting/install/win
+
+        python ez_setup.py
+
+        python get-pip.py
 
         pip install pyquery
 
