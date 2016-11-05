@@ -37,9 +37,10 @@ Install
         sudo easy_install pip
 
         pip install pyquery
-- Win
+
 http://docs.python-guide.org/en/latest/starting/install/win
 
+- Win
         python ez_setup.py
 
         python get-pip.py
