@@ -60,6 +60,9 @@ http://docs.python-guide.org/en/latest/starting/install/win
 
         pip install pyquery
 
+If you need further help installing pip for your system, get it from the source.
+https://pip.pypa.io/en/latest/installing
+
 Quickstart
 ==========
 
