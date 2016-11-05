@@ -27,16 +27,29 @@ tracker.
 Install
 =======
 
-- Linux
+- Linux ~ Python 2.x
         sudo apt-get update
 
-        sudo apt-get install libxml2-dev libxslt1-dev python-dev pip
+        sudo apt-get install libxml2-dev libxslt1-dev python-dev python-pip
 
         pip install pyquery
-- Mac
+
+- Linux ~ Python 3.x
+        sudo apt-get update
+
+        sudo apt-get install libxml2-dev libxslt1-dev python3-lxml python3-dev python-pip3
+
+        pip3 install pyquery
+
+- Mac ~ Python 2.x
         sudo easy_install pip
 
         pip install pyquery
+
+- Mac ~ Python 3.x
+        sudo easy_install pip3
+
+        pip3 install pyquery
 
 http://docs.python-guide.org/en/latest/starting/install/win
 
