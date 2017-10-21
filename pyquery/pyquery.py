@@ -56,6 +56,8 @@ def with_camel_case_alias(func):
     """decorator for methods who required a camelcase alias"""
     _camel_case_aliases.add(func.__name__)
     return func
+
+
 _camel_case_aliases = set()
 
 
@@ -125,6 +127,7 @@ class NoDefault(object):
     def __repr__(self):
         """clean representation in Sphinx"""
         return '<NoDefault>'
+
 
 no_default = NoDefault()
 del NoDefault
@@ -1517,5 +1520,6 @@ class PyQuery(list):
         self('form').each(repl('action'))
 
         return self
+
 
 build_camel_case_aliases(PyQuery)

@@ -3,6 +3,11 @@ import sys
 
 PY3k = sys.version_info >= (3,)
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 if PY3k:
     text_type = str
 

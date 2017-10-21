@@ -21,7 +21,9 @@ except ImportError:
 
 
 allowed_args = (
-    'auth', 'data', 'headers', 'verify', 'cert', 'config', 'hooks', 'proxies', 'cookies')
+    'auth', 'data', 'headers', 'verify',
+    'cert', 'config', 'hooks', 'proxies', 'cookies'
+)
 
 
 def _query(url, method, kwargs):
