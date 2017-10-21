@@ -40,7 +40,7 @@ News
 
 """ % read('README', 'CHANGES')
 
-version = '1.2.18.dev0'
+version = '1.3.0.dev0'
 
 setup(name='pyquery',
       version=version,
@@ -54,6 +54,7 @@ setup(name='pyquery',
           "Programming Language :: Python :: 3.3",
           "Programming Language :: Python :: 3.4",
           "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
       ],
       keywords='jquery html xml scraping',
       author='Olivier Lauzanne',

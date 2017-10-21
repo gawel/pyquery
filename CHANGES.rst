@@ -1,7 +1,13 @@
-1.2.18 (unreleased)
+1.3.0 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Remove some unmaintained modules: ``pyquery.ajax`` and ``pyquery.rules``
+
+- Code cleanup. No longer use ugly hacks required by python2.6/python3.2.
+
+- Run tests with python3.6 on CI
+
+- Add a ``method`` argument to ``.outer_html()``
 
 
 1.2.17 (2016-10-14)
