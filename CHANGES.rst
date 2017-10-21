@@ -1,5 +1,5 @@
-1.3.0 (unreleased)
--------------------
+1.3.0 (2017-10-21)
+------------------
 
 - Remove some unmaintained modules: ``pyquery.ajax`` and ``pyquery.rules``
 
