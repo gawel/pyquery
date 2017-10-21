@@ -15,16 +15,22 @@ import sys
 
 PY3k = sys.version_info >= (3,)
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 if PY3k:
     from urllib.parse import urlencode
     from urllib.parse import urljoin
     basestring = (str, bytes)
     string_types = (str,)
-    unicode = str
+    text_type = str
 else:
     from urllib import urlencode  # NOQA
     from urlparse import urljoin  # NOQA
     string_types = (unicode, str)
+    text_type = unicode
 
 
 def getargspec(func):
@@ -377,8 +383,8 @@ class PyQuery(list):
 
     def __unicode__(self):
         """xml representation of current nodes"""
-        return unicode('').join([etree.tostring(e, encoding=unicode)
-                                 for e in self])
+        return u''.join([etree.tostring(e, encoding=text_type)
+                         for e in self])
 
     def __html__(self):
         """html representation of current nodes::
@@ -389,8 +395,8 @@ class PyQuery(list):
             <script><![[CDATA[ ]></script>
 
         """
-        return unicode('').join([lxml.html.tostring(e, encoding=unicode)
-                                 for e in self])
+        return u''.join([lxml.html.tostring(e, encoding=text_type)
+                         for e in self])
 
     def __repr__(self):
         r = []
@@ -407,7 +413,7 @@ class PyQuery(list):
                 return list.__repr__(self)
             else:
                 for el in self:
-                    if isinstance(el, unicode):
+                    if isinstance(el, text_type):
                         r.append(el.encode('utf-8'))
                     else:
                         r.append(el)
@@ -1071,13 +1077,13 @@ class PyQuery(list):
                 return tag.text
             html = tag.text or ''
             if 'encoding' not in kwargs:
-                kwargs['encoding'] = unicode
-            html += unicode('').join([etree.tostring(e, **kwargs)
-                                      for e in children])
+                kwargs['encoding'] = text_type
+            html += u''.join([etree.tostring(e, **kwargs)
+                              for e in children])
             return html
         else:
             if isinstance(value, self.__class__):
-                new_html = unicode(value)
+                new_html = text_type(value)
             elif isinstance(value, basestring):
                 new_html = value
             elif not value:
@@ -1089,7 +1095,7 @@ class PyQuery(list):
                 for child in tag.getchildren():
                     tag.remove(child)
                 root = fromstring(
-                    unicode('<root>') + new_html + unicode('</root>'),
+                    u'<root>' + new_html + u'</root>',
                     self.parser)[0]
                 children = root.getchildren()
                 if children:
@@ -1123,7 +1129,7 @@ class PyQuery(list):
         if e0.tail:
             e0 = deepcopy(e0)
             e0.tail = ''
-        return etree.tostring(e0, encoding=unicode, method=method)
+        return etree.tostring(e0, encoding=text_type, method=method)
 
     def text(self, value=no_default):
         """Get or set the text representation of sub nodes.
@@ -1173,7 +1179,7 @@ class PyQuery(list):
 
     def _get_root(self, value):
         if isinstance(value, basestring):
-            root = fromstring(unicode('<root>') + value + unicode('</root>'),
+            root = fromstring(u'<root>' + value + u'</root>',
                               self.parser)[0]
         elif isinstance(value, etree._Element):
             root = self._copy(value)
