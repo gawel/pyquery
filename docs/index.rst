@@ -13,7 +13,6 @@ Full documentation
    traversing
    api
    scrap
-   ajax
    tips
    testing
    future

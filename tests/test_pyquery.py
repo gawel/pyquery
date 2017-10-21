@@ -7,11 +7,8 @@ import os
 import sys
 from lxml import etree
 from pyquery.pyquery import PyQuery as pq
-from pyquery.ajax import PyQuery as pqa
 from webtest import http
 from webtest.debugapp import debug_app
-from .apps import application
-from .apps import secure_application
 from .compat import PY3k
 from .compat import u
 from .compat import b
@@ -24,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 def not_py3k(func):
     if not PY3k:
         return func
+
 
 try:
     import requests  # NOQA
@@ -47,12 +45,12 @@ class TestUnicode(TestCase):
             self.assertEqual(str(xml), '<html><p>é</p></html>')
             self.assertEqual(str(xml('p:contains("é")')), '<p>é</p>')
         else:
-            self.assertEqual(unicode(xml),
+            self.assertEqual(text_type(xml),
                              u("<html><p>é</p></html>", 'utf-8'))
             self.assertEqual(str(xml), '<html><p>&#233;</p></html>')
             self.assertEqual(str(xml(u('p:contains("é")', 'utf8'))),
                              '<p>&#233;</p>')
-            self.assertEqual(unicode(xml(u('p:contains("é")', 'utf8'))),
+            self.assertEqual(text_type(xml(u('p:contains("é")', 'utf8'))),
                              u('<p>é</p>', 'utf8'))
 
 
@@ -344,52 +342,6 @@ class TestHook(TestCase):
         self.assertEqual(S('li').test(p=2).text(), 'Milk')
 
 
-class TestAjaxSelector(TestSelector):
-    klass = pqa
-
-    def setUp(self):
-        self.s = http.StopableWSGIServer.create(application)
-
-    @not_py3k
-    def test_proxy(self):
-        self.s.wait()
-        application_url = self.s.application_url
-        e = self.klass([])
-        val = e.get(application_url)
-        assert len(val('pre')) == 1, (str(val.response), val)
-
-    def test_get(self):
-        e = self.klass(app=application)
-        val = e.get('/')
-        assert len(val('pre')) == 1, val
-
-    def test_secure_get(self):
-        e = self.klass(app=secure_application)
-        val = e.get('/', environ=dict(REMOTE_USER='gawii'))
-        assert len(val('pre')) == 1, val
-        val = e.get('/', REMOTE_USER='gawii')
-        assert len(val('pre')) == 1, val
-
-    def test_secure_get_not_authorized(self):
-        e = self.klass(app=secure_application)
-        val = e.get('/')
-        assert len(val('pre')) == 0, val
-
-    def test_post(self):
-        e = self.klass(app=application)
-        val = e.post('/')
-        assert len(val('a')) == 1, val
-
-    def test_subquery(self):
-        e = self.klass(app=application)
-        n = e('div')
-        val = n.post('/')
-        assert len(val('a')) == 1, val
-
-    def tearDown(self):
-        self.s.shutdown()
-
-
 class TestManipulating(TestCase):
     html = '''
     <div class="portlet">
@@ -482,11 +434,11 @@ class TestManipulating(TestCase):
         self.assertIsNone(d('#third').val())
         d('#first').val('eggs')
         d('#second').val('bacon')
-        d('#third').val('eggs') # Selecting non-existing option.
+        d('#third').val('eggs')  # Selecting non-existing option.
         self.assertEqual(d('#first').val(), 'eggs')
         self.assertEqual(d('#second').val(), 'bacon')
         self.assertIsNone(d('#third').val())
-        d('#first').val('bacon') # Selecting non-existing option.
+        d('#first').val('bacon')  # Selecting non-existing option.
         self.assertEqual(d('#first').val(), 'spam')
 
     def test_val_for_multiple_elements(self):
@@ -591,7 +543,8 @@ class TestXMLNamespace(TestCase):
     </body>
     </html>'''
 
-    namespaces = {'bar': 'http://example.com/bar', 'baz': 'http://example.com/baz'}
+    namespaces = {'bar': 'http://example.com/bar',
+                  'baz': 'http://example.com/baz'}
 
     def test_selector(self):
         expected = 'What'

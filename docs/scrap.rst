@@ -2,7 +2,7 @@ Scraping
 =========
 
 ..
-  >>> from pyquery.ajax import PyQuery as pq
+  >>> from pyquery import PyQuery as pq
 
 PyQuery is able to load an html document from a url::
 
