@@ -26,36 +26,37 @@ if PY3k:
     basestring = (str, bytes)
     string_types = (str,)
     text_type = str
+
+    def getargspec(func):
+        args = inspect.signature(func).parameters.values()
+        return [p.name for p in args
+                if p.kind == p.POSITIONAL_OR_KEYWORD]
+
+    def getdefaultsspec(func):
+        return func.__defaults__
+
+    def func_globals(f):
+        return f.__globals__
+
+    def func_code(f):
+        return f.__code__
 else:
     from urllib import urlencode  # NOQA
     from urlparse import urljoin  # NOQA
     string_types = (unicode, str)
     text_type = unicode
 
+    def getargspec(func):
+        return list(inspect.getargspec(func).args)
 
-def getargspec(func):
-    if PY3k:
-        args = inspect.signature(func).parameters.values()
-        args = [p.name for p in args
-                if p.kind == p.POSITIONAL_OR_KEYWORD]
-    else:
-        args = list(inspect.getargspec(func).args)
-    return args
-
-
-def getdefaultsspec(func):
-    if PY3k:
-        return func.__defaults__
-    else:
+    def getdefaultsspec(func):
         return inspect.getargspec(func).defaults
 
+    def func_globals(f):
+        return f.func_globals
 
-def func_globals(f):
-    return f.__globals__ if PY3k else f.func_globals
-
-
-def func_code(f):
-    return f.__code__ if PY3k else f.func_code
+    def func_code(f):
+        return f.func_code
 
 
 def with_camel_case_alias(func):
@@ -376,10 +377,8 @@ class PyQuery(list):
             <script>&lt;![[CDATA[ ]&gt;</script>
 
         """
-        if PY3k:
-            return ''.join([etree.tostring(e, encoding=str) for e in self])
-        else:
-            return ''.join([etree.tostring(e) for e in self])
+        encoding = str if PY3k else None
+        return ''.join([etree.tostring(e, encoding=encoding) for e in self])
 
     def __unicode__(self):
         """xml representation of current nodes"""
