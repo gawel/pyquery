@@ -434,7 +434,8 @@ class TestManipulating(TestCase):
     def test_attr_empty_string(self):
         d = pq('<div>')
         d.attr('value', '')
-        self.assertEqual(d.outer_html(), '<div value=""/>')
+        self.assertEqual(d.outer_html(), '<div value=""></div>')
+        self.assertEqual(d.outer_html(method="xml"), '<div value=""/>')
 
     def test_remove(self):
         d = pq(self.html)

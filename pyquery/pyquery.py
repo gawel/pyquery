@@ -1096,7 +1096,7 @@ class PyQuery(list):
         return self
 
     @with_camel_case_alias
-    def outer_html(self):
+    def outer_html(self, method="html"):
         """Get the html representation of the first selected element::
 
             >>> d = PyQuery('<div><span class="red">toto</span> rocks</div>')
@@ -1120,7 +1120,7 @@ class PyQuery(list):
         if e0.tail:
             e0 = deepcopy(e0)
             e0.tail = ''
-        return etree.tostring(e0, encoding=unicode)
+        return etree.tostring(e0, encoding=unicode, method=method)
 
     def text(self, value=no_default):
         """Get or set the text representation of sub nodes.
