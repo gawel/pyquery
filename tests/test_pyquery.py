@@ -10,7 +10,6 @@ from pyquery.pyquery import PyQuery as pq
 from webtest import http
 from webtest.debugapp import debug_app
 from .compat import PY3k
-from .compat import u
 from .compat import b
 from .compat import text_type
 from .compat import TestCase
@@ -23,13 +22,6 @@ def not_py3k(func):
         return func
 
 
-try:
-    import requests  # NOQA
-    HAS_REQUEST = True
-except ImportError:
-    HAS_REQUEST = False
-
-
 dirname = os.path.dirname(os.path.abspath(__file__))
 docs = os.path.join(os.path.dirname(dirname), 'docs')
 path_to_html_file = os.path.join(dirname, 'test.html')
@@ -39,19 +31,19 @@ path_to_invalid_file = os.path.join(dirname, 'invalid.xml')
 class TestUnicode(TestCase):
 
     def test_unicode(self):
-        xml = pq(u("<html><p>é</p></html>", 'utf-8'))
+        xml = pq(u"<html><p>é</p></html>")
         self.assertEqual(type(xml.html()), text_type)
         if PY3k:
             self.assertEqual(str(xml), '<html><p>é</p></html>')
             self.assertEqual(str(xml('p:contains("é")')), '<p>é</p>')
         else:
             self.assertEqual(text_type(xml),
-                             u("<html><p>é</p></html>", 'utf-8'))
+                             u"<html><p>é</p></html>")
             self.assertEqual(str(xml), '<html><p>&#233;</p></html>')
-            self.assertEqual(str(xml(u('p:contains("é")', 'utf8'))),
+            self.assertEqual(str(xml(u'p:contains("é")')),
                              '<p>&#233;</p>')
-            self.assertEqual(text_type(xml(u('p:contains("é")', 'utf8'))),
-                             u('<p>é</p>', 'utf8'))
+            self.assertEqual(text_type(xml(u'p:contains("é")')),
+                             u'<p>é</p>')
 
 
 class TestAttributeCase(TestCase):
@@ -624,10 +616,8 @@ class TestWebScrapping(TestCase):
 class TestWebScrappingEncoding(TestCase):
 
     def test_get(self):
-        if not HAS_REQUEST:
-            return
-        d = pq(u('http://ru.wikipedia.org/wiki/Заглавная_страница', 'utf8'),
+        d = pq(u'http://ru.wikipedia.org/wiki/Заглавная_страница',
                method='get')
         print(d)
         self.assertEqual(d('#n-mainpage a').text(),
-                         u('Заглавная страница', 'utf8'))
+                         u'Заглавная страница')
