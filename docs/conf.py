@@ -254,27 +254,30 @@ if path.isfile(setup):
             break
 del pkg_dir, setup, path
 
-from pyquery.cssselectpatch import JQueryTranslator
-
-with open('pseudo_classes.rst', 'w') as fd:
-    fd.write('=========================\n')
-    fd.write('Using pseudo classes\n')
-    fd.write('=========================\n')
-    for k in sorted(dir(JQueryTranslator)):
-        if k.startswith('xpath_'):
-            attr = getattr(JQueryTranslator, k)
-            doc = getattr(attr, '__doc__', '') or ''
-            doc = doc.strip()
-            if doc.startswith('Common implementation'):
-                continue
-            k = k[6:]
-            if '_' not in k or not doc:
-                continue
-            k, t = k.split('_', 1)
-            if '_' in t:
-                continue
-            if t == 'function':
-                k += '()'
-            fd.write('\n\n:%s\n' % k)
-            fd.write('==================\n\n')
-            fd.write(doc.strip('..').replace('        ', '    '))
+try:
+    from pyquery.cssselectpatch import JQueryTranslator
+except ImportError:
+    pass
+else:
+    with open('pseudo_classes.rst', 'w') as fd:
+        fd.write('=========================\n')
+        fd.write('Using pseudo classes\n')
+        fd.write('=========================\n')
+        for k in sorted(dir(JQueryTranslator)):
+            if k.startswith('xpath_'):
+                attr = getattr(JQueryTranslator, k)
+                doc = getattr(attr, '__doc__', '') or ''
+                doc = doc.strip()
+                if doc.startswith('Common implementation'):
+                    continue
+                k = k[6:]
+                if '_' not in k or not doc:
+                    continue
+                k, t = k.split('_', 1)
+                if '_' in t:
+                    continue
+                if t == 'function':
+                    k += '()'
+                fd.write('\n\n:%s\n' % k)
+                fd.write('==================\n\n')
+                fd.write(doc.strip('..').replace('        ', '    '))
