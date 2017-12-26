@@ -14,7 +14,7 @@ Matches all button input elements and the button element::
         >>> d(':button')
         [<input>, <button>]
 
-
+    
 
 :checkbox
 ==================
@@ -26,7 +26,7 @@ Matches all checkbox input elements::
         >>> d('input:checkbox')
         [<input>]
 
-
+    
 
 :checked
 ==================
@@ -38,7 +38,7 @@ Matches odd elements, zero-indexed::
         >>> d('input:checked')
         [<input>]
 
-
+    
 
 :child
 ==================
@@ -55,7 +55,7 @@ Matches all elements that contain the given text
         >>> d('h1:contains("title")')
         [<h1.title>]
 
-
+    
 
 :descendant
 ==================
@@ -72,7 +72,7 @@ Matches all elements that are disabled::
         >>> d('input:disabled')
         [<input>]
 
-
+    
 
 :empty
 ==================
@@ -84,7 +84,7 @@ Match all elements that do not contain other elements::
         >>> d(':empty')
         [<h2>]
 
-
+    
 
 :enabled
 ==================
@@ -96,7 +96,7 @@ Matches all elements that are enabled::
         >>> d('input:enabled')
         [<input>]
 
-
+    
 
 :eq()
 ==================
@@ -110,7 +110,7 @@ Matches a single element by its index::
         >>> d('h1:eq(1)')
         [<h1.last>]
 
-
+    
 
 :even
 ==================
@@ -122,7 +122,7 @@ Matches even elements, zero-indexed::
         >>> d('p:even')
         [<p>]
 
-
+    
 
 :file
 ==================
@@ -134,7 +134,7 @@ Matches all input elements of type file::
         >>> d('input:file')
         [<input>]
 
-
+    
 
 :first
 ==================
@@ -146,7 +146,7 @@ Matches the first selected element::
         >>> d('p:first')
         [<p.first>]
 
-
+    
 
 :gt()
 ==================
@@ -158,12 +158,13 @@ Matches all elements with an index over the given one::
         >>> d('h1:gt(0)')
         [<h1.last>]
 
-
+    
 
 :has()
 ==================
-Matches elements which contain at least one element that matches the
-specified selector. https://api.jquery.com/has-selector/
+
+Matches elements which contain at least one element that matches
+    the specified selector. https://api.jquery.com/has-selector/
 
         >>> from pyquery import PyQuery
         >>> d = PyQuery('<div class="foo"><div class="bar"></div></div>')
@@ -176,8 +177,7 @@ specified selector. https://api.jquery.com/has-selector/
         >>> d('.foo:has(div)')
         [<div.foo>]
 
-
-
+    
 
 :header
 ==================
@@ -189,7 +189,7 @@ Matches all header elelements (h1, ..., h6)::
         >>> d(':header')
         [<h1>]
 
-
+    
 
 :hidden
 ==================
@@ -201,7 +201,7 @@ Matches all hidden input elements::
         >>> d('input:hidden')
         [<input>]
 
-
+    
 
 :image
 ==================
@@ -213,7 +213,7 @@ Matches all image input elements::
         >>> d('input:image')
         [<input>]
 
-
+    
 
 :input
 ==================
@@ -226,7 +226,7 @@ Matches all input elements::
         >>> d(':input')
         [<input>, <textarea>]
 
-
+    
 
 :last
 ==================
@@ -238,7 +238,7 @@ Matches the last selected element::
         >>> d('p:last')
         [<p.last>]
 
-
+    
 
 :lt()
 ==================
@@ -250,7 +250,7 @@ Matches all elements with an index below the given one::
         >>> d('h1:lt(1)')
         [<h1.first>]
 
-
+    
 
 :odd
 ==================
@@ -262,7 +262,7 @@ Matches odd elements, zero-indexed::
         >>> d('p:odd')
         [<p.last>]
 
-
+    
 
 :parent
 ==================
@@ -274,7 +274,7 @@ Match all elements that contain other elements::
         >>> d('h1:parent')
         [<h1>]
 
-
+    
 
 :password
 ==================
@@ -286,7 +286,15 @@ Matches all password input elements::
         >>> d('input:password')
         [<input>]
 
+    
 
+:pseudo
+==================
+
+Translate a pseudo-element.
+
+    Defaults to not supporting pseudo-elements at all,
+    but can be overridden by sub-classes
 
 :radio
 ==================
@@ -298,7 +306,7 @@ Matches all radio input elements::
         >>> d('input:radio')
         [<input>]
 
-
+    
 
 :reset
 ==================
@@ -310,7 +318,7 @@ Matches all reset input elements::
         >>> d('input:reset')
         [<input>]
 
-
+    
 
 :selected
 ==================
@@ -322,7 +330,7 @@ Matches all elements that are selected::
         >>> d('option:selected')
         [<option>]
 
-
+    
 
 :submit
 ==================
@@ -334,7 +342,7 @@ Matches all submit input elements::
         >>> d('input:submit')
         [<input>]
 
-
+    
 
 :text
 ==================
@@ -346,4 +354,4 @@ Matches all text input elements::
         >>> d('input:text')
         [<input>]
 
-
+    

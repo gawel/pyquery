@@ -963,7 +963,7 @@ class PyQuery(list):
     # CORE UI EFFECTS #
     ###################
     def hide(self):
-        """remove display:none to elements style
+        """Remove display:none to elements style:
 
             >>> print(PyQuery('<div style="display:none;"/>').hide())
             <div style="display: none"/>
@@ -972,7 +972,7 @@ class PyQuery(list):
         return self.css('display', 'none')
 
     def show(self):
-        """add display:block to elements style
+        """Add display:block to elements style:
 
             >>> print(PyQuery('<div />').show())
             <div style="display: block"/>
@@ -1383,7 +1383,7 @@ class PyQuery(list):
 
     @with_camel_case_alias
     def replace_with(self, value):
-        """replace nodes by value::
+        """replace nodes by value:
 
             >>> doc = PyQuery("<html><div /></html>")
             >>> node = PyQuery("<span />")
@@ -1435,12 +1435,14 @@ class PyQuery(list):
     def remove(self, expr=no_default):
         """Remove nodes:
 
-         >>> h = '<div>Maybe <em>she</em> does <strong>NOT</strong> know</div>'
-         >>> d = PyQuery(h)
-         >>> d('strong').remove()
-         [<strong>]
-         >>> print(d)
-         <div>Maybe <em>she</em> does   know</div>
+             >>> h = (
+             ... '<div>Maybe <em>she</em> does <strong>NOT</strong> know</div>'
+             ... )
+             >>> d = PyQuery(h)
+             >>> d('strong').remove()
+             [<strong>]
+             >>> print(d)
+             <div>Maybe <em>she</em> does   know</div>
         """
         if expr is no_default:
             for tag in self:
