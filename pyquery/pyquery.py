@@ -1073,7 +1073,7 @@ class PyQuery(list):
             tag = self[0]
             children = tag.getchildren()
             if not children:
-                return h_entity.encode(tag.text)
+                return h_entity.escape(tag.text)
             html = tag.text or ''
             if 'encoding' not in kwargs:
                 kwargs['encoding'] = text_type
