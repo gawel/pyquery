@@ -11,7 +11,7 @@ import lxml.html
 import inspect
 import types
 import sys
-import html
+import html as h_entity
 
 PY3k = sys.version_info >= (3,)
 
@@ -1073,7 +1073,7 @@ class PyQuery(list):
             tag = self[0]
             children = tag.getchildren()
             if not children:
-                return html.encode(tag.text)
+                return h_entity.encode(tag.text)
             html = tag.text or ''
             if 'encoding' not in kwargs:
                 kwargs['encoding'] = text_type
