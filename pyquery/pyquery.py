@@ -5,6 +5,7 @@
 # Distributed under the BSD license, see LICENSE.txt
 from .cssselectpatch import JQueryTranslator
 from .openers import url_opener
+from .text import extract_text
 from copy import deepcopy
 from lxml import etree
 import lxml.html
@@ -1130,12 +1131,15 @@ class PyQuery(list):
             e0.tail = ''
         return etree.tostring(e0, encoding=text_type, method=method)
 
-    def text(self, value=no_default):
+    def text(self, value=no_default, **kwargs):
         """Get or set the text representation of sub nodes.
 
         Get the text value::
 
             >>> doc = PyQuery('<div><span>toto</span><span>tata</span></div>')
+            >>> print(doc.text())
+            tototata
+            >>> doc = PyQuery('<div><span>toto</span>       <span>tata</span></div>')
             >>> print(doc.text())
             toto tata
 
@@ -1151,20 +1155,7 @@ class PyQuery(list):
         if value is no_default:
             if not self:
                 return ''
-
-            text = []
-
-            def add_text(tag, no_tail=False):
-                if tag.text and not isinstance(tag, lxml.etree._Comment):
-                    text.append(tag.text)
-                for child in tag.getchildren():
-                    add_text(child)
-                if not no_tail and tag.tail:
-                    text.append(tag.tail)
-
-            for tag in self:
-                add_text(tag, no_tail=True)
-            return ' '.join([t.strip() for t in text if t.strip()])
+            return ' '.join(extract_text(tag, **kwargs) for tag in self)
 
         for tag in self:
             for child in tag.getchildren():
