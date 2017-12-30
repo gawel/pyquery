@@ -3,6 +3,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread
 from queue import Queue
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from time import sleep
 from urllib.parse import urlunsplit
 
@@ -68,8 +69,9 @@ class BaseBrowserTest(unittest.TestCase):
         cls.server_thread = Thread(target=cls.server.serve_forever)
         cls.server_thread.daemon = True
         cls.server_thread.start()
-        # cls.driver = webdriver.Firefox()
-        cls.driver = webdriver.Chrome()
+        options = Options()
+        options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(options=options)
         sleep(1)
 
     @classmethod

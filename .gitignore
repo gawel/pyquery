@@ -16,5 +16,8 @@ parts/
 # Temporary files
 *~
 
+# Log files
+geckodriver.log
+
 # Sphinx documentation
 docs/_build/
