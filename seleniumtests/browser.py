@@ -97,8 +97,6 @@ class TestInnerText(BaseBrowserTest, TextExtractionMixin):
     REQUEST_HANDLER_CLASS = HTMLSnippetSender
 
     def _simple_test(self, html, expected_sq, expected_nosq, **kwargs):
-        # super()._simple_test(html, expected_sq, expected_nosq, **kwargs)
-
         self.send_to_server(html)
         self.open_url('/')
 
