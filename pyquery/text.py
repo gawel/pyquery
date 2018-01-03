@@ -1,4 +1,16 @@
 import re
+import sys
+
+
+PY3k = sys.version_info >= (3,)
+
+
+if PY3k:
+    def is_string(s):
+        return isinstance(s, str)
+else:
+    def is_string(s):
+        return isinstance(s, (unicode, str))
 
 
 # https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#Elements
@@ -14,7 +26,7 @@ SEPARATORS = {'br'}
 
 # Definition of whitespace in HTML:
 # https://www.w3.org/TR/html4/struct/text.html#h-9.1
-WHITESPACE_RE = re.compile('[\x20\x09\x0C\u200B\x0A\x0D]+')
+WHITESPACE_RE = re.compile(u'[\x20\x09\x0C\u200B\x0A\x0D]+')
 
 
 def squash_html_whitespace(text):
@@ -40,12 +52,12 @@ def _strip_artifical_nl(parts):
     if not parts:
         return parts
     for start_idx, pt in enumerate(parts):
-        if isinstance(pt, str):
+        if is_string(pt):
             # 0, 1, 2, index of first string [start_idx:...
             break
     iterator = enumerate(parts[:start_idx - 1 if start_idx > 0 else None:-1])
     for end_idx, pt in iterator:
-        if isinstance(pt, str):  # 0=None, 1=-1, 2=-2, index of last string
+        if is_string(pt):  # 0=None, 1=-1, 2=-2, index of last string
             break
     return parts[start_idx:-end_idx if end_idx > 0 else None]
 
@@ -61,7 +73,7 @@ def _merge_original_parts(parts):
             orp_buf[:] = []
 
     for x in parts:
-        if not isinstance(x, str):
+        if not is_string(x):
             flush()
             output.append(x)
         else:
