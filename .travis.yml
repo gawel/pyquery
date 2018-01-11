@@ -6,6 +6,9 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+before_install:
+  - tests/selenium.sh
+  - export PATH=$PATH:$PWD
 install:
   - pip install tox-travis
 script:
