@@ -619,5 +619,4 @@ class TestWebScrappingEncoding(TestCase):
         d = pq(u'http://ru.wikipedia.org/wiki/Заглавная_страница',
                method='get')
         print(d)
-        self.assertEqual(d('#n-mainpage a').text(),
-                         u'Заглавная страница')
+        self.assertEqual(d('#pt-login').text(), u'Войти')
