@@ -1,7 +1,7 @@
-1.3.1 (unreleased)
+1.4.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Refactoring of `.text()` to match firefox behavior.
 
 
 1.3.0 (2017-10-21)
