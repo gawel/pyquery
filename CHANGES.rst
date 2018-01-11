@@ -1,4 +1,4 @@
-1.4.0 (unreleased)
+1.4.0 (2018-01-11)
 ------------------
 
 - Refactoring of `.text()` to match firefox behavior.
