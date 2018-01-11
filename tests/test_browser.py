@@ -1,12 +1,12 @@
 import unittest
 
 from pyquery.pyquery import PyQuery
-from .base import TextExtractionMixin
+from .browser_base import TextExtractionMixin
 
 
 class TestInnerText(unittest.TestCase, TextExtractionMixin):
     def _prepare_dom(self, html):
-        super()._prepare_dom(html)
+        super(TestInnerText, self)._prepare_dom(html)
         self.pq = PyQuery(self.last_html)
 
     def _simple_test(self, html, expected_sq, expected_nosq, **kwargs):
