@@ -11,7 +11,7 @@ install:
 script:
   - tox
 after_success:
-# env:
-#   - MOZ_HEADLESS=1
-# addons:
-#   firefox: latest
+env:
+  - MOZ_HEADLESS=1
+addons:
+  firefox: latest

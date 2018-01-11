@@ -15,6 +15,7 @@ parts/
 
 # Temporary files
 *~
+geckodriver
 
 # Log files
 geckodriver.log

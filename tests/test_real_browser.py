@@ -1,18 +1,23 @@
+import os
 import unittest
 from threading import Thread
 from time import sleep
 
 from .browser_base import TextExtractionMixin
 
+SELENIUM = 'MOZ_HEADLESS' in os.environ
+
 try:
     from selenium import webdriver
     from selenium.webdriver.firefox.options import Options
+except ImportError:
+    SELENIUM = False
+
+if SELENIUM:
     from urllib.parse import urlunsplit
     from http.server import HTTPServer, BaseHTTPRequestHandler
     from queue import Queue
-except ImportError:
-    pass
-else:
+
     class BaseTestRequestHandler(BaseHTTPRequestHandler):
         _last_html = ''
 
