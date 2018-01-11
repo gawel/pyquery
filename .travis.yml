@@ -7,7 +7,7 @@ python:
   - "3.5"
   - "3.6"
 before_install:
-  - tests/selenium.sh
+  - tests/geckodriver.sh
   - export PATH=$PATH:$PWD
 install:
   - pip install tox-travis
