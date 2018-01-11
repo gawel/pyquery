@@ -24,6 +24,16 @@ tracker.
 .. _deliverance: http://www.gawel.org/weblog/en/2008/12/skinning-with-pyquery-and-deliverance
 .. _project: https://github.com/gawel/pyquery/
 
+I've spent hours maintaining this software, with love.
+Please consider tiping if you like it:
+
+BTC: 1PruQAwByDndFZ7vTeJhyWefAghaZx9RZg
+
+ETH: 0xb6418036d8E06c60C4D91c17d72Df6e1e5b15CE6
+
+LTC: LY6CdZcDbxnBX9GFBJ45TqVj8NykBBqsmT
+
+
 Quickstart
 ==========
 
