@@ -1,17 +1,3 @@
-'''
-Integer quis commodo libero.
-Phasellus eget sem facilisis justo pellentesque venenatis.
-In sagittis rutrum condimentum.
-Praesent aliquam maximus erat vitae mattis.
-Curabitur vulputate ullamcorper nisi vel gravida.
-Morbi fringilla, diam non commodo mattis, nulla neque sollicitudin mi, in ullamcorper orci urna ac mauris.
-Vivamus consequat bibendum sollicitudin.
-Nullam rhoncus vel tortor sit amet vehicula.
-Ut a odio ac arcu placerat placerat.
-In ultricies erat et maximus mollis.
-Etiam vestibulum, odio venenatis dignissim ullamcorper, neque enim cursus erat, id accumsan orci est ac urna.
-'''
-
 
 class TextExtractionMixin():
     def _prepare_dom(self, html):
@@ -32,7 +18,8 @@ class TextExtractionMixin():
             'Phasellus  eget  sem facilisis\n justo',
         )
         self._simple_test(
-            'Phasellus   <span>\n  eget\n           sem\n\tfacilisis</span>   justo',
+            ('Phasellus   <span>\n  eget\n           '
+             'sem\n\tfacilisis</span>   justo'),
             'Phasellus eget sem facilisis justo',
             'Phasellus   \n  eget\n           sem\n\tfacilisis   justo'
         )
@@ -54,7 +41,8 @@ class TextExtractionMixin():
             'In \n\nultricies\n\n erat et \n\n\n\nmaximus\n\n\n mollis',
         )
         self._simple_test(
-            'Integer <div><div>\n  <div>quis commodo</div></div> </div> libero',
+            ('Integer <div><div>\n  <div>quis commodo</div></div> '
+             '</div> libero'),
             'Integer\nquis commodo\nlibero',
             'Integer \n\n\n  \nquis commodo\n\n \n libero',
         )

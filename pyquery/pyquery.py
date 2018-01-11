@@ -232,7 +232,7 @@ class PyQuery(list):
             if hasattr(html, 'close'):
                 try:
                     html.close()
-                except:
+                except Exception:
                     pass
 
         else:
@@ -1139,7 +1139,8 @@ class PyQuery(list):
             >>> doc = PyQuery('<div><span>toto</span><span>tata</span></div>')
             >>> print(doc.text())
             tototata
-            >>> doc = PyQuery('<div><span>toto</span>       <span>tata</span></div>')
+            >>> doc = PyQuery('''<div><span>toto</span>
+            ...               <span>tata</span></div>''')
             >>> print(doc.text())
             toto tata
 
