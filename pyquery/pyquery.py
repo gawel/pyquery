@@ -1101,7 +1101,6 @@ class PyQuery(list):
                 if children:
                     tag.extend(children)
                 tag.text = root.text
-                tag.tail = root.tail
         return self
 
     @with_camel_case_alias

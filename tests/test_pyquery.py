@@ -461,6 +461,18 @@ class TestManipulating(TestCase):
         d = pq('<input>')
         self.assertEqual(d.val(), '')
 
+    def test_html_replacement(self):
+        html = '<div>Not Me<span>Replace Me</span>Not Me</div>'
+        replacement = 'New <em>Contents</em> New'
+        expected = html.replace('Replace Me', replacement)
+
+        d = pq(html)
+        d.find('span').html(replacement)
+
+        new_html = d.outerHtml()
+        self.assertEqual(new_html, expected)
+        self.assertIn(replacement, new_html)
+
 
 class TestMakeLinks(TestCase):
 
