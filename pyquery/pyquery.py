@@ -996,6 +996,23 @@ class PyQuery(list):
             >>> d.val()
             'Youhou'
 
+        Set the selected values for a `select` element with the `multiple`
+        attribute::
+
+            >>> d = PyQuery('''
+            ...             <select multiple>
+            ...                 <option value="you"><option value="hou">
+            ...             </select>
+            ...             ''')
+            >>> d.val(['you', 'hou'])
+            [<select>]
+
+        Get the selected values for a `select` element with the `multiple`
+        attribute::
+
+            >>> d.val()
+            ['you', 'hou']
+
         """
         def _get_value(tag):
             # <textarea>
@@ -1003,6 +1020,13 @@ class PyQuery(list):
                 return self._copy(tag).text()
             # <select>
             elif tag.tag == 'select':
+                if 'multiple' in tag.attrib:
+                    # Only extract value if selected
+                    selected = self._copy(tag)('option[selected]')
+                    # Rebuild list to avoid serialization error
+                    return list(selected.map(
+                        lambda _, o: self._copy(o).attr('value')
+                    ))
                 selected_option = self._copy(tag)('option[selected]:last')
                 if selected_option:
                     return selected_option.attr('value')
@@ -1020,19 +1044,26 @@ class PyQuery(list):
 
         def _set_value(pq, value):
             for tag in pq:
-                # <textarea>
-                if tag.tag == 'textarea':
-                    self._copy(tag).text(value)
-                    continue
                 # <select>
                 if tag.tag == 'select':
+                    if not isinstance(value, list):
+                        value = [value]
                     def _make_option_selected(_, elem):
                         pq = self._copy(elem)
-                        if pq.attr('value') == value:
+                        if pq.attr('value') in value:
                             pq.attr('selected', 'selected')
+                            if 'multiple' not in tag.attrib:
+                                del value[:]  # Ensure it toggles first match
                         else:
                             pq.removeAttr('selected')
                     self._copy(tag)('option').each(_make_option_selected)
+                    continue
+                # Stringify array
+                if isinstance(value, list):
+                    value = ','.join(value)
+                # <textarea>
+                if tag.tag == 'textarea':
+                    self._copy(tag).text(value)
                     continue
                 # <input> and everything else.
                 self._copy(tag).attr('value', value)

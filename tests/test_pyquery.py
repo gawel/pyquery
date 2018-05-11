@@ -365,6 +365,29 @@ class TestManipulating(TestCase):
         </select>
         <select id="third">
         </select>
+        <select id="fourth">
+            <option value="spam">Spam</option>
+            <option value="spam">Eggs</option>
+            <option value="spam">Bacon</option>
+        </select>
+    '''
+
+    html6 = '''
+        <select id="first" multiple>
+            <option value="spam" selected>Spam</option>
+            <option value="eggs" selected>Eggs</option>
+            <option value="bacon">Bacon</option>
+        </select>
+        <select id="second" multiple>
+            <option value="spam">Spam</option>
+            <option value="eggs">Eggs</option>
+            <option value="bacon">Bacon</option>
+        </select>
+        <select id="third" multiple>
+            <option value="spam">Spam</option>
+            <option value="spam">Eggs</option>
+            <option value="spam">Bacon</option>
+        </select>
     '''
 
     html5 = '''
@@ -432,6 +455,36 @@ class TestManipulating(TestCase):
         self.assertIsNone(d('#third').val())
         d('#first').val('bacon')  # Selecting non-existing option.
         self.assertEqual(d('#first').val(), 'spam')
+        # Value set based on option order, not value order
+        d('#second').val(['bacon', 'eggs'])
+        self.assertEqual(d('#second').val(), 'eggs')
+        d('#fourth').val(['spam'])
+        self.assertEqual(d('#fourth').val(), 'spam')
+        # Sets first option with matching value
+        self.assertEqual(d('#fourth option[selected]').length, 1)
+        self.assertEqual(d('#fourth option[selected]').text(), 'Spam')
+
+    def test_val_for_select_multiple(self):
+        d = pq(self.html6)
+        self.assertEqual(d('#first').val(), ['spam', 'eggs'])
+        # Selecting non-existing option.
+        d('#first').val(['eggs', 'sausage', 'bacon'])
+        self.assertEqual(d('#first').val(), ['eggs', 'bacon'])
+        self.assertEqual(d('#second').val(), [])
+        d('#second').val('eggs')
+        self.assertEqual(d('#second').val(), ['eggs'])
+        d('#second').val(['not spam', 'not eggs'])
+        self.assertEqual(d('#second').val(), [])
+        d('#third').val(['spam'])
+        self.assertEqual(d('#third').val(), ['spam', 'spam', 'spam'])
+
+    def test_val_for_input_and_textarea_given_array_value(self):
+        d = pq('<input type="text">')
+        d('input').val(['spam', 'eggs'])
+        self.assertEqual(d('input').val(), 'spam,eggs')
+        d = pq('<textarea></textarea>')
+        d('textarea').val(['spam', 'eggs'])
+        self.assertEqual(d('textarea').val(), 'spam,eggs')
 
     def test_val_for_multiple_elements(self):
         d = pq(self.html5)
