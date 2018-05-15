@@ -1174,6 +1174,14 @@ class PyQuery(list):
             >>> print(doc.text())
             toto tata
 
+        Get the text value, without squashing newlines::
+
+            >>> doc = PyQuery('''<div><span>toto</span>
+            ...               <span>tata</span></div>''')
+            >>> print(doc.text(squash_space=False))
+            toto
+            tata
+
         Set the text value::
 
             >>> doc.text('Youhou !')
