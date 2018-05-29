@@ -94,8 +94,32 @@ class TestSelector(TestCase):
             <body>
               <form action="/">
                 <input name="enabled" type="text" value="test"/>
+                <b disabled>Not :disabled</b>
                 <input name="disabled" type="text"
                        value="disabled" disabled="disabled"/>
+                <fieldset>
+                    <input name="fieldset-enabled">
+                </fieldset>
+                <fieldset disabled>
+                    <legend>
+                        <input name="legend-enabled">
+                    </legend>
+                    <input name="fieldset-disabled">
+                    <legend>
+                        <input name="legend-disabled">
+                    </legend>
+                    <select id="disabled-select">
+                        <optgroup>
+                            <option></option>
+                        </optgroup>
+                    </select>
+                </fieldset>
+                <select>
+                    <optgroup id="disabled-optgroup" disabled>
+                        <option id="disabled-from-optgroup"></option>
+                        <option id="disabled-option" disabled></option>
+                    </optgroup>
+                </select>
                 <input name="file" type="file" />
                 <select name="select">
                   <option value="">Choose something</option>
@@ -178,12 +202,23 @@ class TestSelector(TestCase):
 
         # test on the form
         e = self.klass(self.html4)
-        assert len(e(':disabled')) == 1
-        assert len(e('input:enabled')) == 9
+        disabled = e(':disabled')
+        self.assertIn(e('[name="disabled"]')[0], disabled)
+        self.assertIn(e('fieldset[disabled]')[0], disabled)
+        self.assertIn(e('[name="legend-disabled"]')[0], disabled)
+        self.assertIn(e('[name="fieldset-disabled"]')[0], disabled)
+        self.assertIn(e('#disabled-optgroup')[0], disabled)
+        self.assertIn(e('#disabled-from-optgroup')[0], disabled)
+        self.assertIn(e('#disabled-option')[0], disabled)
+        self.assertIn(e('#disabled-select')[0], disabled)
+
+        assert len(disabled) == 8
+        assert len(e('select:enabled')) == 2
+        assert len(e('input:enabled')) == 11
         assert len(e(':selected')) == 1
         assert len(e(':checked')) == 2
         assert len(e(':file')) == 1
-        assert len(e(':input')) == 12
+        assert len(e(':input')) == 18
         assert len(e(':button')) == 2
         assert len(e(':radio')) == 3
         assert len(e(':checkbox')) == 3

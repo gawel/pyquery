@@ -127,6 +127,26 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         xpath.add_condition("@selected and name(.) = 'option'")
         return xpath
 
+    def _format_disabled_xpath(self, disabled=True):
+        """Format XPath condition for :disabled or :enabled pseudo-classes
+        according to the WHATWG spec. See: https://html.spec.whatwg.org
+        /multipage/semantics-other.html#concept-element-disabled
+        """
+        bool_op = '' if disabled else 'not'
+        return '''
+            ((name(.) = 'button' or name(.) = 'input' or name(.) = 'select'
+                    or name(.) = 'textarea' or name(.) = 'fieldset')
+                and %s(@disabled or (ancestor::fieldset[@disabled]
+                    and not(ancestor::legend[not(preceding-sibling::legend)])))
+            )
+            or
+            ((name(.) = 'option'
+                and %s(@disabled or ancestor::optgroup[@disabled]))
+            )
+            or
+            ((name(.) = 'optgroup' and %s(@disabled)))
+            ''' % (bool_op, bool_op, bool_op)
+
     def xpath_disabled_pseudo(self, xpath):
         """Matches all elements that are disabled::
 
@@ -137,7 +157,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("@disabled")
+        xpath.add_condition(self._format_disabled_xpath())
         return xpath
 
     def xpath_enabled_pseudo(self, xpath):
@@ -150,7 +170,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("not(@disabled) and name(.) = 'input'")
+        xpath.add_condition(self._format_disabled_xpath(disabled=False))
         return xpath
 
     def xpath_file_pseudo(self, xpath):
