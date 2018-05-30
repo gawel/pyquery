@@ -4,6 +4,7 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 from .cssselectpatch import JQueryTranslator
+from collections import OrderedDict
 from .openers import url_opener
 from .text import extract_text
 from copy import deepcopy
@@ -1039,7 +1040,11 @@ class PyQuery(list):
                     return 'on'
                 else:
                     return val
-            # <input> and everything else.
+            # <input>
+            elif tag.tag == 'input':
+                val = self._copy(tag).attr('value')
+                return val.replace('\n', '') if val else ''
+            # everything else.
             return self._copy(tag).attr('value') or ''
 
         def _set_value(pq, value):
@@ -1518,9 +1523,137 @@ class PyQuery(list):
             setattr(PyQuery, name, fn)
     fn = Fn()
 
+
+    ########
+    # AJAX #
+    ########
+
+    @with_camel_case_alias
+    def serialize_array(self):
+        """Serialize form elements as an array of dictionaries, whose structure
+        mirrors that produced by the jQuery API. Notably, it does not handle the
+        deprecated `keygen` form element.
+
+            >>> d = PyQuery('<form><input name="order" value="spam"></form>')
+            >>> d.serialize_array() == [{'name': 'order', 'value': 'spam'}]
+            True
+            >>> d.serializeArray() == [{'name': 'order', 'value': 'spam'}]
+            True
+        """
+        return list(map(
+            lambda p: {'name': p[0], 'value': p[1]},
+            self.serialize_pairs()
+        ))
+
+    def serialize(self):
+        """Serialize form elements as a URL-encoded string.
+
+            >>> h = (
+            ... '<form><input name="order" value="spam">'
+            ... '<input name="order2" value="baked beans"></form>'
+            ... )
+            >>> d = PyQuery(h)
+            >>> d.serialize()
+            'order=spam&order2=baked%20beans'
+        """
+        return urlencode(self.serialize_pairs()).replace('+', '%20')
+
+
     #####################################################
     # Additional methods that are not in the jQuery API #
     #####################################################
+
+    @with_camel_case_alias
+    def serialize_pairs(self):
+        """Serialize form elements as an array of 2-tuples conventional for
+        typical URL-parsing operations in Python.
+
+            >>> d = PyQuery('<form><input name="order" value="spam"></form>')
+            >>> d.serialize_pairs()
+            [('order', 'spam')]
+            >>> d.serializePairs()
+            [('order', 'spam')]
+        """
+        # https://github.com/jquery/jquery/blob
+        # /2d4f53416e5f74fa98e0c1d66b6f3c285a12f0ce/src/serialize.js#L14
+        _submitter_types = ['submit', 'button', 'image', 'reset', 'file']
+
+        controls = self._copy([])
+        # Expand list of form controls
+        for el in self.items():
+            if el[0].tag == 'form':
+                form_id = el.attr('id')
+                if form_id:
+                    # Include inputs outside of their form owner
+                    root = self._copy(el.root.getroot())
+                    controls.extend(root(
+                        '#%s :not([form]):input, [form="%s"]:input'
+                        % (form_id, form_id)))
+                else:
+                    controls.extend(el(':not([form]):input'))
+            elif el[0].tag == 'fieldset':
+                controls.extend(el(':input'))
+            else:
+                controls.extend(el)
+        # Filter controls
+        selector = '[name]:enabled:not(button)'  # Not serializing image button
+        selector += ''.join(map(
+            lambda s: ':not([type="%s"])' % s,
+            _submitter_types))
+        controls = controls.filter(selector)
+
+        def _filter_out_unchecked(_, el):
+            el = controls._copy(el)
+            return not el.is_(':checkbox:not(:checked)') \
+                    and not el.is_(':radio:not(:checked)')
+        controls = controls.filter(_filter_out_unchecked)
+
+        # jQuery serializes inputs with the datalist element as an ancestor
+        # contrary to WHATWG spec as of August 2018
+        #
+        # xpath = 'self::*[not(ancestor::datalist)]'
+        # results = []
+        # for tag in controls:
+        #     results.extend(tag.xpath(xpath, namespaces=controls.namespaces))
+        # controls = controls._copy(results)
+
+        # Serialize values
+        ret = []
+        for field in controls:
+            val = self._copy(field).val()
+            if isinstance(val, list):
+                ret.extend(map(
+                    lambda v: (field.attrib['name'], v.replace('\n', '\r\n')),
+                    val
+                ))
+            else:
+                ret.append((field.attrib['name'], val.replace('\n', '\r\n')))
+        return ret
+
+    @with_camel_case_alias
+    def serialize_dict(self):
+        """Serialize form elements as an ordered dictionary. Multiple values
+        corresponding to the same input name are concatenated into one list.
+
+            >>> d = PyQuery('''<form>
+            ...             <input name="order" value="spam">
+            ...             <input name="order" value="eggs">
+            ...             <input name="order2" value="ham">
+            ...             </form>''')
+            >>> d.serialize_dict()
+            OrderedDict([('order', ['spam', 'eggs']), ('order2', 'ham')])
+            >>> d.serializeDict()
+            OrderedDict([('order', ['spam', 'eggs']), ('order2', 'ham')])
+        """
+        ret = OrderedDict()
+        for name, val in self.serialize_pairs():
+            if name not in ret:
+                ret[name] = val
+            elif not isinstance(ret[name], list):
+                ret[name] = [ret[name], val]
+            else:
+                ret[name].append(val)
+        return ret
 
     @property
     def base_url(self):
