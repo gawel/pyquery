@@ -133,7 +133,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         /multipage/semantics-other.html#concept-element-disabled
         """
         bool_op = '' if disabled else 'not'
-        return '''
+        return '''(
             ((name(.) = 'button' or name(.) = 'input' or name(.) = 'select'
                     or name(.) = 'textarea' or name(.) = 'fieldset')
                 and %s(@disabled or (ancestor::fieldset[@disabled]
@@ -145,7 +145,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
             )
             or
             ((name(.) = 'optgroup' and %s(@disabled)))
-            ''' % (bool_op, bool_op, bool_op)
+            )''' % (bool_op, bool_op, bool_op)
 
     def xpath_disabled_pseudo(self, xpath):
         """Matches all elements that are disabled::
