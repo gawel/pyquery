@@ -6,7 +6,7 @@
 import os
 import sys
 from lxml import etree
-from pyquery.pyquery import PyQuery as pq
+from pyquery.pyquery import PyQuery as pq, no_default
 from webtest import http
 from webtest.debugapp import debug_app
 from .compat import PY3k
@@ -160,6 +160,10 @@ class TestSelector(TestCase):
         doc = pq(b('<?xml version="1.0" encoding="UTF-8"?><root><p/></root>'))
         self.assertEqual(isinstance(doc.root, etree._ElementTree), True)
         self.assertEqual(doc.encoding, 'UTF-8')
+
+        child = doc.children().eq(0)
+        self.assertNotEqual(child._parent, no_default)
+        self.assertTrue(isinstance(child.root, etree._ElementTree))
 
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)

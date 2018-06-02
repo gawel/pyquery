@@ -424,7 +424,7 @@ class PyQuery(list):
         """return the xml root element
         """
         if self._parent is not no_default:
-            return self._parent.getroottree()
+            return self._parent[0].getroottree()
         return self[0].getroottree()
 
     @property
