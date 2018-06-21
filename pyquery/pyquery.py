@@ -1545,6 +1545,11 @@ class PyQuery(list):
                 if attr_value is None:
                     return None
 
+                # skip specific "protocol" schemas
+                if any(attr_value.startswith(schema)
+                       for schema in ('tel:', 'callto:', 'sms:')):
+                    return None
+
                 return self(e).attr(attr,
                                     urljoin(base_url, attr_value.strip()))
             return rep
