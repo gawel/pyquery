@@ -1,7 +1,7 @@
 1.4.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove py33 support
 
 
 1.4.0 (2018-01-11)
