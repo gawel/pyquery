@@ -385,7 +385,10 @@ class TestManipulating(TestCase):
     '''
 
     html3 = '''
-        <textarea>Spam</textarea>
+        <textarea id="textarea-single">Spam</textarea>
+        <textarea id="textarea-multi">Spam
+<b>Eggs</b>
+Bacon</textarea>
     '''
 
     html4 = '''
@@ -470,12 +473,20 @@ class TestManipulating(TestCase):
 
     def test_val_for_textarea(self):
         d = pq(self.html3)
-        self.assertEqual(d('textarea').val(), 'Spam')
-        self.assertEqual(d('textarea').text(), 'Spam')
-        d('textarea').val('42')
-        self.assertEqual(d('textarea').val(), '42')
+        self.assertEqual(d('#textarea-single').val(), 'Spam')
+        self.assertEqual(d('#textarea-single').text(), 'Spam')
+        d('#textarea-single').val('42')
+        self.assertEqual(d('#textarea-single').val(), '42')
         # Note: jQuery still returns 'Spam' here.
-        self.assertEqual(d('textarea').text(), '42')
+        self.assertEqual(d('#textarea-single').text(), '42')
+
+        multi_expected = '''Spam\n<b>Eggs</b>\nBacon'''
+        self.assertEqual(d('#textarea-multi').val(), multi_expected)
+        self.assertEqual(d('#textarea-multi').text(), multi_expected)
+        multi_new = '''Bacon\n<b>Eggs</b>\nSpam'''
+        d('#textarea-multi').val(multi_new)
+        self.assertEqual(d('#textarea-multi').val(), multi_new)
+        self.assertEqual(d('#textarea-multi').text(), multi_new)
 
     def test_val_for_select(self):
         d = pq(self.html4)

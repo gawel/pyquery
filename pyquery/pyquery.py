@@ -1017,7 +1017,7 @@ class PyQuery(list):
         def _get_value(tag):
             # <textarea>
             if tag.tag == 'textarea':
-                return self._copy(tag).text()
+                return self._copy(tag).html()
             # <select>
             elif tag.tag == 'select':
                 if 'multiple' in tag.attrib:
@@ -1194,7 +1194,10 @@ class PyQuery(list):
         if value is no_default:
             if not self:
                 return ''
-            return ' '.join(extract_text(tag, **kwargs) for tag in self)
+            return ' '.join(
+                self._copy(tag).html() if tag.tag == 'textarea' else
+                extract_text(tag, **kwargs) for tag in self
+            )
 
         for tag in self:
             for child in tag.getchildren():
