@@ -6,7 +6,7 @@
 import os
 import sys
 from lxml import etree
-from pyquery.pyquery import PyQuery as pq
+from pyquery.pyquery import PyQuery as pq, no_default
 from webtest import http
 from webtest.debugapp import debug_app
 from .compat import PY3k
@@ -160,6 +160,10 @@ class TestSelector(TestCase):
         doc = pq(b('<?xml version="1.0" encoding="UTF-8"?><root><p/></root>'))
         self.assertEqual(isinstance(doc.root, etree._ElementTree), True)
         self.assertEqual(doc.encoding, 'UTF-8')
+
+        child = doc.children().eq(0)
+        self.assertNotEqual(child._parent, no_default)
+        self.assertTrue(isinstance(child.root, etree._ElementTree))
 
     def test_selector_from_doc(self):
         doc = etree.fromstring(self.html)
@@ -384,6 +388,13 @@ class TestManipulating(TestCase):
         <input type="radio" value="Ham">
     '''
 
+    html2_newline = '''
+        <input id="newline-text" type="text" name="order" value="S
+pam">
+        <input id="newline-radio" type="radio" name="order" value="S
+pam">
+    '''
+
     html3 = '''
         <textarea id="textarea-single">Spam</textarea>
         <textarea id="textarea-multi">Spam
@@ -470,6 +481,11 @@ Bacon</textarea>
         self.assertEqual(d('input[name="eggs"]').val(), '43')
         self.assertEqual(d('input:checkbox').val(), '44')
         self.assertEqual(d('input:radio').val(), '45')
+
+    def test_val_for_inputs_with_newline(self):
+        d = pq(self.html2_newline)
+        self.assertEqual(d('#newline-text').val(), 'Spam')
+        self.assertEqual(d('#newline-radio').val(), 'S\npam')
 
     def test_val_for_textarea(self):
         d = pq(self.html3)
@@ -571,6 +587,140 @@ Bacon</textarea>
         new_html = d.outerHtml()
         self.assertEqual(new_html, expected)
         self.assertIn(replacement, new_html)
+
+
+class TestAjax(TestCase):
+
+    html = '''
+    <div id="div">
+    <input form="dispersed" name="order" value="spam">
+    </div>
+    <form id="dispersed">
+    <div><input name="order" value="eggs"></div>
+    <input form="dispersed" name="order" value="ham">
+    <input form="other-form" name="order" value="nothing">
+    <input form="" name="order" value="nothing">
+    </form>
+    <form id="other-form">
+    <input form="dispersed" name="order" value="tomato">
+    </form>
+    <form class="no-id">
+    <input form="dispersed" name="order" value="baked beans">
+    <input name="spam" value="Spam">
+    </form>
+    '''
+
+    html2 = '''
+    <form id="first">
+    <input name="order" value="spam">
+    <fieldset>
+    <input name="fieldset" value="eggs">
+    <input id="input" name="fieldset" value="ham">
+    </fieldset>
+    </form>
+    <form id="datalist">
+    <datalist><div><input name="datalist" value="eggs"></div></datalist>
+    <input type="checkbox" name="checkbox" checked>
+    <input type="radio" name="radio" checked>
+    </form>
+    '''
+
+    html3 = '''
+    <form>
+    <input name="order" value="spam">
+    <input id="noname" value="sausage">
+    <fieldset disabled>
+    <input name="order" value="sausage">
+    </fieldset>
+    <input name="disabled" value="ham" disabled>
+    <input type="submit" name="submit" value="Submit">
+    <input type="button" name="button" value="">
+    <input type="image" name="image" value="">
+    <input type="reset" name="reset" value="Reset">
+    <input type="file" name="file" value="">
+    <button type="submit" name="submit" value="submit"></button>
+    <input type="checkbox" name="spam">
+    <input type="radio" name="eggs">
+    </form>
+    '''
+
+    html4 = '''
+    <form>
+    <input name="spam" value="Spam/
+spam">
+    <select name="order" multiple>
+    <option value="baked
+beans" selected>
+    <option value="tomato" selected>
+    <option value="spam">
+    </select>
+    <textarea name="multiline">multiple
+lines
+of text</textarea>
+    </form>
+    '''
+
+    def test_serialize_pairs_form_id(self):
+        d = pq(self.html)
+        self.assertEqual(d('#div').serialize_pairs(), [])
+        self.assertEqual(d('#dispersed').serialize_pairs(), [
+            ('order', 'spam'), ('order', 'eggs'), ('order', 'ham'),
+            ('order', 'tomato'), ('order', 'baked beans'),
+        ])
+        self.assertEqual(d('.no-id').serialize_pairs(), [
+            ('spam', 'Spam'),
+        ])
+
+    def test_serialize_pairs_form_controls(self):
+        d = pq(self.html2)
+        self.assertEqual(d('fieldset').serialize_pairs(), [
+            ('fieldset', 'eggs'), ('fieldset', 'ham'),
+        ])
+        self.assertEqual(d('#input, fieldset, #first').serialize_pairs(), [
+            ('order', 'spam'), ('fieldset', 'eggs'), ('fieldset', 'ham'),
+            ('fieldset', 'eggs'), ('fieldset', 'ham'), ('fieldset', 'ham'),
+        ])
+        self.assertEqual(d('#datalist').serialize_pairs(), [
+            ('datalist', 'eggs'), ('checkbox', 'on'), ('radio', 'on'),
+        ])
+
+    def test_serialize_pairs_filter_controls(self):
+        d = pq(self.html3)
+        self.assertEqual(d('form').serialize_pairs(), [
+            ('order', 'spam')
+        ])
+
+    def test_serialize_pairs_form_values(self):
+        d = pq(self.html4)
+        self.assertEqual(d('form').serialize_pairs(), [
+            ('spam', 'Spam/spam'), ('order', 'baked\r\nbeans'),
+            ('order', 'tomato'), ('multiline', 'multiple\r\nlines\r\nof text'),
+        ])
+
+    def test_serialize_array(self):
+        d = pq(self.html4)
+        self.assertEqual(d('form').serialize_array(), [
+            {'name': 'spam', 'value': 'Spam/spam'},
+            {'name': 'order', 'value': 'baked\r\nbeans'},
+            {'name': 'order', 'value': 'tomato'},
+            {'name': 'multiline', 'value': 'multiple\r\nlines\r\nof text'},
+        ])
+
+    def test_serialize(self):
+        d = pq(self.html4)
+        self.assertEqual(
+            d('form').serialize(),
+            'spam=Spam%2Fspam&order=baked%0D%0Abeans&order=tomato&'
+            'multiline=multiple%0D%0Alines%0D%0Aof%20text'
+        )
+
+    def test_serialize_dict(self):
+        d = pq(self.html4)
+        self.assertEqual(d('form').serialize_dict(), {
+            'spam': 'Spam/spam',
+            'order': ['baked\r\nbeans', 'tomato'],
+            'multiline': 'multiple\r\nlines\r\nof text',
+        })
 
 
 class TestMakeLinks(TestCase):
