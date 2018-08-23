@@ -5,8 +5,10 @@
 # Distributed under the BSD license, see LICENSE.txt
 import os
 import sys
+import time
 from lxml import etree
 from pyquery.pyquery import PyQuery as pq, no_default
+from pyquery.openers import HAS_REQUEST
 from webtest import http
 from webtest.debugapp import debug_app
 from .compat import PY3k
@@ -870,6 +872,17 @@ class TestWebScrapping(TestCase):
         self.assertIn('REQUEST_METHOD: POST', d('p').text())
         self.assertIn('q=foo', d('p').text())
 
+    def test_session(self):
+        if HAS_REQUEST:
+            import requests
+            session = requests.Session()
+            session.headers.update({'X-FOO': 'bar'})
+            d = pq(self.application_url, {'q': 'foo'},
+                   method='get', session=session)
+            self.assertIn('HTTP_X_FOO: bar', d('p').text())
+        else:
+            self.skipTest('no requests library')
+
     def tearDown(self):
         self.s.shutdown()
 
@@ -881,3 +894,23 @@ class TestWebScrappingEncoding(TestCase):
                method='get')
         print(d)
         self.assertEqual(d('#pt-login').text(), u'Войти')
+
+
+class TestWebScrappingTimeouts(TestCase):
+
+    def setUp(self):
+        def app(environ, start_response):
+            start_response('200 OK', [('Content-Type', 'text/plain')])
+            time.sleep(2)
+            return [b'foobar\n']
+        self.s = http.StopableWSGIServer.create(app)
+        self.s.wait()
+        self.application_url = self.s.application_url.rstrip('/')
+
+    def test_get(self):
+        pq(self.application_url)
+        with self.assertRaises(Exception):
+            pq(self.application_url, timeout=1)
+
+    def tearDown(self):
+        self.s.shutdown()
