@@ -15,7 +15,7 @@ told myself "Hey let's make jquery in python". This is the result.
 
 The `project`_ is being actively developped on a git repository on Github. I
 have the policy of giving push access to anyone who wants it and then to review
-what he does. So if you want to contribute just email me.
+what they do. So if you want to contribute just email me.
 
 Please report bugs on the `github
 <https://github.com/gawel/pyquery/issues>`_ issue
