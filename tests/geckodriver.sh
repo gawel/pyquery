@@ -1,5 +1,5 @@
 #!/bin/bash
 
-driver="https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz"
+driver="https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz"
 
 [ -f geckodriver ] || wget -cqO- $driver | tar xvzf -

@@ -4,5 +4,5 @@
 # get geckodriver
 ./tests/geckodriver.sh
 
-# run tox with py3.6
-MOZ_HEADLESS=1 PATH=$PATH:$PWD tox -e py36 tests/test_real_browser.py
+# run tox with py3.7
+MOZ_HEADLESS=1 PATH=$PATH:$PWD tox -e py37 tests/test_real_browser.py
