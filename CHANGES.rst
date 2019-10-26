@@ -1,4 +1,4 @@
-1.4.1 (unreleased)
+1.4.1 (2019-10-26)
 ------------------
 
 - This is the latest release with py2 support
