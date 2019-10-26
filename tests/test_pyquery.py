@@ -1,5 +1,3 @@
-# -*- coding:utf-8 -*-
-#
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
@@ -11,17 +9,9 @@ from pyquery.pyquery import PyQuery as pq, no_default
 from pyquery.openers import HAS_REQUEST
 from webtest import http
 from webtest.debugapp import debug_app
-from .compat import PY3k
-from .compat import b
-from .compat import text_type
-from .compat import TestCase
+from unittest import TestCase
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
-
-def not_py3k(func):
-    if not PY3k:
-        return func
 
 
 dirname = os.path.dirname(os.path.abspath(__file__))
@@ -34,18 +24,9 @@ class TestUnicode(TestCase):
 
     def test_unicode(self):
         xml = pq(u"<html><p>é</p></html>")
-        self.assertEqual(type(xml.html()), text_type)
-        if PY3k:
-            self.assertEqual(str(xml), '<html><p>é</p></html>')
-            self.assertEqual(str(xml('p:contains("é")')), '<p>é</p>')
-        else:
-            self.assertEqual(text_type(xml),
-                             u"<html><p>é</p></html>")
-            self.assertEqual(str(xml), '<html><p>&#233;</p></html>')
-            self.assertEqual(str(xml(u'p:contains("é")')),
-                             '<p>&#233;</p>')
-            self.assertEqual(text_type(xml(u'p:contains("é")')),
-                             u'<p>é</p>')
+        self.assertEqual(type(xml.html()), str)
+        self.assertEqual(str(xml), '<html><p>é</p></html>')
+        self.assertEqual(str(xml('p:contains("é")')), '<p>é</p>')
 
 
 class TestAttributeCase(TestCase):
@@ -159,7 +140,7 @@ class TestSelector(TestCase):
            """
 
     def test_get_root(self):
-        doc = pq(b('<?xml version="1.0" encoding="UTF-8"?><root><p/></root>'))
+        doc = pq(b'<?xml version="1.0" encoding="UTF-8"?><root><p/></root>')
         self.assertEqual(isinstance(doc.root, etree._ElementTree), True)
         self.assertEqual(doc.encoding, 'UTF-8')
 
@@ -803,14 +784,14 @@ class TestXMLNamespace(TestCase):
 
     def test_selector(self):
         expected = 'What'
-        d = pq(b(self.xml), parser='xml')
+        d = pq(self.xml.encode('utf8'), parser='xml')
         val = d('bar|blah',
                 namespaces=self.namespaces).text()
         self.assertEqual(repr(val), repr(expected))
 
     def test_selector_with_xml(self):
         expected = 'What'
-        d = pq('bar|blah', b(self.xml), parser='xml',
+        d = pq('bar|blah', self.xml.encode('utf8'), parser='xml',
                namespaces=self.namespaces)
         val = d.text()
         self.assertEqual(repr(val), repr(expected))
@@ -823,7 +804,7 @@ class TestXMLNamespace(TestCase):
 
     def test_xhtml_namespace(self):
         expected = 'What'
-        d = pq(b(self.xhtml), parser='xml')
+        d = pq(self.xhtml.encode('utf8'), parser='xml')
         d.xhtml_to_html()
         val = d('div').text()
         self.assertEqual(repr(val), repr(expected))
@@ -837,17 +818,19 @@ class TestXMLNamespace(TestCase):
 
     def test_remove_namespaces(self):
         expected = 'What'
-        d = pq(b(self.xml), parser='xml').remove_namespaces()
+        d = pq(self.xml.encode('utf8'), parser='xml').remove_namespaces()
         val = d('blah').text()
         self.assertEqual(repr(val), repr(expected))
 
     def test_persistent_namespaces(self):
-        d = pq(b(self.xml), parser='xml', namespaces=self.namespaces)
+        d = pq(self.xml.encode('utf8'), parser='xml',
+               namespaces=self.namespaces)
         val = d('bar|blah').text()
         self.assertEqual(repr(val), repr('What'))
 
     def test_namespace_traversal(self):
-        d = pq(b(self.xml), parser='xml', namespaces=self.namespaces)
+        d = pq(self.xml.encode('utf8'), parser='xml',
+               namespaces=self.namespaces)
         val = d('baz|subbaz').closest('baz|baz').attr('a')
         self.assertEqual(repr(val), repr('b'))
 

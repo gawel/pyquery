@@ -1,10 +1,10 @@
-# -*- coding:utf-8 -*-
-#
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
 from .cssselectpatch import JQueryTranslator
 from collections import OrderedDict
+from urllib.parse import urlencode
+from urllib.parse import urljoin
 from .openers import url_opener
 from .text import extract_text
 from copy import deepcopy
@@ -12,53 +12,14 @@ from lxml import etree
 import lxml.html
 import inspect
 import types
-import sys
+
+basestring = (str, bytes)
 
 
-PY3k = sys.version_info >= (3,)
-
-try:
-    unicode
-except NameError:
-    unicode = str
-
-if PY3k:
-    from urllib.parse import urlencode
-    from urllib.parse import urljoin
-    basestring = (str, bytes)
-    string_types = (str,)
-    text_type = str
-
-    def getargspec(func):
-        args = inspect.signature(func).parameters.values()
-        return [p.name for p in args
-                if p.kind == p.POSITIONAL_OR_KEYWORD]
-
-    def getdefaultsspec(func):
-        return func.__defaults__
-
-    def func_globals(f):
-        return f.__globals__
-
-    def func_code(f):
-        return f.__code__
-else:
-    from urllib import urlencode  # NOQA
-    from urlparse import urljoin  # NOQA
-    string_types = (unicode, str)
-    text_type = unicode
-
-    def getargspec(func):
-        return list(inspect.getargspec(func).args)
-
-    def getdefaultsspec(func):
-        return inspect.getargspec(func).defaults
-
-    def func_globals(f):
-        return f.func_globals
-
-    def func_code(f):
-        return f.func_code
+def getargspec(func):
+    args = inspect.signature(func).parameters.values()
+    return [p.name for p in args
+            if p.kind == p.POSITIONAL_OR_KEYWORD]
 
 
 def with_camel_case_alias(func):
@@ -76,8 +37,8 @@ def build_camel_case_aliases(PyQuery):
         parts = list(alias.split('_'))
         name = parts[0] + ''.join([p.title() for p in parts[1:]])
         func = getattr(PyQuery, alias)
-        f = types.FunctionType(func_code(func), func_globals(func),
-                               name, getdefaultsspec(func))
+        f = types.FunctionType(func.__code__, func.__globals__,
+                               name, func.__defaults__)
         f.__doc__ = (
             'Alias for :func:`~pyquery.pyquery.PyQuery.%s`') % func.__name__
         setattr(PyQuery, name, f.__get__(None, PyQuery))
@@ -129,7 +90,7 @@ def fromstring(context, parser=None, custom_parser=None):
 
 
 def callback(func, *args):
-    return func(*args[:func_code(func).co_argcount])
+    return func(*args[:func.__code__.co_argcount])
 
 
 class NoDefault(object):
@@ -188,7 +149,7 @@ class PyQuery(list):
         self.parser = kwargs.pop('parser', None)
 
         if (len(args) >= 1 and
-                isinstance(args[0], string_types) and
+                isinstance(args[0], str) and
                 args[0].split('://', 1)[0] in ('http', 'https')):
             kwargs['url'] = args[0]
             if len(args) >= 2:
@@ -294,7 +255,7 @@ class PyQuery(list):
         if args[0] == '':
             return self._copy([])
         if (len(args) == 1 and
-                isinstance(args[0], string_types) and
+                isinstance(args[0], str) and
                 not args[0].startswith('<')):
             args += (self,)
         result = self._copy(*args, parent=self, **kwargs)
@@ -379,12 +340,11 @@ class PyQuery(list):
             <script>&lt;![[CDATA[ ]&gt;</script>
 
         """
-        encoding = str if PY3k else None
-        return ''.join([etree.tostring(e, encoding=encoding) for e in self])
+        return ''.join([etree.tostring(e, encoding=str) for e in self])
 
     def __unicode__(self):
         """xml representation of current nodes"""
-        return u''.join([etree.tostring(e, encoding=text_type)
+        return u''.join([etree.tostring(e, encoding=str)
                          for e in self])
 
     def __html__(self):
@@ -396,7 +356,7 @@ class PyQuery(list):
             <script><![[CDATA[ ]></script>
 
         """
-        return u''.join([lxml.html.tostring(e, encoding=text_type)
+        return u''.join([lxml.html.tostring(e, encoding=str)
                          for e in self])
 
     def __repr__(self):
@@ -410,15 +370,7 @@ class PyQuery(list):
                 r.append('<%s%s%s>' % (el.tag, id, c))
             return '[' + (', '.join(r)) + ']'
         except AttributeError:
-            if PY3k:
-                return list.__repr__(self)
-            else:
-                for el in self:
-                    if isinstance(el, text_type):
-                        r.append(el.encode('utf-8'))
-                    else:
-                        r.append(el)
-                return repr(r)
+            return list.__repr__(self)
 
     @property
     def root(self):
@@ -626,11 +578,11 @@ class PyQuery(list):
             try:
                 for i, this in enumerate(self):
                     if len(args) == 1:
-                        func_globals(selector)['this'] = this
+                        selector.__globals__['this'] = this
                     if callback(selector, i, this):
                         elements.append(this)
             finally:
-                f_globals = func_globals(selector)
+                f_globals = selector.__globals__
                 if 'this' in f_globals:
                     del f_globals['this']
             return self._copy(elements, parent=self)
@@ -710,11 +662,11 @@ class PyQuery(list):
         """
         try:
             for i, element in enumerate(self):
-                func_globals(func)['this'] = element
+                func.__globals__['this'] = element
                 if callback(func, i, element) is False:
                     break
         finally:
-            f_globals = func_globals(func)
+            f_globals = func.__globals__
             if 'this' in f_globals:
                 del f_globals['this']
         return self
@@ -739,7 +691,7 @@ class PyQuery(list):
         items = []
         try:
             for i, element in enumerate(self):
-                func_globals(func)['this'] = element
+                func.__globals__['this'] = element
                 result = callback(func, i, element)
                 if result is not None:
                     if not isinstance(result, list):
@@ -747,7 +699,7 @@ class PyQuery(list):
                     else:
                         items.extend(result)
         finally:
-            f_globals = func_globals(func)
+            f_globals = func.__globals__
             if 'this' in f_globals:
                 del f_globals['this']
         return self._copy(items, parent=self)
@@ -1053,6 +1005,7 @@ class PyQuery(list):
                 if tag.tag == 'select':
                     if not isinstance(value, list):
                         value = [value]
+
                     def _make_option_selected(_, elem):
                         pq = self._copy(elem)
                         if pq.attr('value') in value:
@@ -1061,6 +1014,7 @@ class PyQuery(list):
                                 del value[:]  # Ensure it toggles first match
                         else:
                             pq.removeAttr('selected')
+
                     self._copy(tag)('option').each(_make_option_selected)
                     continue
                 # Stringify array
@@ -1113,13 +1067,13 @@ class PyQuery(list):
                 return tag.text
             html = tag.text or ''
             if 'encoding' not in kwargs:
-                kwargs['encoding'] = text_type
+                kwargs['encoding'] = str
             html += u''.join([etree.tostring(e, **kwargs)
                               for e in children])
             return html
         else:
             if isinstance(value, self.__class__):
-                new_html = text_type(value)
+                new_html = str(value)
             elif isinstance(value, basestring):
                 new_html = value
             elif not value:
@@ -1164,7 +1118,7 @@ class PyQuery(list):
         if e0.tail:
             e0 = deepcopy(e0)
             e0.tail = ''
-        return etree.tostring(e0, encoding=text_type, method=method)
+        return etree.tostring(e0, encoding=str, method=method)
 
     def text(self, value=no_default, **kwargs):
         """Get or set the text representation of sub nodes.
@@ -1517,12 +1471,11 @@ class PyQuery(list):
         """
         def __setattr__(self, name, func):
             def fn(self, *args, **kwargs):
-                func_globals(func)['this'] = self
+                func.__globals__['this'] = self
                 return func(*args, **kwargs)
             fn.__name__ = name
             setattr(PyQuery, name, fn)
     fn = Fn()
-
 
     ########
     # AJAX #
@@ -1531,8 +1484,8 @@ class PyQuery(list):
     @with_camel_case_alias
     def serialize_array(self):
         """Serialize form elements as an array of dictionaries, whose structure
-        mirrors that produced by the jQuery API. Notably, it does not handle the
-        deprecated `keygen` form element.
+        mirrors that produced by the jQuery API. Notably, it does not handle
+        the deprecated `keygen` form element.
 
             >>> d = PyQuery('<form><input name="order" value="spam"></form>')
             >>> d.serialize_array() == [{'name': 'order', 'value': 'spam'}]
@@ -1557,7 +1510,6 @@ class PyQuery(list):
             'order=spam&order2=baked%20beans'
         """
         return urlencode(self.serialize_pairs()).replace('+', '%20')
-
 
     #####################################################
     # Additional methods that are not in the jQuery API #
@@ -1604,8 +1556,8 @@ class PyQuery(list):
 
         def _filter_out_unchecked(_, el):
             el = controls._copy(el)
-            return not el.is_(':checkbox:not(:checked)') \
-                    and not el.is_(':radio:not(:checked)')
+            return not el.is_(':checkbox:not(:checked)') and \
+                not el.is_(':radio:not(:checked)')
         controls = controls.filter(_filter_out_unchecked)
 
         # jQuery serializes inputs with the datalist element as an ancestor
