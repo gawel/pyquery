@@ -1,7 +1,15 @@
 1.4.1 (unreleased)
 ------------------
 
-- Remove py33 support
+- This is the latest release with py2 support
+
+- Remove py33, py34 support
+
+- web scraping improvements: default timeout and session support
+
+- Add API methods to serialize form-related elements according to spec
+
+- Include HTML markup when querying textarea text/value
 
 
 1.4.0 (2018-01-11)
