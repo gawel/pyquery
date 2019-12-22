@@ -7,7 +7,7 @@ Tips
 Making links absolute
 ---------------------
 
-You can make links absolute which can be usefull for screen scrapping::
+You can make links absolute which can be useful for screen scrapping::
 
     >>> d = pq(url=your_url, parser='html')
     >>> d('form').attr('action')
