@@ -1,21 +1,4 @@
 import re
-import sys
-
-
-PY3k = sys.version_info >= (3,)
-
-try:
-    unicode
-except NameError:
-    unicode = str
-
-
-if PY3k:
-    def is_string(s):
-        return isinstance(s, str)
-else:
-    def is_string(s):
-        return isinstance(s, (unicode, str))
 
 
 # https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#Elements
@@ -57,12 +40,12 @@ def _strip_artifical_nl(parts):
     if not parts:
         return parts
     for start_idx, pt in enumerate(parts):
-        if is_string(pt):
+        if isinstance(pt, str):
             # 0, 1, 2, index of first string [start_idx:...
             break
     iterator = enumerate(parts[:start_idx - 1 if start_idx > 0 else None:-1])
     for end_idx, pt in iterator:
-        if is_string(pt):  # 0=None, 1=-1, 2=-2, index of last string
+        if isinstance(pt, str):  # 0=None, 1=-1, 2=-2, index of last string
             break
     return parts[start_idx:-end_idx if end_idx > 0 else None]
 
@@ -78,7 +61,7 @@ def _merge_original_parts(parts):
             orp_buf[:] = []
 
     for x in parts:
-        if not is_string(x):
+        if not isinstance(x, str):
             flush()
             output.append(x)
         else:

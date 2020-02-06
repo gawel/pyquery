@@ -1,17 +1,7 @@
 # -*- coding: utf-8 -*-
-import sys
-
-PY3k = sys.version_info >= (3,)
-
-if PY3k:
-    from urllib.request import urlopen
-    from urllib.parse import urlencode
-    from urllib.error import HTTPError
-    basestring = (str, bytes)
-else:
-    from urllib2 import urlopen  # NOQA
-    from urllib import urlencode  # NOQA
-    from urllib2 import HTTPError
+from urllib.request import urlopen
+from urllib.parse import urlencode
+from urllib.error import HTTPError
 
 try:
     import requests
@@ -20,6 +10,8 @@ except ImportError:
     HAS_REQUEST = False
 
 DEFAULT_TIMEOUT = 60
+
+basestring = (str, bytes)
 
 allowed_args = (
     'auth', 'data', 'headers', 'verify',
@@ -43,7 +35,7 @@ def _query(url, method, kwargs):
         url += data
         data = None
 
-    if data and PY3k:
+    if data:
         data = data.encode('utf-8')
     return url, data
 
