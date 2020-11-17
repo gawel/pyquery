@@ -1064,7 +1064,7 @@ class PyQuery(list):
             tag = self[0]
             children = tag.getchildren()
             if not children:
-                return tag.text
+                return tag.text or ''
             html = tag.text or ''
             if 'encoding' not in kwargs:
                 kwargs['encoding'] = str
