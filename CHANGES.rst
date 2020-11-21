@@ -1,4 +1,4 @@
-1.4.3 (unreleased)
+1.4.3 (2020-11-21)
 ------------------
 
 - No longer use a universal wheel
