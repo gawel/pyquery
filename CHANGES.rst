@@ -1,8 +1,9 @@
 1.4.2 (unreleased)
 ------------------
 
--  Fix exception raised when calling `PyQuery("<textarea></textarea>").text()`
+- Fix exception raised when calling `PyQuery("<textarea></textarea>").text()`
 
+- python2 is no longer supported
 
 1.4.1 (2019-10-26)
 ------------------
