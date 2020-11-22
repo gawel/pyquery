@@ -11,6 +11,7 @@ from copy import deepcopy
 from lxml import etree
 import lxml.html
 import inspect
+import itertools
 import types
 
 basestring = (str, bytes)
@@ -461,6 +462,23 @@ class PyQuery(list):
         [<img>]
         """
         return self._filter_only(selector, self._next_all())
+
+    @with_camel_case_alias
+    def next_until(self, selector, filter_=None):
+        """
+        >>> h = '<h2>Greeting 1</h2><p>Hello!</p><p>World!</p><h2>Greeting 2</h2><p>Bye!</p>'
+        >>> d = PyQuery(h)
+        >>> d('h2:first').nextUntil('h2')
+        [<p>Hello</p>, <p>World!</p>]
+        """
+        return self._filter_only(
+            filter_, [
+                e
+                for q in itertools.takewhile(
+                    lambda q: not q.is_(selector), self.next_all().items())
+                for e in q
+            ]
+        )
 
     def _prev_all(self):
         return [e for e in self._traverse('getprevious')]
