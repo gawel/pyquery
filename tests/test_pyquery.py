@@ -321,13 +321,17 @@ class TestCallback(TestCase):
 
     def test_S_this_inside_callback(self):
         S = pq(self.html)
-        self.assertEqual(S('li').map(lambda i, el: S(this).html()),  # NOQA
-                                     ['Coffee', 'Tea', 'Milk'])
+        self.assertEqual(S('li').map(
+            lambda i, el: S(this).html()),  # NOQA
+            ['Coffee', 'Tea', 'Milk']
+        )
 
     def test_parameterless_callback(self):
         S = pq(self.html)
-        self.assertEqual(S('li').map(lambda: S(this).html()),  # NOQA
-                                     ['Coffee', 'Tea', 'Milk'])
+        self.assertEqual(S('li').map(
+            lambda: S(this).html()),  # NOQA
+            ['Coffee', 'Tea', 'Milk']
+        )
 
 
 class TestHook(TestCase):
