@@ -27,7 +27,9 @@ jobs:
       - name: Install Tox and any other packages
         run: pip install tox
       - name: Run Tox
-        run: tox -e py
+        run: |
+            export PATH=$PATH:$PWD
+            tox -e py
       - name: Run flake8 / docs
         run: tox -e flake8,docs
         if: matrix.python == 3.8
