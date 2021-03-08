@@ -33,6 +33,8 @@ ETH: 0xb6418036d8E06c60C4D91c17d72Df6e1e5b15CE6
 
 LTC: LY6CdZcDbxnBX9GFBJ45TqVj8NykBBqsmT
 
+..
+   >>> (urlopen, your_url, path_to_html_file) = getfixture('readme_fixt')
 
 Quickstart
 ==========

@@ -3,6 +3,7 @@ Scraping
 
 ..
   >>> from pyquery import PyQuery as pq
+  >>> your_url = getfixture('scrap_url')
 
 PyQuery is able to load an html document from a url::
 

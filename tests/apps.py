@@ -8,13 +8,13 @@ def input_app(environ, start_response):
     resp = Response()
     req = Request(environ)
     if req.path_info == '/':
-        resp.body = b'<input name="youyou" type="text" value="" />'
+        resp.text = '<input name="youyou" type="text" value="" />'
     elif req.path_info == '/submit':
-        resp.body = b'<input type="submit" value="OK" />'
+        resp.text = '<input type="submit" value="OK" />'
     elif req.path_info.startswith('/html'):
-        resp.body = b'<html><p>Success</p></html>'
+        resp.text = '<html><p>Success</p></html>'
     else:
-        resp.body = ''
+        resp.text = '<html></html>'
     return resp(environ, start_response)
 
 
@@ -22,9 +22,9 @@ def application(environ, start_response):
     req = Request(environ)
     response = Response()
     if req.method == 'GET':
-        response.body = b'<pre>Yeah !</pre>'
+        response.text = '<pre>Yeah !</pre>'
     else:
-        response.body = b'<a href="/plop">Yeah !</a>'
+        response.text = '<a href="/plop">Yeah !</a>'
     return response(environ, start_response)
 
 

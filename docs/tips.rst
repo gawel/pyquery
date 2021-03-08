@@ -3,6 +3,7 @@ Tips
 
 ..
     >>> from pyquery import PyQuery as pq
+    >>> your_url = getfixture('tips_url')
 
 Making links absolute
 ---------------------
