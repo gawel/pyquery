@@ -64,6 +64,9 @@ setup(name='pyquery',
       packages=find_packages(exclude=[
           'bootstrap', 'bootstrap-py3k', 'docs', 'tests', 'README_fixt'
       ]),
+      extras_require={
+        'test': ['requests', 'webob', 'webtest', 'pytest', 'pytest-cov'],
+      },
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
