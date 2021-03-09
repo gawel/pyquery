@@ -466,10 +466,14 @@ class PyQuery(list):
     @with_camel_case_alias
     def next_until(self, selector, filter_=None):
         """
-        >>> h = '<h2>Greeting 1</h2><p>Hello!</p><p>World!</p><h2>Greeting 2</h2><p>Bye!</p>'
+        >>> h = '''
+        ... <h2>Greeting 1</h2>
+        ... <p>Hello!</p><p>World!</p>
+        ... <h2>Greeting 2</h2><p>Bye!</p>
+        ... '''
         >>> d = PyQuery(h)
         >>> d('h2:first').nextUntil('h2')
-        [<p>Hello</p>, <p>World!</p>]
+        [<p>, <p>]
         """
         return self._filter_only(
             filter_, [

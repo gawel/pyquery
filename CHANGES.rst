@@ -1,7 +1,7 @@
 1.4.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add nextUntil method
 
 
 1.4.3 (2020-11-21)
