@@ -235,6 +235,27 @@ class TestTraversal(TestCase):
            </html>
            """
 
+    html2 = """
+            <html>
+             <body>
+               <dl>
+                 <dt id="term-1">term 1</dt>
+                 <dd>definition 1-a</dd>
+                 <dd>definition 1-b</dd>
+                 <dd>definition 1-c</dd>
+                 <dd>definition 1-d</dd>
+                 <dt id="term-2">term 2</dt>
+                 <dd>definition 2-a</dd>
+                 <dd class="strange">definition 2-b</dd>
+                 <dd>definition 2-c</dd>
+                 <dt id="term-3">term 3</dt>
+                 <dd>definition 3-a</dd>
+                 <dd>definition 3-b</dd>
+               </dl>
+             </body>
+            </html>
+            """
+
     def test_filter(self):
         assert len(self.klass('div', self.html).filter('.node3')) == 1
         assert len(self.klass('div', self.html).filter('#node2')) == 1
@@ -277,6 +298,32 @@ class TestTraversal(TestCase):
         assert self.klass('#node2',
                           self.html).closest('.node3').attr('id') == 'node2'
         assert self.klass('.node3', self.html).closest('form') == []
+
+    def test_next_all(self):
+        d = pq(self.html2)
+
+        # without filter
+        self.assertEqual(
+            len(d('#term-2').next_all()), 6)
+        # with filter
+        self.assertEqual(
+            len(d('#term-2').next_all('dd')), 5)
+        # when empty
+        self.assertEqual(
+            d('#NOTHING').next_all(), [])
+
+    def test_next_until(self):
+        d = pq(self.html2)
+
+        # without filter
+        self.assertEqual(
+            len(d('#term-2').next_until('dt')), 3)
+        # with filter
+        self.assertEqual(
+            len(d('#term-2').next_until('dt', ':not(.strange)')), 2)
+        # when empty
+        self.assertEqual(
+            d('#NOTHING').next_until('*'), [])
 
 
 class TestOpener(TestCase):
