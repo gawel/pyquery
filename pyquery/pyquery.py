@@ -1594,7 +1594,7 @@ class PyQuery(list):
         # Serialize values
         ret = []
         for field in controls:
-            val = self._copy(field).val()
+            val = self._copy(field).val() or ''
             if isinstance(val, list):
                 ret.extend(map(
                     lambda v: (field.attrib['name'], v.replace('\n', '\r\n')),
