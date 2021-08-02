@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 from .openers import url_opener
 from .text import extract_text
 from copy import deepcopy
+from html import escape
 from lxml import etree
 import lxml.html
 import inspect
@@ -1085,9 +1086,9 @@ class PyQuery(list):
                 return None
             tag = self[0]
             children = tag.getchildren()
+            html = escape(tag.text or '', quote=False)
             if not children:
-                return tag.text or ''
-            html = tag.text or ''
+                return html
             if 'encoding' not in kwargs:
                 kwargs['encoding'] = str
             html += u''.join([etree.tostring(e, **kwargs)
