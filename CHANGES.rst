@@ -3,6 +3,8 @@
 
 - Add nextUntil method
 
+- ``.remove()`` no longer inserts a space in place of the removed element
+
 
 1.4.3 (2020-11-21)
 ------------------
