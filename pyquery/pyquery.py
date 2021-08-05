@@ -149,14 +149,6 @@ class PyQuery(list):
         self._base_url = None
         self.parser = kwargs.pop('parser', None)
 
-        if (len(args) >= 1 and
-                isinstance(args[0], str) and
-                args[0].split('://', 1)[0] in ('http', 'https')):
-            kwargs['url'] = args[0]
-            if len(args) >= 2:
-                kwargs['data'] = args[1]
-            args = []
-
         if 'parent' in kwargs:
             self._parent = kwargs.pop('parent')
         else:
