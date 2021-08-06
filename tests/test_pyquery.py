@@ -902,14 +902,14 @@ class TestWebScrapping(TestCase):
         self.application_url = self.s.application_url.rstrip('/')
 
     def test_get(self):
-        d = pq(self.application_url, {'q': 'foo'},
+        d = pq(url=self.application_url, data={'q': 'foo'},
                method='get')
         print(d)
         self.assertIn('REQUEST_METHOD: GET', d('p').text())
         self.assertIn('q=foo', d('p').text())
 
     def test_post(self):
-        d = pq(self.application_url, {'q': 'foo'},
+        d = pq(url=self.application_url, data={'q': 'foo'},
                method='post')
         self.assertIn('REQUEST_METHOD: POST', d('p').text())
         self.assertIn('q=foo', d('p').text())
@@ -919,7 +919,7 @@ class TestWebScrapping(TestCase):
             import requests
             session = requests.Session()
             session.headers.update({'X-FOO': 'bar'})
-            d = pq(self.application_url, {'q': 'foo'},
+            d = pq(url=self.application_url, data={'q': 'foo'},
                    method='get', session=session)
             self.assertIn('HTTP_X_FOO: bar', d('p').text())
         else:
@@ -932,7 +932,7 @@ class TestWebScrapping(TestCase):
 class TestWebScrappingEncoding(TestCase):
 
     def test_get(self):
-        d = pq(u'http://ru.wikipedia.org/wiki/Заглавная_страница',
+        d = pq(url=u'http://ru.wikipedia.org/wiki/Заглавная_страница',
                method='get')
         print(d)
         self.assertEqual(d('#pt-login').text(), u'Войти')
@@ -950,9 +950,9 @@ class TestWebScrappingTimeouts(TestCase):
         self.application_url = self.s.application_url.rstrip('/')
 
     def test_get(self):
-        pq(self.application_url)
+        pq(url=self.application_url)
         with self.assertRaises(Exception):
-            pq(self.application_url, timeout=1)
+            pq(url=self.application_url, timeout=1)
 
     def tearDown(self):
         self.s.shutdown()

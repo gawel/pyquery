@@ -7,17 +7,17 @@ Scraping
 
 PyQuery is able to load an html document from a url::
 
-  >>> pq(your_url)
+  >>> pq(url=your_url)
   [<html>]
 
 By default it uses python's urllib.
 
 If `requests`_ is installed then it will use it. This allow you to use most of `requests`_ parameters::
 
-  >>> pq(your_url, headers={'user-agent': 'pyquery'})
+  >>> pq(url=your_url, headers={'user-agent': 'pyquery'})
   [<html>]
 
-  >>> pq(your_url, {'q': 'foo'}, method='post', verify=True)
+  >>> pq(url=your_url, data={'q': 'foo'}, method='post', verify=True)
   [<html>]
 
 
