@@ -491,9 +491,9 @@ Bacon</textarea>
         d = pq(self.html)
         d('img').remove()
         val = d('a:first').html()
-        assert val == 'Test My link text', repr(val)
+        assert val == 'TestMy link text', repr(val)
         val = d('a:last').html()
-        assert val == ' My link text 2', repr(val)
+        assert val == 'My link text 2', repr(val)
 
     def test_class(self):
         d = pq('<div></div>')

@@ -1457,7 +1457,7 @@ class PyQuery(list):
              >>> d('strong').remove()
              [<strong>]
              >>> print(d)
-             <div>Maybe <em>she</em> does   know</div>
+             <div>Maybe <em>she</em> does  know</div>
         """
         if expr is no_default:
             for tag in self:
@@ -1468,11 +1468,11 @@ class PyQuery(list):
                         if prev is None:
                             if not parent.text:
                                 parent.text = ''
-                            parent.text += ' ' + tag.tail
+                            parent.text += tag.tail
                         else:
                             if not prev.tail:
                                 prev.tail = ''
-                            prev.tail += ' ' + tag.tail
+                            prev.tail += tag.tail
                     parent.remove(tag)
         else:
             results = self._copy(expr, self)

@@ -3,6 +3,8 @@
 
 - Add nextUntil method
 
+- ``.remove()`` no longer inserts a space in place of the removed element
+
 - Fix escaping of top-level element text in ``.html()`` output
 
 
