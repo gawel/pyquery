@@ -1,12 +1,9 @@
-2.0 (unreleased)
-----------------
+2.0.0 (unreleased)
+------------------
 
 - Breaking change: inputs starting with ``"http://"`` or ``"https://"`` like
   ``PyQuery("http://example.com")`` will no longer fetch the contents of the URL.
   Users desiring the old behavior should switch to ``PyQuery(url="http://example.com")``.
-
-1.4.4 (unreleased)
-------------------
 
 - Add nextUntil method
 
