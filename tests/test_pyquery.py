@@ -534,9 +534,10 @@ Bacon</textarea>
         self.assertEqual(d('#textarea-multi').val(), multi_expected)
         self.assertEqual(d('#textarea-multi').text(), multi_expected)
         multi_new = '''Bacon\n<b>Eggs</b>\nSpam'''
+        multi_new_expected = '''Bacon\n&lt;b&gt;Eggs&lt;/b&gt;\nSpam'''
         d('#textarea-multi').val(multi_new)
-        self.assertEqual(d('#textarea-multi').val(), multi_new)
-        self.assertEqual(d('#textarea-multi').text(), multi_new)
+        self.assertEqual(d('#textarea-multi').val(), multi_new_expected)
+        self.assertEqual(d('#textarea-multi').text(), multi_new_expected)
 
     def test_val_for_select(self):
         d = pq(self.html4)
@@ -621,6 +622,13 @@ Bacon</textarea>
         new_html = d.outerHtml()
         self.assertEqual(new_html, expected)
         self.assertIn(replacement, new_html)
+
+    def test_html_escape(self):
+        inner_html = 'encoded &lt;script&gt; tag with "quotes".' \
+                     '<span>nested &lt;tag&gt;</span>'
+        html = '<div>' + inner_html + '</div>'
+        d = pq(html)
+        self.assertEqual(d.html(), inner_html)
 
 
 class TestAjax(TestCase):

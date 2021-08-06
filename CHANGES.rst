@@ -3,6 +3,8 @@
 
 - Add nextUntil method
 
+- Fix escaping of top-level element text in ``.html()`` output
+
 
 1.4.3 (2020-11-21)
 ------------------
