@@ -169,10 +169,8 @@ class PyQuery(list):
         if kwargs:
             # specific case to get the dom
             if 'filename' in kwargs:
-                if 'encoding' in kwargs:
-                    html = open(kwargs['filename'], encoding=kwargs['encoding'])
-                else:
-                    html = open(kwargs['filename'])
+                html = open(kwargs['filename'],
+                            encoding=kwargs.get('encoding'))
             elif 'url' in kwargs:
                 url = kwargs.pop('url')
                 if 'opener' in kwargs:
