@@ -6,15 +6,15 @@ pyquery: a jquery-like library for python
    :target: https://travis-ci.org/gawel/pyquery
 
 pyquery allows you to make jquery queries on xml documents.
-The API is as much as possible the similar to jquery. pyquery uses lxml for fast
+The API is as much as possible similar to jquery. pyquery uses lxml for fast
 xml and html manipulation.
 
 This is not (or at least not yet) a library to produce or interact with
 javascript code. I just liked the jquery API and I missed it in python so I
 told myself "Hey let's make jquery in python". This is the result.
 
-The `project`_ is being actively developped on a git repository on Github. I
-have the policy of giving push access to anyone who wants it and then to review
+The `project`_ is being actively developed on a git repository on Github. I
+have the policy of giving push access to anyone who wants it and then reviewing
 what they do. So if you want to contribute just email me.
 
 Please report bugs on the `github
@@ -25,7 +25,7 @@ tracker.
 .. _project: https://github.com/gawel/pyquery/
 
 I've spent hours maintaining this software, with love.
-Please consider tiping if you like it:
+Please consider tipping if you like it:
 
 BTC: 1PruQAwByDndFZ7vTeJhyWefAghaZx9RZg
 
