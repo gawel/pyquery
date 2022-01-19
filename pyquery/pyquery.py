@@ -933,7 +933,7 @@ class PyQuery(list):
     # CORE UI EFFECTS #
     ###################
     def hide(self):
-        """Remove display:none to elements style:
+        """Add display:none to elements style:
 
             >>> print(PyQuery('<div style="display:none;"/>').hide())
             <div style="display: none"/>
