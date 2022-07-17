@@ -77,7 +77,7 @@ def extract_text_array(dom, squash_artifical_nl=True, strip_artifical_nl=True):
     if dom.tag in SEPARATORS:
         r.append(True)  # equivalent of '\n' used to designate separators
     elif dom.tag not in INLINE_TAGS:
-        # equivalent of '\n' used to designate artifically inserted newlines
+        # equivalent of '\n' used to designate artificially inserted newlines
         r.append(None)
     if dom.text is not None:
         r.append(dom.text)
@@ -87,7 +87,7 @@ def extract_text_array(dom, squash_artifical_nl=True, strip_artifical_nl=True):
         if child.tail is not None:
             r.append(child.tail)
     if dom.tag not in INLINE_TAGS and dom.tag not in SEPARATORS:
-        # equivalent of '\n' used to designate artifically inserted newlines
+        # equivalent of '\n' used to designate artificially inserted newlines
         r.append(None)
     if squash_artifical_nl:
         r = _squash_artifical_nl(r)

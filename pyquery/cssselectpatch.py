@@ -321,7 +321,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         return xpath
 
     def xpath_header_pseudo(self, xpath):
-        """Matches all header elelements (h1, ..., h6)::
+        """Matches all header elements (h1, ..., h6)::
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><h1>title</h1></div>')

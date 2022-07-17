@@ -266,7 +266,7 @@ class PyQuery(list):
         return self._copy(self[:] + other[:])
 
     def extend(self, other):
-        """Extend with anoter PyQuery object"""
+        """Extend with another PyQuery object"""
         assert isinstance(other, self.__class__)
         self._extend(other[:])
         return self
