@@ -58,9 +58,9 @@ class TextExtractionMixin():
             'Some words\ntest. Another word\n\n \n test.',
         )
         self._simple_test(
-            'Inline <span>  splitted by\nbr<br>tag</span> test',
-            'Inline splitted by br\ntag test',
-            'Inline   splitted by\nbr\ntag test',
+            'Inline <span>  split by\nbr<br>tag</span> test',
+            'Inline split by br\ntag test',
+            'Inline   split by\nbr\ntag test',
         )
         self._simple_test(
             'Some words<hr>test. Another word<hr><hr> <hr> test.',
