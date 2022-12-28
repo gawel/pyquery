@@ -1,9 +1,9 @@
 pyquery: a jquery-like library for python
 =========================================
 
-.. image:: https://travis-ci.org/gawel/pyquery.svg
+.. image:: https://github.com/gawel/pyquery/actions/workflows/tox.yml/badge.svg
    :alt: Build Status
-   :target: https://travis-ci.org/gawel/pyquery
+   :target: https://github.com/gawel/pyquery/actions/workflows/tox.yml
 
 pyquery allows you to make jquery queries on xml documents.
 The API is as much as possible similar to jquery. pyquery uses lxml for fast
