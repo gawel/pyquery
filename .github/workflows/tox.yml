@@ -3,9 +3,8 @@ name: tox
 on: [push, pull_request]
 
 jobs:
-  tox:
-
-    runs-on: ["windows-latest", "ubuntu-latest"]
+  linux:
+    runs-on: ubuntu-latest
     env:
         MOZ_HEADLESS: "1"
     strategy:
@@ -33,3 +32,22 @@ jobs:
       - name: Run flake8 / docs
         run: tox -e flake8,docs
         if: matrix.python == 3.9
+
+  windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python: [3.7, 3.8, 3.9, "3.10"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Tox and any other packages
+        run: pip install tox
+      - name: Run Tox
+        run: |
+            export PATH=$PATH:$PWD
+            tox -e py
