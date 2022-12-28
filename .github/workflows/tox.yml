@@ -50,7 +50,7 @@ jobs:
       - name: Run Tox
         run: tox -e py
 
-  windows:
+  macos:
     runs-on: macos-latest
     strategy:
       matrix:
