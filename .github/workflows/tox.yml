@@ -16,9 +16,9 @@ jobs:
         uses: browser-actions/setup-firefox@latest
         with:
           firefox-version: latest
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Install geckodriver
@@ -40,14 +40,29 @@ jobs:
         python: [3.7, 3.8, 3.9, "3.10"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
       - name: Install Tox and any other packages
         run: pip install tox
       - name: Run Tox
-        run: |
-            export PATH=$PATH:$PWD
-            tox -e py
+        run: tox -e py
+
+  windows:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python: [3.7, 3.8, 3.9, "3.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Tox and any other packages
+        run: pip install tox
+      - name: Run Tox
+        run: tox -e py
