@@ -11,6 +11,10 @@
 
 - Fix escaping of top-level element text in ``.html()`` output
 
+- Support (and require) cssselect 1.2+
+
+- Drop support for python 3.5/3.6
+
 
 1.4.3 (2020-11-21)
 ------------------
