@@ -1,4 +1,4 @@
-2.0.0 (unreleased)
+2.0.0 (2022-12-28)
 ------------------
 
 - Breaking change: inputs starting with ``"http://"`` or ``"https://"`` like
