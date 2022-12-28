@@ -29,8 +29,11 @@ class XPathExpr(XPathExprOrig):
             path = '%s[%s]' % (path, self.post_condition)
         return path
 
-    def join(self, combiner, other):
-        res = XPathExprOrig.join(self, combiner, other)
+    def join(self, combiner, other,
+             closing_combiner=None, has_inner_condition=False):
+        res = XPathExprOrig.join(self, combiner, other,
+                                 closing_combiner=closing_combiner,
+                                 has_inner_condition=has_inner_condition)
         self.post_condition = other.post_condition
         return res
 

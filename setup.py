@@ -10,7 +10,7 @@ import os
 
 install_requires = [
     'lxml>=2.1',
-    'cssselect>0.7.9',
+    'cssselect>=1.2.0',
 ]
 
 
