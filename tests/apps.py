@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from webob import Request
 from webob import Response
 from webob import exc

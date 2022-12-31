@@ -23,7 +23,7 @@ path_to_invalid_file = os.path.join(dirname, 'invalid.xml')
 class TestUnicode(TestCase):
 
     def test_unicode(self):
-        xml = pq(u"<html><p>é</p></html>")
+        xml = pq("<html><p>é</p></html>")
         self.assertEqual(type(xml.html()), str)
         self.assertEqual(str(xml), '<html><p>é</p></html>')
         self.assertEqual(str(xml('p:contains("é")')), '<p>é</p>')
@@ -932,10 +932,10 @@ class TestWebScrapping(TestCase):
 class TestWebScrappingEncoding(TestCase):
 
     def test_get(self):
-        d = pq(url=u'http://ru.wikipedia.org/wiki/Заглавная_страница',
+        d = pq(url='http://ru.wikipedia.org/wiki/Заглавная_страница',
                method='get')
         print(d)
-        self.assertEqual(d('#pt-login').text(), u'Войти')
+        self.assertEqual(d('#pt-login').text(), 'Войти')
 
 
 class TestWebScrappingTimeouts(TestCase):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # pyquery documentation build configuration file, created by
 # sphinx-quickstart on Thu Nov  1 21:48:09 2012.
@@ -40,8 +39,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'pyquery'
-copyright = u'2012-2017, Olivier Lauzanne'
+project = 'pyquery'
+copyright = '2012-2017, Olivier Lauzanne'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -183,8 +182,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'pyquery.tex', u'pyquery Documentation',
-   u'Olivier Lauzanne', 'manual'),
+  ('index', 'pyquery.tex', 'pyquery Documentation',
+   'Olivier Lauzanne', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -213,8 +212,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pyquery', u'pyquery Documentation',
-     [u'Olivier Lauzanne'], 1)
+    ('index', 'pyquery', 'pyquery Documentation',
+     ['Olivier Lauzanne'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -227,8 +226,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'pyquery', u'pyquery Documentation',
-   u'Olivier Lauzanne', 'pyquery', 'One line description of project.',
+  ('index', 'pyquery', 'pyquery Documentation',
+   'Olivier Lauzanne', 'pyquery', 'One line description of project.',
    'Miscellaneous'),
 ]
 
