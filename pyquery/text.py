@@ -14,7 +14,7 @@ SEPARATORS = {'br'}
 
 # Definition of whitespace in HTML:
 # https://www.w3.org/TR/html4/struct/text.html#h-9.1
-WHITESPACE_RE = re.compile(u'[\x20\x09\x0C\u200B\x0A\x0D]+')
+WHITESPACE_RE = re.compile('[\x20\x09\x0C\u200B\x0A\x0D]+')
 
 
 def squash_html_whitespace(text):

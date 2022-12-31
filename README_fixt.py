@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 from webtest import http
 from webtest.debugapp import debug_app
