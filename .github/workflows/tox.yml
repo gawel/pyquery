@@ -6,7 +6,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     env:
-        MOZ_HEADLESS: "1"
+      MOZ_HEADLESS: "1"
     strategy:
       matrix:
         python: [3.7, 3.8, 3.9, "3.10", 3.11]
@@ -27,8 +27,8 @@ jobs:
         run: pip install tox
       - name: Run Tox
         run: |
-            export PATH=$PATH:$PWD
-            tox -e py
+          export PATH=$PATH:$PWD
+          tox -e py
       - name: Run flake8 / docs
         run: tox -e flake8,docs
         if: matrix.python == 3.9
