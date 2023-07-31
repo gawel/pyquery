@@ -857,7 +857,7 @@ class TestXMLNamespace(TestCase):
 
     def test_selector_html(self):
         expected = 'What'
-        query = 'blah' if etree.LIBXML_VERSION < (2, 10, 4) else 'bar\:blah'
+        query = 'blah' if etree.LIBXML_VERSION < (2, 10, 4) else 'bar|blah'
         d = pq(query, self.xml.split('?>', 1)[1], parser='html')
         val = d.text()
         self.assertEqual(repr(val), repr(expected))
