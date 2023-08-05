@@ -17,6 +17,7 @@ import types
 
 basestring = (str, bytes)
 
+from collections import OrderedDict
 
 def getargspec(func):
     args = inspect.signature(func).parameters.values()
@@ -888,44 +889,40 @@ class PyQuery(list):
             tag.set('class', ' '.join(classes))
         return self
 
-    def css(self, *args, **kwargs):
-        """css attributes manipulation
-        """
+    def css(self, propertyName, value=no_default):
+        """css attributes manipulation"""
+        def clean_css(styles):
+            return OrderedDict((key.strip().replace('_', '-'), value.strip())
+                   for key, value in styles.items())
 
-        attr = value = no_default
-        length = len(args)
-        if length == 1:
-            attr = args[0]
-        elif length == 2:
-            attr, value = args
-        elif kwargs:
-            attr = kwargs
+        if isinstance(propertyName, basestring):
+            getter = value is no_default
+            attrs = {propertyName: not getter and value or ''}
+        elif isinstance(propertyName, dict):
+            attrs = propertyName
+            getter = False
+        elif isinstance(propertyName, list):
+            attrs = OrderedDict((key, '') for key in propertyName)
+            getter = True
         else:
-            raise ValueError('Invalid arguments %s %s' % (args, kwargs))
+            raise ValueError('Invalid arguments %s' % str(propertyName))
+        attrs = clean_css(attrs)
 
-        if isinstance(attr, dict):
-            for tag in self:
-                stripped_keys = [key.strip().replace('_', '-')
-                                 for key in attr.keys()]
-                current = [el.strip()
-                           for el in (tag.get('style') or '').split(';')
-                           if el.strip()
-                           and not el.split(':')[0].strip() in stripped_keys]
-                for key, value in attr.items():
-                    key = key.replace('_', '-')
-                    current.append('%s: %s' % (key, value))
-                tag.set('style', '; '.join(current))
-        elif isinstance(value, basestring):
-            attr = attr.replace('_', '-')
-            for tag in self:
-                current = [
-                    el.strip()
-                    for el in (tag.get('style') or '').split(';')
-                    if (el.strip() and
-                        not el.split(':')[0].strip() == attr.strip())]
-                current.append('%s: %s' % (attr, value))
-                tag.set('style', '; '.join(current))
-        return self
+        for tag in self:
+            style = (tag.get('style') or '').split(';')
+            styles = OrderedDict(e.split(':', 1) for e in style if ':' in e)
+            styles = clean_css(styles)
+
+            if getter:
+                # The getter always returns for the first element in jquery
+                ret = [ styles.get(key, no_default) for key in attrs.keys() ]
+                return isinstance(propertyName, list) and ret or ''.join(ret[:1])
+
+            styles.update(attrs)
+            styles = [ ': '.join(e) for e in styles.items() if all(e) ]
+            tag.set('style', '; '.join(styles) + ';')
+        # Return's self on write (but not on read)
+        return self 
 
     css = FlexibleElement(pget=css, pset=css)
 

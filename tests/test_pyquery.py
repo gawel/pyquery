@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 dirname = os.path.dirname(os.path.abspath(__file__))
 docs = os.path.join(os.path.dirname(dirname), 'docs')
 path_to_html_file = os.path.join(dirname, 'test.html')
+path_to_css_file = os.path.join(dirname, 'test_css.html')
 path_to_invalid_file = os.path.join(dirname, 'invalid.xml')
 
 
@@ -324,6 +325,42 @@ class TestTraversal(TestCase):
         # when empty
         self.assertEqual(
             d('#NOTHING').next_until('*'), [])
+
+
+class TestCss(TestCase):
+    def setUp(self):
+        self.doc = pq(filename=path_to_css_file)
+        self.tags = self.doc('#css')
+
+    def test_read_css(self):
+        self.assertEqual(self.tags.css('color'), 'red')
+
+    def test_read_list(self):
+        self.assertEqual(self.tags.css(['color']), ['red'])
+        self.assertEqual(self.tags.css(['color', 'border']),
+            ['red', '2px solid black'])
+
+    def test_write_css_new(self):
+        self.tags.css('font-size', '4px')
+        self.assertEqual(self.tags[0].get('style'),
+            'color: red; border: 2px solid black; font-size: 4px;')
+
+    def test_remove_css(self):
+        self.tags.css('color', None)
+        self.assertEqual(self.tags[0].get('style'),
+            'border: 2px solid black;')
+
+    def test_write_css_old(self):
+        # Note, our jquery modifies the css in place rather than reordering.
+        self.tags.css('color', 'blue')
+        self.assertEqual(self.tags.css('color'), 'blue')
+        self.assertEqual(self.tags[0].get('style'),
+            'color: blue; border: 2px solid black;')
+
+    def test_write_dict(self):
+        self.tags.css({'color': 'green', 'font-size': '16px'})
+        self.assertEqual(self.tags[0].get('style'),
+            'color: green; border: 2px solid black; font-size: 16px;')
 
 
 class TestOpener(TestCase):
