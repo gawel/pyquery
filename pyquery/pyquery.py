@@ -2,7 +2,7 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 from .cssselectpatch import JQueryTranslator
-from collections import OrderedDict
+from reprlib import recursive_repr
 from urllib.parse import urlencode
 from urllib.parse import urljoin
 from .openers import url_opener
@@ -14,6 +14,24 @@ import lxml.html
 import inspect
 import itertools
 import types
+import sys
+
+if sys.version_info >= (3, 12, 0):
+    from collections import OrderedDict
+else:
+    # backward compat. to be able to run doctest with 3.7+. see:
+    # https://github.com/gawel/pyquery/issues/249
+    # and:
+    # https://github.com/python/cpython/blob/3.12/Lib/collections/__init__.py#L272
+    from collections import OrderedDict as BaseOrderedDict
+
+    class OrderedDict(BaseOrderedDict):
+        @recursive_repr()
+        def __repr__(self):
+            'od.__repr__() <==> repr(od)'
+            if not self:
+                return '%s()' % (self.__class__.__name__,)
+            return '%s(%r)' % (self.__class__.__name__, dict(self.items()))
 
 basestring = (str, bytes)
 
@@ -1609,9 +1627,9 @@ class PyQuery(list):
             ...             <input name="order2" value="ham">
             ...             </form>''')
             >>> d.serialize_dict()
-            OrderedDict([('order', ['spam', 'eggs']), ('order2', 'ham')])
+            OrderedDict({'order': ['spam', 'eggs'], 'order2': 'ham'})
             >>> d.serializeDict()
-            OrderedDict([('order', ['spam', 'eggs']), ('order2', 'ham')])
+            OrderedDict({'order': ['spam', 'eggs'], 'order2': 'ham'})
         """
         ret = OrderedDict()
         for name, val in self.serialize_pairs():
