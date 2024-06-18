@@ -99,7 +99,7 @@ def fromstring(context, parser=None, custom_parser=None):
             raise ValueError('No such parser: "%s"' % parser)
 
     result = custom_parser(context)
-    if type(result) is list:
+    if isinstance(result, list):
         return result
     elif isinstance(result, etree._ElementTree):
         return [result.getroot()]
@@ -928,7 +928,7 @@ class PyQuery(list):
                 current = [el.strip()
                            for el in (tag.get('style') or '').split(';')
                            if el.strip()
-                           and not el.split(':')[0].strip() in stripped_keys]
+                           and el.split(':')[0].strip() not in stripped_keys]
                 for key, value in attr.items():
                     key = key.replace('_', '-')
                     current.append('%s: %s' % (key, value))
