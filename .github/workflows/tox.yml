@@ -1,3 +1,5 @@
+---
+
 name: tox
 
 on: [push, pull_request]
@@ -29,9 +31,9 @@ jobs:
         run: |
           export PATH=$PATH:$PWD
           tox -e py
-      - name: Run flake8 / docs
-        run: tox -e flake8,docs
-        if: matrix.python == 3.9
+      - name: Run lint / docs
+        run: tox -e lint,docs
+        if: matrix.python == 3.11
 
   windows:
     runs-on: windows-latest
