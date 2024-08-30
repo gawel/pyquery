@@ -1,8 +1,9 @@
 2.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Breaking change: its seems no longer possible to use the html parser with a xml file so its no longer tested
 
+- Drop support for python 3.7
 
 2.0.0 (2022-12-28)
 ------------------
@@ -266,7 +267,7 @@
 
 - Add root and encoding attribute
 
-- fix issues 19, 20, 22, 23 
+- fix issues 19, 20, 22, 23
 
 0.6.1
 ------
