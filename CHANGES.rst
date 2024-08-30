@@ -1,4 +1,4 @@
-2.0.1 (unreleased)
+2.0.1 (2024-08-30)
 ------------------
 
 - Breaking change: its seems no longer possible to use the html parser with a xml file so its no longer tested
