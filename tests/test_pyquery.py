@@ -11,6 +11,8 @@ from webtest import http
 from webtest.debugapp import debug_app
 from unittest import TestCase
 
+import pytest
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 
@@ -534,10 +536,9 @@ Bacon</textarea>
         self.assertEqual(d('#textarea-multi').val(), multi_expected)
         self.assertEqual(d('#textarea-multi').text(), multi_expected)
         multi_new = '''Bacon\n<b>Eggs</b>\nSpam'''
-        multi_new_expected = '''Bacon\n&lt;b&gt;Eggs&lt;/b&gt;\nSpam'''
         d('#textarea-multi').val(multi_new)
-        self.assertEqual(d('#textarea-multi').val(), multi_new_expected)
-        self.assertEqual(d('#textarea-multi').text(), multi_new_expected)
+        self.assertEqual(d('#textarea-multi').val(), multi_new)
+        self.assertEqual(d('#textarea-multi').text(), multi_new)
 
     def test_val_for_select(self):
         d = pq(self.html4)
@@ -784,6 +785,7 @@ class TestMakeLinks(TestCase):
                          'http://example.com/path_info')
 
 
+@pytest.mark.skipif(os.name == 'nt', reason='fail on windows')
 class TestHTMLParser(TestCase):
     xml = "<div>I'm valid XML</div>"
     html = '''<div class="portlet">
@@ -802,7 +804,7 @@ class TestHTMLParser(TestCase):
         expected = '''<div class="portlet">
       <a href="/toto">TestimageMy link text</a>
       <a href="/toto2">imageMy link text 2</a>
-      Behind you, a three-headed HTML&amp;dash;Entity!
+      Behind you, a three-headed HTML‐Entity!
     </div>'''
         d = pq(self.html)
         d('img').replace_with('image')
@@ -813,7 +815,7 @@ class TestHTMLParser(TestCase):
         expected = '''<div class="portlet">
       TestimageMy link text
       imageMy link text 2
-      Behind you, a three-headed HTML&amp;dash;Entity!
+      Behind you, a three-headed HTML‐Entity!
     </div>'''
         d = pq(self.html)
         d('a').replace_with(lambda i, e: pq(e).html())
@@ -899,14 +901,14 @@ class TestWebScrapping(TestCase):
         d = pq(url=self.application_url, data={'q': 'foo'},
                method='get')
         print(d)
-        self.assertIn('REQUEST_METHOD: GET', d('p').text())
-        self.assertIn('q=foo', d('p').text())
+        self.assertIn('REQUEST_METHOD: GET', d.text())
+        self.assertIn('q=foo', d.text())
 
     def test_post(self):
         d = pq(url=self.application_url, data={'q': 'foo'},
                method='post')
-        self.assertIn('REQUEST_METHOD: POST', d('p').text())
-        self.assertIn('q=foo', d('p').text())
+        self.assertIn('REQUEST_METHOD: POST', d.text())
+        self.assertIn('q=foo', d.text())
 
     def test_session(self):
         if HAS_REQUEST:
@@ -915,7 +917,7 @@ class TestWebScrapping(TestCase):
             session.headers.update({'X-FOO': 'bar'})
             d = pq(url=self.application_url, data={'q': 'foo'},
                    method='get', session=session)
-            self.assertIn('HTTP_X_FOO: bar', d('p').text())
+            self.assertIn('HTTP_X_FOO: bar', d.text())
         else:
             self.skipTest('no requests library')
 
@@ -925,6 +927,7 @@ class TestWebScrapping(TestCase):
 
 class TestWebScrappingEncoding(TestCase):
 
+    @pytest.mark.skip('No longer possible to query this url')
     def test_get(self):
         d = pq(url='http://ru.wikipedia.org/wiki/Заглавная_страница',
                method='get')

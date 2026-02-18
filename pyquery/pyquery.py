@@ -1004,7 +1004,7 @@ class PyQuery(list):
         def _get_value(tag):
             # <textarea>
             if tag.tag == 'textarea':
-                return self._copy(tag).html()
+                return self._copy(tag).html(escape=False)
             # <select>
             elif tag.tag == 'select':
                 if 'multiple' in tag.attrib:
@@ -1097,7 +1097,9 @@ class PyQuery(list):
                 return None
             tag = self[0]
             children = tag.getchildren()
-            html = escape(tag.text or '', quote=False)
+            html = tag.text or ''
+            if kwargs.pop('escape', True):
+                html = escape(html, quote=False)
             if not children:
                 return html
             if 'encoding' not in kwargs:
@@ -1188,7 +1190,7 @@ class PyQuery(list):
             if not self:
                 return ''
             return ' '.join(
-                self._copy(tag).html() if tag.tag == 'textarea' else
+                self._copy(tag).html(escape=False) if tag.tag == 'textarea' else
                 extract_text(tag, **kwargs) for tag in self
             )
 

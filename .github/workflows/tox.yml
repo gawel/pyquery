@@ -11,7 +11,7 @@ jobs:
       MOZ_HEADLESS: "1"
     strategy:
       matrix:
-        python: [3.8, 3.9, "3.10", 3.11, 3.12]
+        python: [3.11, 3.12]
 
     steps:
       - name: Setup firefox
@@ -33,13 +33,13 @@ jobs:
           tox -e py
       - name: Run lint / docs
         run: tox -e lint,docs
-        if: matrix.python == 3.11
+        if: matrix.python == 3.12
 
   windows:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: [3.8, 3.9, "3.10", 3.11, 3.12]
+        python: [3.11, 3.12]
 
     steps:
       - uses: actions/checkout@v3
@@ -56,7 +56,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python: [3.8, 3.9, "3.10", 3.11, 3.12]
+        python: [3.11, 3.12]
 
     steps:
       - uses: actions/checkout@v3

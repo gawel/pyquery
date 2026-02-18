@@ -1,7 +1,7 @@
 2.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Drop support for python 3.9and 3.10
 
 
 2.0.1 (2024-08-30)
