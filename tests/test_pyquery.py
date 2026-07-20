@@ -189,6 +189,11 @@ class TestSelector(TestCase):
         self.assertEqual(e('div:lt(1)').text(), 'node1')
         self.assertEqual(e('div:eq(2)').text(), 'node3')
 
+        # A non-integer :lt() argument must name :lt() in the error, not :gt().
+        from cssselect.xpath import ExpressionError
+        with self.assertRaisesRegex(ExpressionError, r':lt\('):
+            e('div:lt("a")')
+
         # test on the form
         e = self.klass(self.html4)
         disabled = e(':disabled')
