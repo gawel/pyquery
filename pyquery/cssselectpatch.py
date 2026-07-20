@@ -415,7 +415,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() != ['NUMBER']:
             raise ExpressionError(
-                "Expected a single integer for :gt(), got %r" % (
+                "Expected a single integer for :lt(), got %r" % (
                     function.arguments,))
 
         value = int(function.arguments[0].value)
