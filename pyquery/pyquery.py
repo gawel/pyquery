@@ -1590,11 +1590,24 @@ class PyQuery(list):
             if el[0].tag == 'form':
                 form_id = el.attr('id')
                 if form_id:
-                    # Include inputs outside of their form owner
+                    # Avoid #id selectors: HTML ids may contain CSS metacharacters.
                     root = self._copy(el.root.getroot())
-                    controls.extend(root(
-                        '#%s :not([form]):input, [form="%s"]:input'
-                        % (form_id, form_id)))
+                    form_elem = el[0]
+                    matched = []
+                    for tag in root(':input'):
+                        owner = tag.get('form')
+                        if owner is not None:
+                            if owner == form_id:
+                                matched.append(tag)
+                            continue
+                        parent = tag.getparent()
+                        while parent is not None:
+                            if parent is form_elem:
+                                matched.append(tag)
+                                break
+                            parent = parent.getparent()
+                    if matched:
+                        controls.extend(self._copy(matched))
                 else:
                     controls.extend(el(':not([form]):input'))
             elif el[0].tag == 'fieldset':

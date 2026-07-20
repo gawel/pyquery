@@ -765,6 +765,36 @@ of text</textarea>
             ('spam', 'Spam'),
         ])
 
+    def test_serialize_pairs_form_id_css_metacharacters(self):
+        # HTML ids may contain CSS metacharacters; #id is not a literal match.
+        html = (
+            '<form id="a.b">'
+            '<input name="in" value="1">'
+            '</form>'
+            '<input form="a.b" name="out" value="2">'
+        )
+        self.assertEqual(pq(html)('form').serialize_pairs(), [
+            ('in', '1'), ('out', '2'),
+        ])
+        html_colon = (
+            '<form id="a:b">'
+            '<input name="in" value="1">'
+            '</form>'
+            '<input form="a:b" name="out" value="2">'
+        )
+        self.assertEqual(pq(html_colon)('form').serialize_pairs(), [
+            ('in', '1'), ('out', '2'),
+        ])
+        html_quote = (
+            '<form id="a&quot;b">'
+            '<input name="in" value="1">'
+            '</form>'
+            '<input form=\'a"b\' name="out" value="2">'
+        )
+        self.assertEqual(pq(html_quote)('form').serialize_pairs(), [
+            ('in', '1'), ('out', '2'),
+        ])
+
     def test_serialize_pairs_form_controls(self):
         d = pq(self.html2)
         self.assertEqual(d('fieldset').serialize_pairs(), [
