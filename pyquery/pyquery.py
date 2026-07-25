@@ -613,7 +613,17 @@ class PyQuery(list):
             [<p.hello>]
             >>> d('p').filter(lambda i, this: PyQuery(this).text() == 'Hi')
             [<p.hello>]
+
+        A PyQuery object may also be used, keeping the elements of self that
+        are also part of it:
+
+            >>> d('p').filter(d('.hello'))
+            [<p.hello>]
         """
+        if isinstance(selector, self.__class__):
+            keep = {id(el) for el in selector}
+            return self._copy([el for el in self if id(el) in keep],
+                              parent=self)
         if not hasattr(selector, '__call__'):
             return self._filter_only(selector, self)
         else:

@@ -266,6 +266,11 @@ class TestTraversal(TestCase):
         d = pq('<p>Hello <b>warming</b> world</p>')
         self.assertEqual(d('strong').filter(lambda el: True), [])
 
+    def test_filter_pyquery_object(self):
+        d = pq('<div page="1">a</div><div page="2">b</div>')
+        self.assertEqual(d('div').filter(d('[page="2"]')), d('[page="2"]'))
+        self.assertEqual(d('div').filter(pq('<div page="3">c</div>')), [])
+
     def test_not(self):
         assert len(self.klass('div', self.html).not_('.node3')) == 1
 
