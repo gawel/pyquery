@@ -1,6 +1,8 @@
 2.0.2 (unreleased)
 ------------------
 
+- require cssselect 1.4.x. 1.5.x breaks ``has()`` pseudo selector
+
 - Drop support for python 3.9and 3.10
 
 
