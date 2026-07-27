@@ -29,11 +29,8 @@ class XPathExpr(XPathExprOrig):
             path = '%s[%s]' % (path, self.post_condition)
         return path
 
-    def join(self, combiner, other,
-             closing_combiner=None, has_inner_condition=False):
-        res = XPathExprOrig.join(self, combiner, other,
-                                 closing_combiner=closing_combiner,
-                                 has_inner_condition=has_inner_condition)
+    def join(self, combiner, other):
+        res = XPathExprOrig.join(self, combiner, other)
         self.post_condition = other.post_condition
         return res
 
@@ -447,11 +444,11 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div class="foo"><div class="bar"></div></div>')
-            >>> d('.foo:has(".baz")')
+            >>> d('.foo:has(.baz)')
             []
-            >>> d('.foo:has(".foo")')
+            >>> d('.foo:has(.foo)')
             []
-            >>> d('.foo:has(".bar")')
+            >>> d('.foo:has(.bar)')
             [<div.foo>]
             >>> d('.foo:has(div)')
             [<div.foo>]

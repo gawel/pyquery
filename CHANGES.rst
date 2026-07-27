@@ -1,7 +1,7 @@
-2.0.3 (unreleased)
+3.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- pseudo selector ``:has()`` no longer support strings as arguments
 
 
 2.0.2 (2026-07-27)
