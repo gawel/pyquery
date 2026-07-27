@@ -1,7 +1,6 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
-from __future__ import unicode_literals
 from cssselect import xpath as cssselect_xpath
 from cssselect.xpath import ExpressionError
 
@@ -18,15 +17,14 @@ class XPathExpr(XPathExprOrig):
 
     def add_post_condition(self, post_condition):
         if self.post_condition:
-            self.post_condition = '%s and (%s)' % (self.post_condition,
-                                                   post_condition)
+            self.post_condition = f'{self.post_condition} and ({post_condition})'
         else:
             self.post_condition = post_condition
 
     def __str__(self):
         path = XPathExprOrig.__str__(self)
         if self.post_condition:
-            path = '%s[%s]' % (path, self.post_condition)
+            path = f'{path}[{self.post_condition}]'
         return path
 
     def join(self, combiner, other):
@@ -131,19 +129,19 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         /multipage/semantics-other.html#concept-element-disabled
         """
         bool_op = '' if disabled else 'not'
-        return '''(
+        return f'''(
             ((name(.) = 'button' or name(.) = 'input' or name(.) = 'select'
                     or name(.) = 'textarea' or name(.) = 'fieldset')
-                and %s(@disabled or (ancestor::fieldset[@disabled]
+                and {bool_op}(@disabled or (ancestor::fieldset[@disabled]
                     and not(ancestor::legend[not(preceding-sibling::legend)])))
             )
             or
             ((name(.) = 'option'
-                and %s(@disabled or ancestor::optgroup[@disabled]))
+                and {bool_op}(@disabled or ancestor::optgroup[@disabled]))
             )
             or
-            ((name(.) = 'optgroup' and %s(@disabled)))
-            )''' % (bool_op, bool_op, bool_op)
+            ((name(.) = 'optgroup' and {bool_op}(@disabled)))
+            )'''
 
     def xpath_disabled_pseudo(self, xpath):
         """Matches all elements that are disabled::
@@ -195,9 +193,9 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition((
+        xpath.add_condition(
             "(name(.) = 'input' or name(.) = 'select') "
-            "or (name(.) = 'textarea' or name(.) = 'button')"))
+            "or (name(.) = 'textarea' or name(.) = 'button')")
         return xpath
 
     def xpath_button_pseudo(self, xpath):
@@ -211,9 +209,9 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition((
+        xpath.add_condition(
             "(@type = 'button' and name(.) = 'input') "
-            "or name(.) = 'button'"))
+            "or name(.) = 'button'")
         return xpath
 
     def xpath_radio_pseudo(self, xpath):
@@ -331,9 +329,9 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         ..
         """
         # this seems kind of brute-force, is there a better way?
-        xpath.add_condition((
+        xpath.add_condition(
             "(name(.) = 'h1' or name(.) = 'h2' or name (.) = 'h3') "
-            "or (name(.) = 'h4' or name (.) = 'h5' or name(.) = 'h6')"))
+            "or (name(.) = 'h4' or name (.) = 'h5' or name(.) = 'h6')")
         return xpath
 
     def xpath_parent_pseudo(self, xpath):
@@ -376,8 +374,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() != ['NUMBER']:
             raise ExpressionError(
-                "Expected a single integer for :eq(), got %r" % (
-                    function.arguments,))
+                f"Expected a single integer for :eq(), got {function.arguments!r}")
         value = int(function.arguments[0].value)
         xpath.add_post_condition('position() = %s' % (value + 1))
         return xpath
@@ -394,8 +391,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() != ['NUMBER']:
             raise ExpressionError(
-                "Expected a single integer for :gt(), got %r" % (
-                    function.arguments,))
+                f"Expected a single integer for :gt(), got {function.arguments!r}")
         value = int(function.arguments[0].value)
         xpath.add_post_condition('position() > %s' % (value + 1))
         return xpath
@@ -412,8 +408,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() != ['NUMBER']:
             raise ExpressionError(
-                "Expected a single integer for :gt(), got %r" % (
-                    function.arguments,))
+                f"Expected a single integer for :gt(), got {function.arguments!r}")
 
         value = int(function.arguments[0].value)
         xpath.add_post_condition('position() < %s' % (value + 1))
@@ -431,11 +426,10 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() not in (['STRING'], ['IDENT']):
             raise ExpressionError(
-                "Expected a single string or ident for :contains(), got %r" % (
-                    function.arguments,))
+                f"Expected a single string or ident for :contains(), got {function.arguments!r}")
 
         value = self.xpath_literal(function.arguments[0].value)
-        xpath.add_post_condition('contains(., %s)' % value)
+        xpath.add_post_condition(f'contains(., {value})')
         return xpath
 
     def xpath_has_function(self, xpath, function):
@@ -457,8 +451,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         """
         if function.argument_types() not in (['STRING'], ['IDENT']):
             raise ExpressionError(
-                "Expected a single string or ident for :has(), got %r" % (
-                    function.arguments,))
+                f"Expected a single string or ident for :has(), got {function.arguments!r}")
         value = self.css_to_xpath(
             function.arguments[0].value, prefix='descendant::',
         )

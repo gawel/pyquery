@@ -1,6 +1,7 @@
 import unittest
 
 from pyquery.pyquery import PyQuery
+
 from .browser_base import TextExtractionMixin
 
 

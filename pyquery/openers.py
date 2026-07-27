@@ -1,6 +1,6 @@
-from urllib.request import urlopen
-from urllib.parse import urlencode
 from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 try:
     import requests
@@ -49,7 +49,7 @@ def _requests(url, kwargs):
     else:
         meth = getattr(requests, str(method))
     if method == 'get':
-        url, data = _query(url, method, kwargs)
+        url, _data = _query(url, method, kwargs)
     kw = {}
     for k in allowed_args:
         if k in kwargs:

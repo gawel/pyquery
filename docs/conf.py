@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #
 # pyquery documentation build configuration file, created by
 # sphinx-quickstart on Thu Nov  1 21:48:09 2012.
@@ -252,7 +253,7 @@ texinfo_documents = [
 pkg_dir = path.abspath(__file__).split('/docs')[0]
 setup = path.join(pkg_dir, 'setup.py')
 if path.isfile(setup):
-    for line_ in open(setup):
+    for line_ in open(setup):  # NOQA
         if line_.startswith("version"):
             version = line_.split('=')[-1]
             version = version.strip()
@@ -285,6 +286,6 @@ else:
                     continue
                 if t == 'function':
                     k += '()'
-                fd.write('\n\n:%s\n' % k)
+                fd.write(f'\n\n:{k}\n')
                 fd.write('==================\n\n')
-                fd.write(doc.strip('..').replace('        ', '    '))
+                fd.write(doc.strip('..').replace('        ', '    '))  # NOQA

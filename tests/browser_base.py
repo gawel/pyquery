@@ -1,4 +1,4 @@
-class TextExtractionMixin():
+class TextExtractionMixin:
     def _prepare_dom(self, html):
         self.last_html = '<html><body>' + html + '</body></html>'
 

@@ -3,9 +3,9 @@
 #
 # Distributed under the BSD license, see LICENSE.txt
 
-from setuptools import setup, find_packages
 import os
 
+from setuptools import find_packages, setup
 
 install_requires = [
     'lxml>=2.1',
@@ -14,11 +14,11 @@ install_requires = [
 
 
 def read(*names):
-    values = dict()
+    values = {}
     for name in names:
         filename = name + '.rst'
         if os.path.isfile(filename):
-            fd = open(filename)
+            fd = open(filename)  # NOQA
             value = fd.read()
             fd.close()
         else:
@@ -28,16 +28,16 @@ def read(*names):
 
 
 long_description = """
-%(README)s
+{README}
 
 See http://pyquery.rtfd.org/ for the full documentation
 
 News
 ====
 
-%(CHANGES)s
+{CHANGES}
 
-""" % read('README', 'CHANGES')
+""".format(**read('README', 'CHANGES'))
 
 version = '2.0.3.dev0'
 

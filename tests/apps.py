@@ -1,6 +1,4 @@
-from webob import Request
-from webob import Response
-from webob import exc
+from webob import Request, Response, exc
 
 
 def input_app(environ, start_response):

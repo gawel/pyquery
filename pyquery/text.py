@@ -1,6 +1,5 @@
 import re
 
-
 # https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#Elements
 INLINE_TAGS = {
     'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite',

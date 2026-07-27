@@ -4,14 +4,16 @@
 import os
 import sys
 import time
-from lxml import etree
-from pyquery.pyquery import PyQuery as pq, no_default
-from pyquery.openers import HAS_REQUEST
-from webtest import http
-from webtest.debugapp import debug_app
 from unittest import TestCase
 
 import pytest
+from lxml import etree
+from webtest import http
+from webtest.debugapp import debug_app
+
+from pyquery.openers import HAS_REQUEST
+from pyquery.pyquery import PyQuery as pq
+from pyquery.pyquery import no_default
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -891,7 +893,7 @@ class TestXMLNamespace(TestCase):
     </body>
     </html>'''
 
-    namespaces = {'bar': 'http://example.com/bar',
+    namespaces = {'bar': 'http://example.com/bar',  # NOQA
                   'baz': 'http://example.com/baz'}
 
     def test_selector(self):
@@ -999,7 +1001,7 @@ class TestWebScrappingTimeouts(TestCase):
 
     def test_get(self):
         pq(url=self.application_url)
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception):  # NOQA
             pq(url=self.application_url, timeout=1)
 
     def tearDown(self):

@@ -1,8 +1,9 @@
 import os
+from urllib.request import urlopen
+
 import pytest
 from webtest import http
 from webtest.debugapp import debug_app
-from urllib.request import urlopen
 
 
 @pytest.fixture

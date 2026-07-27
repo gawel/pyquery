@@ -14,9 +14,9 @@ except ImportError:
     SELENIUM = False
 
 if SELENIUM:
-    from urllib.parse import urlunsplit
-    from http.server import HTTPServer, BaseHTTPRequestHandler
+    from http.server import BaseHTTPRequestHandler, HTTPServer
     from queue import Queue
+    from urllib.parse import urlunsplit
 
     class BaseTestRequestHandler(BaseHTTPRequestHandler):
         _last_html = ''
@@ -99,8 +99,7 @@ if SELENIUM:
 
         def open_url(self, path):
             self.driver.get(urlunsplit(
-                ('http', '{}:{}'.format(
-                    self.LOCAL_IP, self.PORT), path, '', '')))
+                ('http', f'{self.LOCAL_IP}:{self.PORT}', path, '', '')))
 
     class TestInnerText(BaseBrowserTest, TextExtractionMixin):
         REQUEST_HANDLER_CLASS = HTMLSnippetSender
