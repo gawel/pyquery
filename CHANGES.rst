@@ -1,4 +1,4 @@
-2.0.2 (unreleased)
+2.0.2 (2026-07-27)
 ------------------
 
 - require cssselect 1.4.x. 1.5.x breaks ``has()`` pseudo selector
