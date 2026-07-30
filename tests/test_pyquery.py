@@ -221,6 +221,13 @@ class TestSelector(TestCase):
         assert len(e(":empty")) == 1
         assert len(e(":contains('Heading')")) == 8
 
+    def test_eq_negative_index(self):
+        e = self.klass(self.html)
+        self.assertEqual(e('div:eq(-1)').text(), 'node3')
+        self.assertEqual(e('div:eq(-2)').text(), 'node2')
+        self.assertEqual(e('div:eq(-3)').text(), 'node1')
+        self.assertEqual(e('div:eq(-4)').text(), '')
+
     def test_on_the_fly_dom_creation(self):
         e = self.klass(self.html)
         assert e('<p>Hello world</p>').text() == 'Hello world'
