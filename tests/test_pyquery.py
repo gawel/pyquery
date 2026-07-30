@@ -369,6 +369,17 @@ class TestComment(TestCase):
         self.assertEqual(doc.text(), 'bar')
 
 
+class TestInlineTags(TestCase):
+
+    def test_text_does_not_break_around_inline_elements(self):
+        for tag in ('audio', 'bdi', 'canvas', 'data', 'datalist', 'del',
+                    'embed', 'iframe', 'ins', 'mark', 'meter', 'noscript',
+                    'output', 'picture', 'progress', 'ruby', 's', 'slot',
+                    'svg', 'template', 'u', 'video', 'wbr'):
+            doc = pq('<p>foo<{0}>bar</{0}>baz</p>'.format(tag))
+            self.assertEqual(doc.text(), 'foobarbaz', tag)
+
+
 class TestContentsStr(TestCase):
 
     def test_str_contents_with_text_nodes(self):
