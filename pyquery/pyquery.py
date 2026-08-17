@@ -1300,6 +1300,10 @@ class PyQuery(list):
             if i > 0:
                 root = deepcopy(list(root))
             parent = tag.getparent()
+            if parent is None:
+                raise ValueError(
+                    'Cannot add a sibling after an element without a '
+                    'parent')
             index = parent.index(tag) + 1
             parent[index:index] = root
             root = parent[index:len(root)]
@@ -1324,12 +1328,20 @@ class PyQuery(list):
                 previous.tail += root_text
             else:
                 parent = tag.getparent()
+                if parent is None:
+                    raise ValueError(
+                        'Cannot add a sibling before an element without '
+                        'a parent')
                 if not parent.text:
                     parent.text = ''
                 parent.text += root_text
             if i > 0:
                 root = deepcopy(list(root))
             parent = tag.getparent()
+            if parent is None:
+                raise ValueError(
+                    'Cannot add a sibling before an element without a '
+                    'parent')
             index = parent.index(tag)
             parent[index:index] = root
             root = parent[index:len(root)]
