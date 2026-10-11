@@ -1,8 +1,7 @@
 2.1.1 (unreleased)
 ------------------
 
-- Reject empty files with the default and HTML parsers, and close input files
-  when parsing fails. Empty string inputs still return an empty selection.
+- Return an empty selection for empty files with the default and HTML parsers.
 
 
 2.1.0 (2026-07-27)

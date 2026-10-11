@@ -83,12 +83,9 @@ def fromstring(context, parser=None, custom_parser=None):
                 if hasattr(context, 'seek'):
                     context.seek(0)
                 result = getattr(lxml.html, meth)(context)
-                if (isinstance(result, etree._ElementTree)
-                        and result.getroot() is None):
-                    # HTML recovery may return a tree without a document.
-                    raise
             if isinstance(result, etree._ElementTree):
-                return [result.getroot()]
+                root = result.getroot()
+                return [] if root is None else [root]
             else:
                 return [result]
         elif parser == 'xml':
@@ -111,9 +108,7 @@ def fromstring(context, parser=None, custom_parser=None):
         return result
     elif isinstance(result, etree._ElementTree):
         root = result.getroot()
-        if root is None:
-            raise etree.ParserError('Document is empty')
-        return [root]
+        return [] if root is None else [root]
     elif result is not None:
         return [result]
     else:
@@ -213,15 +208,13 @@ class PyQuery(list):
             else:
                 raise ValueError(f'Invalid keyword arguments {kwargs}')
 
-            try:
-                elements = fromstring(html, self.parser)
-            finally:
-                # close open descriptor even when parsing fails
-                if hasattr(html, 'close'):
-                    try:
-                        html.close()
-                    except Exception:  # NOQA
-                        pass
+            elements = fromstring(html, self.parser)
+            # close open descriptor if possible
+            if hasattr(html, 'close'):
+                try:
+                    html.close()
+                except Exception:  # NOQA
+                    pass
 
         else:
             # get nodes
