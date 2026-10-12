@@ -777,6 +777,21 @@ of text</textarea>
             ('spam', 'Spam'),
         ])
 
+    def test_serialize_pairs_form_id_special_characters(self):
+        for form_id in ('owner:form', 'owner.form', 'owner[form]',
+                        'owner"form', "owner'form", 'owner\\form', '123form'):
+            with self.subTest(form_id=form_id):
+                d = pq('<div><input form="owner" name="before" value="a">'
+                       '<form id="owner"><input name="inside" value="b">'
+                       '<input form="elsewhere" name="other" value="x">'
+                       '</form><input form="owner" name="after" value="c">'
+                       '</div>')
+                d('form').attr('id', form_id)
+                d('[form="owner"]').attr('form', form_id)
+                self.assertEqual(d('form').serialize_pairs(), [
+                    ('before', 'a'), ('inside', 'b'), ('after', 'c'),
+                ])
+
     def test_serialize_pairs_form_controls(self):
         d = pq(self.html2)
         self.assertEqual(d('fieldset').serialize_pairs(), [
