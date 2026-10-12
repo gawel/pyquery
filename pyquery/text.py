@@ -1,5 +1,7 @@
 import re
 
+from lxml import etree
+
 # https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#Elements
 INLINE_TAGS = {
     'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite',
@@ -73,21 +75,24 @@ def extract_text_array(dom, squash_artifical_nl=True, strip_artifical_nl=True):
     if callable(dom.tag):
         return ''
     r = []
-    if dom.tag in SEPARATORS:
-        r.append(True)  # equivalent of '\n' used to designate separators
-    elif dom.tag not in INLINE_TAGS:
-        # equivalent of '\n' used to designate artificially inserted newlines
-        r.append(None)
-    if dom.text is not None:
-        r.append(dom.text)
-    for child in dom.getchildren():
-        r.extend(extract_text_array(child, squash_artifical_nl=False,
-                                    strip_artifical_nl=False))
-        if child.tail is not None:
-            r.append(child.tail)
-    if dom.tag not in INLINE_TAGS and dom.tag not in SEPARATORS:
-        # equivalent of '\n' used to designate artificially inserted newlines
-        r.append(None)
+    for event, element in etree.iterwalk(
+            dom, events=('start', 'end', 'comment', 'pi')):
+        tag = element.tag
+        if event == 'start':
+            if callable(tag):
+                continue
+            if tag in SEPARATORS:
+                r.append(True)
+            elif tag not in INLINE_TAGS:
+                r.append(None)
+            if element.text is not None:
+                r.append(element.text)
+        else:
+            if (event == 'end' and not callable(tag)
+                    and tag not in INLINE_TAGS and tag not in SEPARATORS):
+                r.append(None)
+            if element is not dom and element.tail is not None:
+                r.append(element.tail)
     if squash_artifical_nl:
         r = _squash_artifical_nl(r)
     if strip_artifical_nl:
