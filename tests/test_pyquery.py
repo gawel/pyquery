@@ -544,6 +544,31 @@ Bacon</textarea>
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
 
+    def test_replace_with_on_child(self):
+        # documented working case: replace_with on a child found via
+        # .find(), which has a parent
+        doc = pq("<html><div /></html>")
+        node = pq("<span />")
+        child = doc.find('div')
+        child.replace_with(node)
+        assert str(doc) == '<html><span/></html>'
+
+    def test_replace_with_on_parentless_root_raises(self):
+        # calling replace_with() (which uses before() internally) on an
+        # element with no parent should raise a clear error instead of
+        # an AttributeError
+        doc = pq("<html><div /></html>")
+        node = pq("<span />")
+        self.assertRaises(ValueError, doc.replace_with, node)
+
+    def test_before_on_parentless_root_raises(self):
+        doc = pq("<html><div /></html>")
+        self.assertRaises(ValueError, doc.before, '<span />')
+
+    def test_after_on_parentless_root_raises(self):
+        doc = pq("<html><div /></html>")
+        self.assertRaises(ValueError, doc.after, '<span />')
+
     def test_val_for_inputs(self):
         d = pq(self.html2)
         self.assertIsNone(d('input[name="none"]').val())
