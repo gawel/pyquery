@@ -3,6 +3,8 @@
 
 - Return an empty selection for empty files with the default and HTML parsers.
 
+- Restore callback ``this`` values across nested queries and callback exceptions.
+
 
 2.1.0 (2026-07-27)
 ------------------

@@ -5,6 +5,7 @@ import inspect
 import itertools
 import sys
 import types
+from contextlib import contextmanager
 from copy import deepcopy
 from html import escape
 from reprlib import recursive_repr
@@ -41,6 +42,21 @@ def getargspec(func):
     args = inspect.signature(func).parameters.values()
     return [p.name for p in args
             if p.kind == p.POSITIONAL_OR_KEYWORD]
+
+
+@contextmanager
+def _callback_globals(func):
+    """Restore the caller's implicit callback element after callback execution."""
+    f_globals = func.__globals__
+    missing = object()
+    previous = f_globals.get('this', missing)
+    try:
+        yield f_globals
+    finally:
+        if previous is missing:
+            f_globals.pop('this', None)
+        else:
+            f_globals['this'] = previous
 
 
 def with_camel_case_alias(func):
@@ -621,16 +637,12 @@ class PyQuery(list):
         else:
             elements = []
             args = getargspec(callback)
-            try:
+            with _callback_globals(selector) as f_globals:
                 for i, this in enumerate(self):
                     if len(args) == 1:
-                        selector.__globals__['this'] = this
+                        f_globals['this'] = this
                     if callback(selector, i, this):
                         elements.append(this)
-            finally:
-                f_globals = selector.__globals__
-                if 'this' in f_globals:
-                    del f_globals['this']
             return self._copy(elements, parent=self)
 
     def not_(self, selector):
@@ -706,15 +718,11 @@ class PyQuery(list):
     def each(self, func):
         """apply func on each nodes
         """
-        try:
+        with _callback_globals(func) as f_globals:
             for i, element in enumerate(self):
-                func.__globals__['this'] = element
+                f_globals['this'] = element
                 if callback(func, i, element) is False:
                     break
-        finally:
-            f_globals = func.__globals__
-            if 'this' in f_globals:
-                del f_globals['this']
         return self
 
     def map(self, func):
@@ -735,19 +743,15 @@ class PyQuery(list):
 
         """
         items = []
-        try:
+        with _callback_globals(func) as f_globals:
             for i, element in enumerate(self):
-                func.__globals__['this'] = element
+                f_globals['this'] = element
                 result = callback(func, i, element)
                 if result is not None:
                     if not isinstance(result, list):
                         items.append(result)
                     else:
                         items.extend(result)
-        finally:
-            f_globals = func.__globals__
-            if 'this' in f_globals:
-                del f_globals['this']
         return self._copy(items, parent=self)
 
     @property
