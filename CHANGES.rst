@@ -1,7 +1,7 @@
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Return an empty selection for empty files with the default and HTML parsers.
 
 
 2.1.0 (2026-07-27)

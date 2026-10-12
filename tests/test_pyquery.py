@@ -348,6 +348,16 @@ class TestOpener(TestCase):
         assert len(doc('.node')) == 1, doc
 
 
+@pytest.mark.parametrize('markup', ['', ' \t\n'])
+@pytest.mark.parametrize('parser', [None, 'html'])
+def test_empty_file_returns_empty_doc(tmp_path, markup, parser):
+    filename = tmp_path / 'file.txt'
+    filename.write_text(markup)
+    doc = pq(filename=str(filename), parser=parser)
+    assert doc.find('div') == []
+    assert doc == []
+
+
 class TestConstruction(TestCase):
 
     def test_typeerror_on_invalid_value(self):

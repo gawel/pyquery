@@ -84,7 +84,8 @@ def fromstring(context, parser=None, custom_parser=None):
                     context.seek(0)
                 result = getattr(lxml.html, meth)(context)
             if isinstance(result, etree._ElementTree):
-                return [result.getroot()]
+                root = result.getroot()
+                return [] if root is None else [root]
             else:
                 return [result]
         elif parser == 'xml':
@@ -106,7 +107,8 @@ def fromstring(context, parser=None, custom_parser=None):
     if isinstance(result, list):
         return result
     elif isinstance(result, etree._ElementTree):
-        return [result.getroot()]
+        root = result.getroot()
+        return [] if root is None else [root]
     elif result is not None:
         return [result]
     else:
