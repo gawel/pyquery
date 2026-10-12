@@ -4,6 +4,7 @@
 import os
 import sys
 import time
+from types import FunctionType
 from unittest import TestCase
 
 import pytest
@@ -414,6 +415,53 @@ class TestCallback(TestCase):
             lambda: S(this).html()),  # NOQA
             ['Coffee', 'Tea', 'Milk']
         )
+
+
+    def test_nested_callbacks_restore_this(self):
+        for outer_method in ('each', 'map', 'filter'):
+            for inner_method in ('each', 'map', 'filter'):
+                with self.subTest(outer=outer_method, inner=inner_method):
+                    original = object()
+                    namespace = {
+                        'inner': pq('<b>inner</b>'),
+                        'inner_method': inner_method,
+                        'this': original,
+                    }
+                    def outer(i):
+                        previous = globals()['this']
+                        inner = globals()['inner']
+                        method = globals()['inner_method']
+                        getattr(inner, method)(lambda i: True)
+                        assert globals()['this'] is previous
+                        return True
+
+                    callback = FunctionType(outer.__code__, namespace)
+                    getattr(pq('<p>outer</p>'), outer_method)(callback)
+                    self.assertIs(namespace['this'], original)
+
+    def test_callbacks_restore_this_after_exception(self):
+        for method in ('each', 'map', 'filter'):
+            with self.subTest(method=method):
+                original = object()
+                namespace = {'this': original}
+                def failing(i):
+                    raise ValueError("callback failed")
+
+                callback = FunctionType(failing.__code__, namespace)
+                with self.assertRaises(ValueError):
+                    getattr(pq('<p>outer</p>'), method)(callback)
+                self.assertIs(namespace['this'], original)
+
+    def test_callbacks_remove_temporary_this(self):
+        for method in ('each', 'map', 'filter'):
+            with self.subTest(method=method):
+                namespace = {}
+                def temporary(i):
+                    return globals()['this'] is not None
+
+                callback = FunctionType(temporary.__code__, namespace)
+                getattr(pq('<p>outer</p>'), method)(callback)
+                self.assertNotIn('this', namespace)
 
 
 class TestHook(TestCase):
