@@ -3,6 +3,8 @@
 
 - Return an empty selection for empty files with the default and HTML parsers.
 
+- Extract text without Python recursion or repeated subtree result copying.
+
 
 2.1.0 (2026-07-27)
 ------------------

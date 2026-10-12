@@ -694,6 +694,30 @@ Bacon</textarea>
         d = pq(html)
         self.assertEqual(d.html(), inner_html)
 
+    def test_text_deep_lxml_tree(self):
+        dom = etree.Element('div')
+        element = dom
+        for _ in range(1500):
+            element = etree.SubElement(element, 'div')
+        element.text = 'leaf'
+        self.assertEqual(pq(dom).text(), 'leaf')
+
+    def test_text_preserves_special_node_tails(self):
+        dom = etree.fromstring(
+            b'<div>lead<span> inline </span> after<!-- hidden --> comment-tail'
+            b'<?target value?> pi-tail<br/>next<p> block </p>end</div>')
+        dom.tail = 'outside'
+        query = pq(dom)
+        self.assertEqual(
+            query.text(),
+            'lead inline after comment-tail pi-tail\nnext\nblock\nend')
+        self.assertEqual(
+            query.text(squash_space=False),
+            'lead inline  after comment-tail pi-tail\nnext\n block \nend')
+        self.assertEqual(
+            query.text(block_symbol='|', sep_symbol='/', squash_space=False),
+            'lead inline  after comment-tail pi-tail/next| block |end')
+
 
 class TestAjax(TestCase):
 
