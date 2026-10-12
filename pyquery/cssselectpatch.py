@@ -370,13 +370,23 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
             >>> d('h1:eq(1)')
             [<h1.last>]
 
+        A negative index counts back from the last element::
+
+            >>> d('h1:eq(-1)')
+            [<h1.last>]
+
         ..
         """
         if function.argument_types() != ['NUMBER']:
             raise ExpressionError(
                 f"Expected a single integer for :eq(), got {function.arguments!r}")
         value = int(function.arguments[0].value)
-        xpath.add_post_condition('position() = %s' % (value + 1))
+        if value < 0:
+            xpath.add_post_condition(
+                'position() = last()%s' % (
+                    '%+d' % (value + 1) if value != -1 else ''))
+        else:
+            xpath.add_post_condition('position() = %s' % (value + 1))
         return xpath
 
     def xpath_gt_function(self, xpath, function):
