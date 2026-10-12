@@ -2,10 +2,13 @@ import re
 
 # https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#Elements
 INLINE_TAGS = {
-    'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite',
-    'code', 'dfn', 'em', 'i', 'img', 'input', 'kbd', 'label', 'map',
-    'object', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong',
-    'sub', 'sup', 'textarea', 'time', 'tt', 'var'
+    'a', 'abbr', 'acronym', 'audio', 'b', 'bdi', 'bdo', 'big', 'br',
+    'button', 'canvas', 'cite', 'code', 'data', 'datalist', 'del', 'dfn',
+    'em', 'embed', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label',
+    'map', 'mark', 'meter', 'noscript', 'object', 'output', 'picture',
+    'progress', 'q', 'ruby', 's', 'samp', 'script', 'select', 'slot',
+    'small', 'span', 'strong', 'sub', 'sup', 'svg', 'template',
+    'textarea', 'time', 'tt', 'u', 'var', 'video', 'wbr'
 }
 
 SEPARATORS = {'br'}
