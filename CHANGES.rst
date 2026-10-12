@@ -3,6 +3,8 @@
 
 - Return an empty selection for empty files with the default and HTML parsers.
 
+- Serialize forms whose IDs contain CSS selector punctuation without losing controls.
+
 
 2.1.0 (2026-07-27)
 ------------------

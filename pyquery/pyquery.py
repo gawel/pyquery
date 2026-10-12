@@ -1590,8 +1590,15 @@ class PyQuery(list):
                 if form_id:
                     # Include inputs outside of their form owner
                     root = self._copy(el.root.getroot())
-                    controls.extend(root(
-                        f'#{form_id} :not([form]):input, [form="{form_id}"]:input'))
+                    form = el[0]
+
+                    def has_form_owner(_, control, form=form, form_id=form_id):
+                        owner = control.get('form')
+                        if owner is not None:
+                            return owner == form_id
+                        return form in control.iterancestors('form')
+
+                    controls.extend(root(':input').filter(has_form_owner))
                 else:
                     controls.extend(el(':not([form]):input'))
             elif el[0].tag == 'fieldset':
