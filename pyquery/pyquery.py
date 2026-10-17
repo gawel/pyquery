@@ -888,10 +888,8 @@ class PyQuery(list):
         """
         for tag in self:
             values = value.split(' ')
-            classes = set((tag.get('class') or '').split())
-            classes.difference_update(values)
-            classes.difference_update([''])
-            classes = ' '.join(classes)
+            classes = dict.fromkeys((tag.get('class') or '').split())
+            classes = ' '.join(name for name in classes if name not in values)
             if classes.strip() or tag.get('class'):
                 tag.set('class', classes)
         return self

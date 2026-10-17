@@ -3,6 +3,8 @@
 
 - Return an empty selection for empty files with the default and HTML parsers.
 
+- Preserve the order of remaining classes in ``remove_class()``.
+
 
 2.1.0 (2026-07-27)
 ------------------

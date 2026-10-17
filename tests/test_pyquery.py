@@ -544,6 +544,18 @@ Bacon</textarea>
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
 
+    def test_remove_class_preserves_order(self):
+        for names in (['first', 'second', 'third', 'fourth'],
+                      ['fourth', 'third', 'second', 'first']):
+            with self.subTest(names=names):
+                d = pq('<div></div>').attr('class', ' '.join(names))
+                self.assertIs(d.remove_class('missing'), d)
+                self.assertEqual(d.attr('class'), ' '.join(names))
+                d.removeClass('second fourth')
+                expected = [name for name in names
+                            if name not in ('second', 'fourth')]
+                self.assertEqual(d.attr('class'), ' '.join(expected))
+
     def test_val_for_inputs(self):
         d = pq(self.html2)
         self.assertIsNone(d('input[name="none"]').val())
