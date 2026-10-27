@@ -280,6 +280,23 @@ class TestTraversal(TestCase):
         assert len(self.klass('#node2', self.html).find('span')) == 2
         assert len(self.klass('div', self.html).find('span')) == 3
 
+    def test_text_selector_with_implicit_type(self):
+        markup = ('<form><input id="implicit"/>'
+                  '<input id="explicit" type="text"/>'
+                  '<input id="password" type="password"/>'
+                  '<input id="empty" type=""/>'
+                  '<textarea id="area"/>'
+                  '<div id="other" type="text"/></form>')
+        for parser in (None, 'html'):
+            doc = self.klass(markup, parser=parser)
+            for result in (doc(':text'), doc('input:text'),
+                           doc('input').filter(':text')):
+                with self.subTest(parser=parser, result=result):
+                    self.assertEqual([node.get('id') for node in result],
+                                     ['implicit', 'explicit'])
+            self.assertEqual([node.get('id') for node in doc('input[type=text]')],
+                             ['explicit'])
+
     def test_each(self):
         doc = self.klass(self.html)
         doc('span').each(lambda: doc(this).wrap("<em></em>"))  # NOQA

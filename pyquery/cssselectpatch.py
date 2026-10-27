@@ -237,7 +237,8 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("@type = 'text' and name(.) = 'input'")
+        xpath.add_condition(
+            "(@type = 'text' or not(@type)) and name(.) = 'input'")
         return xpath
 
     def xpath_checkbox_pseudo(self, xpath):
