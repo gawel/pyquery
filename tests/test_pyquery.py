@@ -207,7 +207,7 @@ class TestSelector(TestCase):
         assert len(e('select:enabled')) == 2
         assert len(e('input:enabled')) == 11
         assert len(e(':selected')) == 1
-        assert len(e(':checked')) == 2
+        assert len(e(':checked')) == 3
         assert len(e(':file')) == 1
         assert len(e(':input')) == 18
         assert len(e(':button')) == 2
@@ -220,6 +220,37 @@ class TestSelector(TestCase):
         assert len(e(":parent")) == 2
         assert len(e(":empty")) == 1
         assert len(e(":contains('Heading')")) == 8
+
+    def test_form_pseudo_classes(self):
+        doc = self.klass("""
+            <form>
+                <input id="checked" type="checkbox" checked="checked"/>
+                <input id="unchecked" type="checkbox"/>
+                <select>
+                    <option id="selected" selected="selected">Selected</option>
+                    <option id="unselected">Unselected</option>
+                </select>
+                <input id="submit-input" type="submit"/>
+                <button id="submit-button" type="submit">Submit</button>
+                <input id="reset-input" type="reset"/>
+                <button id="reset-button" type="reset">Reset</button>
+                <button id="other-button" type="button">Other</button>
+                <div checked="checked" selected="selected" type="submit"/>
+            </form>
+        """)
+        cases = {
+            ':checked': ['checked', 'selected'],
+            'input:checked': ['checked'],
+            'option:checked': ['selected'],
+            ':submit': ['submit-input', 'submit-button'],
+            'button:submit': ['submit-button'],
+            ':reset': ['reset-input', 'reset-button'],
+            'button:reset': ['reset-button'],
+            ':checked#unchecked': [],
+            ':checked#unselected': [],
+        }
+        for selector, expected in cases.items():
+            self.assertEqual([node.get('id') for node in doc(selector)], expected)
 
     def test_on_the_fly_dom_creation(self):
         e = self.klass(self.html)
