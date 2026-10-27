@@ -253,6 +253,8 @@ class PyQuery(list):
                 for tag in elements:
                     results.extend(
                         tag.xpath(xpath, namespaces=self.namespaces))
+                if isinstance(context, self.__class__):
+                    results = list(dict.fromkeys(results))
                 elements = results
 
         list.__init__(self, elements)
@@ -680,7 +682,7 @@ class PyQuery(list):
         elements = []
         for r in results:
             elements.extend(r)
-        return self._copy(elements, parent=self)
+        return self._copy(list(dict.fromkeys(elements)), parent=self)
 
     def eq(self, index):
         """Return PyQuery of only the element with the provided index::

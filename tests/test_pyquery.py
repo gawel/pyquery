@@ -280,6 +280,30 @@ class TestTraversal(TestCase):
         assert len(self.klass('#node2', self.html).find('span')) == 2
         assert len(self.klass('div', self.html).find('span')) == 3
 
+    def test_overlapping_query_context(self):
+        doc = self.klass(
+            '<div><div><p id="first"/></div><p id="second"/></div>')
+        context = doc('div')
+        expected = list(doc('p'))
+        for result in (doc('p', context), self.klass('p', context),
+                       context('p'), context.find('p')):
+            with self.subTest(result=result):
+                self.assertEqual(list(result), expected)
+        self.assertIs(context.find('p').end(), context)
+
+    def test_query_context_preserves_distinct_nodes_and_order(self):
+        first = self.klass('<div><div><p/></div></div>')
+        second = self.klass('<div><p/></div>')
+        context = self.klass(list(second('div')) + list(first('div')))
+        expected = [second('p')[0], first('p')[0]]
+        self.assertEqual(list(context('p')), expected)
+        self.assertEqual(list(context.find('p')), expected)
+
+    def test_copy_preserves_duplicate_elements(self):
+        element = self.klass('<p/>')[0]
+        context = self.klass([element, element])
+        self.assertEqual(list(self.klass(context)), [element, element])
+
     def test_each(self):
         doc = self.klass(self.html)
         doc('span').each(lambda: doc(this).wrap("<em></em>"))  # NOQA
