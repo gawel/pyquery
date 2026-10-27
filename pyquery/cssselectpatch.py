@@ -98,7 +98,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         return xpath
 
     def xpath_checked_pseudo(self, xpath):
-        """Matches odd elements, zero-indexed::
+        """Matches checked inputs and selected options::
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><input checked="checked"/></div>')
@@ -107,7 +107,8 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("@checked and name(.) = 'input'")
+        xpath.add_condition("(@checked and name(.) = 'input') or "
+                            "(@selected and name(.) = 'option')")
         return xpath
 
     def xpath_selected_pseudo(self, xpath):
@@ -267,7 +268,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         return xpath
 
     def xpath_submit_pseudo(self, xpath):
-        """Matches all submit input elements::
+        """Matches submit inputs and buttons::
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><input type="submit"/></div>')
@@ -276,7 +277,8 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("@type = 'submit' and name(.) = 'input'")
+        xpath.add_condition("@type = 'submit' and "
+                            "(name(.) = 'input' or name(.) = 'button')")
         return xpath
 
     def xpath_hidden_pseudo(self, xpath):
@@ -306,7 +308,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         return xpath
 
     def xpath_reset_pseudo(self, xpath):
-        """Matches all reset input elements::
+        """Matches reset inputs and buttons::
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><input type="reset"/></div>')
@@ -315,7 +317,8 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("@type = 'reset' and name(.) = 'input'")
+        xpath.add_condition("@type = 'reset' and "
+                            "(name(.) = 'input' or name(.) = 'button')")
         return xpath
 
     def xpath_header_pseudo(self, xpath):
