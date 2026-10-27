@@ -335,7 +335,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
         return xpath
 
     def xpath_parent_pseudo(self, xpath):
-        """Match all elements that contain other elements::
+        """Match all elements with element or text children::
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><h1><span>title</span></h1><h1/></div>')
@@ -344,11 +344,11 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("count(child::*) > 0")
+        xpath.add_condition("* or text()")
         return xpath
 
     def xpath_empty_pseudo(self, xpath):
-        """Match all elements that do not contain other elements::
+        """Match all elements without element or text children::
 
             >>> from pyquery import PyQuery
             >>> d = PyQuery('<div><h1><span>title</span></h1><h2/></div>')
@@ -357,7 +357,7 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
 
         ..
         """
-        xpath.add_condition("not(node())")
+        xpath.add_condition("not(* or text())")
         return xpath
 
     def xpath_eq_function(self, xpath, function):

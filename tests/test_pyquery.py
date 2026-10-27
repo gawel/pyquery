@@ -217,7 +217,8 @@ class TestSelector(TestCase):
         # test on other elements
         e = self.klass(self.html5)
         assert len(e(":header")) == 6
-        assert len(e(":parent")) == 2
+        # The headings contain text; html and body contain elements.
+        assert len(e(":parent")) == 8
         assert len(e(":empty")) == 1
         assert len(e(":contains('Heading')")) == 8
 
@@ -279,6 +280,24 @@ class TestTraversal(TestCase):
         assert len(self.klass('#node1', self.html).find('span')) == 1
         assert len(self.klass('#node2', self.html).find('span')) == 2
         assert len(self.klass('div', self.html).find('span')) == 3
+
+    def test_complementary_content_selectors(self):
+        doc = self.klass(
+            '<div><p id="text">value</p><p id="space"> </p>'
+            '<p id="empty"/><p id="comment"><!-- comment --></p>'
+            '<p id="instruction"><?test value?></p>'
+            '<p id="element"><span/></p>'
+            '<p id="cdata"><![CDATA[value]]></p>'
+            '<p id="tail"/>outside text</div>', parser='xml')
+        parents = ['text', 'space', 'element', 'cdata']
+        empty = ['empty', 'comment', 'instruction', 'tail']
+        for result, expected in ((doc('p:parent'), parents),
+                                 (doc('p').filter(':parent'), parents),
+                                 (doc('p:empty'), empty),
+                                 (doc('p').filter(':empty'), empty)):
+            with self.subTest(result=result):
+                self.assertEqual([node.get('id') for node in result], expected)
+        self.assertEqual(len(doc('p:parent')) + len(doc('p:empty')), len(doc('p')))
 
     def test_each(self):
         doc = self.klass(self.html)
