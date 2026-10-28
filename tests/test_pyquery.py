@@ -391,6 +391,52 @@ class TestContentsStr(TestCase):
         doc = pq('<div>only text</div>')
         self.assertEqual(str(doc.contents()), 'only text')
 
+    def test_contents_escapes_literal_text(self):
+        markup = '<p>&lt;b&gt;literal&lt;/b&gt; &amp; "quotes" 中文</p>'
+        expected = '&lt;b&gt;literal&lt;/b&gt; &amp; "quotes" 中文'
+        for parser in ('xml', 'html'):
+            contents = pq(markup, parser=parser).contents()
+            for serialize in (contents.__str__, contents.__unicode__,
+                              contents.__html__):
+                with self.subTest(parser=parser, method=serialize.__name__):
+                    self.assertEqual(serialize(), expected)
+
+    def test_contents_preserves_mixed_nodes(self):
+        markup = ('<p>A &amp; &lt;b&gt;literal&lt;/b&gt;'
+                  '<strong>real &amp; text</strong>'
+                  ' &lt;i&gt;tail&lt;/i&gt;</p>')
+        doc = pq(markup)
+        contents = doc.contents()
+        for serialize in (contents.__str__, contents.__unicode__,
+                          contents.__html__):
+            with self.subTest(method=serialize.__name__):
+                serialized = serialize()
+                self.assertEqual(serialized, markup[3:-4])
+                roundtrip = pq('<p>' + serialized + '</p>')
+                self.assertEqual(roundtrip.text(), doc.text())
+                self.assertEqual([child.tag for child in roundtrip[0]],
+                                 ['strong'])
+
+    def test_contents_escapes_entity_looking_text_once(self):
+        contents = pq('<p>&amp;lt;b&amp;gt;</p>').contents()
+        for serialize in (contents.__str__, contents.__unicode__,
+                          contents.__html__):
+            with self.subTest(method=serialize.__name__):
+                self.assertEqual(serialize(), '&amp;lt;b&amp;gt;')
+
+    def test_empty_contents_serialization(self):
+        contents = pq('<p/>').contents()
+        self.assertEqual(str(contents), '')
+        self.assertEqual(contents.__unicode__(), '')
+        self.assertEqual(contents.__html__(), '')
+
+    def test_element_only_selection_preserves_tail(self):
+        selected = pq('<p><b>real</b> tail &amp; text</p>')('b')
+        for serialize in (selected.__str__, selected.__unicode__,
+                          selected.__html__):
+            with self.subTest(method=serialize.__name__):
+                self.assertEqual(serialize(), '<b>real</b> tail &amp; text')
+
 
 class TestCallback(TestCase):
     html = """

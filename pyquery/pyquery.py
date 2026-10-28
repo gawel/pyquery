@@ -354,7 +354,7 @@ class PyQuery(list):
         # Text nodes from contents() cannot go through tostring.
         has_text_nodes = any(isinstance(e, str) for e in self)
         return ''.join(
-            e if isinstance(e, str) else dumps(
+            escape(e, quote=False) if isinstance(e, str) else dumps(
                 e, encoding=str, method=method, with_tail=not has_text_nodes)
             for e in self
         )

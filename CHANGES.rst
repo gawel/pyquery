@@ -3,6 +3,8 @@
 
 - Return an empty selection for empty files with the default and HTML parsers.
 
+- Escape literal text when serializing ``contents()`` as XML or HTML.
+
 
 2.1.0 (2026-07-27)
 ------------------
