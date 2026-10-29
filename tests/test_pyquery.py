@@ -803,6 +803,32 @@ of text</textarea>
             ('order', 'tomato'), ('multiline', 'multiple\r\nlines\r\nof text'),
         ])
 
+    def test_serialize_omits_selects_without_values(self):
+        for markup in ('<select name="choice"></select>',
+                       '<select name="choice" multiple></select>',
+                       ('<select name="choice" multiple>'
+                        '<option value="one">One</option></select>')):
+            for selector in ('form', 'select'):
+                with self.subTest(markup=markup, selector=selector):
+                    d = pq('<form>' + markup + '</form>')(selector)
+                    self.assertEqual(d.serialize_pairs(), [])
+                    self.assertEqual(d.serialize_array(), [])
+                    self.assertEqual(d.serialize_dict(), {})
+                    self.assertEqual(d.serialize(), '')
+
+    def test_serialize_retains_selected_empty_values(self):
+        d = pq('<form><input name="input"><textarea name="text"></textarea>'
+               '<select name="single"><option value="" selected>Empty</option>'
+               '</select><select name="multi" multiple>'
+               '<option value="" selected>Empty</option>'
+               '<option value="second" selected>Second</option></select></form>')
+        self.assertEqual(d.serialize_pairs(), [('input', ''), ('text', ''),
+                                              ('single', ''), ('multi', ''),
+                                              ('multi', 'second')])
+        self.assertEqual(d.serialize(), 'input=&text=&single=&multi=&multi=second')
+        self.assertEqual(d.serialize_dict(), {'input': '', 'text': '',
+                                             'single': '', 'multi': ['', 'second']})
+
     def test_serialize_array(self):
         d = pq(self.html4)
         self.assertEqual(d('form').serialize_array(), [

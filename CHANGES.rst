@@ -1,6 +1,8 @@
 2.1.1 (unreleased)
 ------------------
 
+- Omit selects without selected values from form serialization (issue #290).
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 

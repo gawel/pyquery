@@ -1621,7 +1621,9 @@ class PyQuery(list):
         # Serialize values
         ret = []
         for field in controls:
-            val = self._copy(field).val() or ''
+            val = self._copy(field).val()
+            if val is None:
+                continue
             if isinstance(val, list):
                 ret.extend((field.attrib['name'], v.replace('\n', '\r\n')) for v in val)
             else:
