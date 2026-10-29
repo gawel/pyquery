@@ -1,6 +1,9 @@
 2.1.1 (unreleased)
 ------------------
 
+- Preserve ancestor and sibling context when filtering with combined CSS
+  selectors, including ``not_()`` and ``is_()`` (issue #1).
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 
