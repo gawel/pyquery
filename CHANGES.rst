@@ -1,6 +1,9 @@
 2.1.1 (unreleased)
 ------------------
 
+- Clear detached nodes' tails after preserving that text in their parent,
+  avoiding duplication when the nodes are reinserted (issue #292).
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 

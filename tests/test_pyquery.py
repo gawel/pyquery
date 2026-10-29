@@ -544,6 +544,38 @@ Bacon</textarea>
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
 
+    def test_remove_does_not_duplicate_tail_when_reinserted(self):
+        for parser in ('html', 'xml'):
+            for previous in ('', '<i>prior</i>text'):
+                for use_selector in (False, True):
+                    with self.subTest(parser=parser, previous=previous,
+                                      use_selector=use_selector):
+                        tail = 'tail &amp;copy; &lt;x&gt; 日本語'
+                        d = pq('<div>start' + previous + '<b>x</b>' + tail +
+                               '<em>last</em></div>', parser=parser)
+                        node = d('b')
+                        if use_selector:
+                            self.assertIs(d.remove('b'), d)
+                        else:
+                            self.assertIs(node.remove(), node)
+                        expected = '<div>start' + previous + tail + '<em>last</em>'
+                        self.assertEqual(str(d), expected + '</div>')
+                        self.assertIsNone(node[0].tail)
+                        node.remove()
+                        self.assertEqual(str(d), expected + '</div>')
+                        node.append_to(d)
+                        self.assertEqual(str(d), expected + '<b>x</b></div>')
+
+    def test_remove_preserves_adjacent_tails_and_detached_roots(self):
+        d = pq('<div><b>a</b>first<b>b</b>second</div>')
+        nodes = d('b').remove()
+        self.assertEqual(str(d), '<div>firstsecond</div>')
+        self.assertEqual([node.tail for node in nodes], [None, None])
+        root = pq('<div/>')
+        root[0].tail = 'outside'
+        root.remove()
+        self.assertEqual(root[0].tail, 'outside')
+
     def test_val_for_inputs(self):
         d = pq(self.html2)
         self.assertIsNone(d('input[name="none"]').val())

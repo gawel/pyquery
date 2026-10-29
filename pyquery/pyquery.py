@@ -1506,6 +1506,7 @@ class PyQuery(list):
                                 prev.tail = ''
                             prev.tail += tag.tail
                     parent.remove(tag)
+                    tag.tail = None
         else:
             results = self._copy(expr, self)
             results.remove()
