@@ -544,6 +544,28 @@ Bacon</textarea>
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
 
+    def test_has_class_literal_names(self):
+        for name in ('a.b', 'a:b', 'a+b', 'a[0]', '1st', 'a"b',
+                     "a'b", r'a\b', '日本語', 'a\u00a0b'):
+            with self.subTest(name=name):
+                d = pq('<div/>').attr('class', 'first ' + name + ' last')
+                self.assertTrue(d.has_class(name))
+                self.assertTrue(d.hasClass(name))
+                self.assertFalse(d.has_class(name + '-missing'))
+                self.assertFalse(pq('<div class="a b"/>').has_class(name))
+
+    def test_has_class_selection_and_whitespace(self):
+        d = pq('<div><p class="first"/><p class="second"/></div>')
+        self.assertTrue(d('p').has_class('second'))
+        self.assertFalse(d.has_class('second'))
+        self.assertFalse(pq([]).has_class('second'))
+        self.assertFalse(pq('<div/>').has_class('second'))
+        self.assertFalse(pq('<div class=""/>').has_class(''))
+        self.assertFalse(pq('<div class="first second"/>').has_class('first second'))
+        d = pq('<div class="first\tsecond\nthird\rfourth\ffifth"/>')
+        for name in ('first', 'second', 'third', 'fourth', 'fifth'):
+            self.assertTrue(d.has_class(name))
+
     def test_val_for_inputs(self):
         d = pq(self.html2)
         self.assertIsNone(d('input[name="none"]').val())

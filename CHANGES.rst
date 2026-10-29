@@ -1,6 +1,9 @@
 2.1.1 (unreleased)
 ------------------
 
+- Treat ``has_class()`` and ``hasClass()`` arguments as literal class names,
+  including names with CSS metacharacters (see issue #11).
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 

@@ -3,6 +3,7 @@
 # Distributed under the BSD license, see LICENSE.txt
 import inspect
 import itertools
+import re
 import sys
 import types
 from copy import deepcopy
@@ -851,9 +852,18 @@ class PyQuery(list):
             >>> d.hasClass('myclass')
             True
 
+        Class names are literal strings, not CSS selectors::
+
+            >>> d = PyQuery('<div class="item:active"></div>')
+            >>> d.has_class('item:active')
+            True
+
         ..
         """
-        return self.is_(f'.{name}')
+        if not name:
+            return False
+        return any(name in re.split(r'[ \t\n\r\f]+', tag.get('class') or '')
+                   for tag in self)
 
     @with_camel_case_alias
     def add_class(self, value):
