@@ -544,6 +544,28 @@ Bacon</textarea>
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
 
+    def test_replace_with_preserves_literal_tail(self):
+        for parser in ('html', 'xml'):
+            for replacement in ('<b>new</b>', 'new', '', pq('<b>new</b>')):
+                for callback in (False, True):
+                    with self.subTest(parser=parser, replacement=replacement,
+                                      callback=callback):
+                        d = pq('<div><i>old</i>&lt;b&gt;tail&lt;/b&gt;'
+                               ' &amp;copy; &amp; &gt; 日本語<em>last</em></div>',
+                               parser=parser)
+                        value = replacement
+                        if callback:
+                            value = lambda i, el, text=str(replacement): text
+                        removed = d('i')
+                        self.assertIs(removed.replace_with(value), removed)
+                        has_element = str(replacement) == '<b>new</b>'
+                        self.assertEqual(len(d('b')), int(has_element))
+                        tail = d('b')[0].tail if d('b') else d[0].text
+                        prefix = '' if has_element else str(replacement)
+                        self.assertEqual(tail, prefix +
+                                         '<b>tail</b> &copy; & > 日本語')
+                        self.assertEqual(d('em').text(), 'last')
+
     def test_val_for_inputs(self):
         d = pq(self.html2)
         self.assertIsNone(d('input[name="none"]').val())

@@ -1446,12 +1446,12 @@ class PyQuery(list):
         if callable(value):
             for i, element in enumerate(self):
                 self._copy(element).before(
-                    value(i, element) + (element.tail or ''))
+                    value(i, element) + escape(element.tail or '', quote=False))
                 parent = element.getparent()
                 parent.remove(element)
         else:
             for tag in self:
-                self._copy(tag).before(value + (tag.tail or ''))
+                self._copy(tag).before(value + escape(tag.tail or '', quote=False))
                 parent = tag.getparent()
                 parent.remove(tag)
         return self

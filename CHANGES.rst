@@ -1,6 +1,8 @@
 2.1.1 (unreleased)
 ------------------
 
+- Preserve literal tail text when replacing nodes (issue #97).
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 
