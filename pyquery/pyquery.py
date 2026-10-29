@@ -1360,13 +1360,8 @@ class PyQuery(list):
         nodes = []
         for tag in self:
             wrapper = deepcopy(value)
-            # FIXME: using iterchildren is probably not optimal
-            if not wrapper.getchildren():
-                wrapper.append(deepcopy(tag))
-            else:
-                childs = [c for c in wrapper.iterchildren()]
-                child = childs[-1]
-                child.append(deepcopy(tag))
+            child = wrapper.xpath('descendant-or-self::*[not(*)]')[0]
+            child.append(deepcopy(tag))
             nodes.append(wrapper)
 
             parent = tag.getparent()
@@ -1400,11 +1395,7 @@ class PyQuery(list):
         assert isinstance(value, basestring)
         value = fromstring(value)[0]
         wrapper = deepcopy(value)
-        if not wrapper.getchildren():
-            child = wrapper
-        else:
-            childs = [c for c in wrapper.iterchildren()]
-            child = childs[-1]
+        child = wrapper.xpath('descendant-or-self::*[not(*)]')[0]
 
         replace_childs = True
         parent = self[0].getparent()

@@ -544,6 +544,40 @@ Bacon</textarea>
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
 
+    def test_nested_wrapper_insertion_depth(self):
+        for method in ('wrap', 'wrap_all', 'wrapAll'):
+            for markup, leaf in (
+                ('<section/>', 'section'),
+                ('<section><article/></section>', 'article'),
+                ('<section><article><main/></article></section>', 'main'),
+                (('<section><!--keep--><article><main>prefix</main>'
+                  '</article></section>'), 'main'),
+            ):
+                with self.subTest(method=method, markup=markup):
+                    d = pq('<div><b>first</b><b>second</b></div>')
+                    nodes = d('b')
+                    self.assertIs(getattr(nodes, method)(markup), nodes)
+                    expected_count = 2 if method == 'wrap' else 1
+                    self.assertEqual(len(d('section')), expected_count)
+                    leaves = d(leaf)
+                    self.assertEqual(len(leaves), expected_count)
+                    self.assertEqual([b.text for node in leaves
+                                      for b in node if b.tag == 'b'],
+                                     ['first', 'second'])
+                    self.assertEqual(len(d('b')), 2)
+                    if 'prefix' in markup:
+                        self.assertTrue(all(node.text == 'prefix' for node in leaves))
+                        self.assertEqual(len(d[0].xpath('.//comment()')), expected_count)
+
+    def test_nested_wrapper_for_detached_element(self):
+        d = pq('<b>text</b>')
+        d.wrap('<section><article><main/></article></section>')
+        self.assertEqual(str(d), '<section><article><main><b>text</b></main>'
+                         '</article></section>')
+        empty = pq([])
+        self.assertIs(empty.wrap('<section><article/></section>'), empty)
+        self.assertIs(empty.wrap_all('<section><article/></section>'), empty)
+
     def test_val_for_inputs(self):
         d = pq(self.html2)
         self.assertIsNone(d('input[name="none"]').val())

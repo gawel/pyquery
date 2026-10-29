@@ -1,6 +1,9 @@
 2.1.1 (unreleased)
 ------------------
 
+- Insert wrapped content into the innermost element of nested wrapper
+  structures in ``wrap()`` and ``wrap_all()`` (issue #294).
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 
