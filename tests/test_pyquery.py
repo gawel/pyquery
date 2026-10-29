@@ -657,6 +657,64 @@ Bacon</textarea>
         )
         self.assertEqual(form.serialize_pairs(), [('s', 't2')])
 
+    def test_val_batch_select_assignment_preserves_values(self):
+        options = ('<option value="zero">zero</option>'
+                   '<option value="wanted">wanted</option>'
+                   '<option value="wanted">duplicate</option>')
+        for value in ('wanted', ['wanted'], ['missing', 'wanted']):
+            for multiple in (False, True):
+                with self.subTest(value=value, multiple=multiple):
+                    attr = ' multiple' if multiple else ''
+                    d = pq(f'<main><select{attr}>{options}</select>'
+                           f'<select{attr}>{options}</select></main>')
+                    controls = d('select')
+                    expected = value[:] if isinstance(value, list) else value
+                    self.assertIs(controls.val(value), controls)
+                    self.assertEqual(value, expected)
+                    selected = ['wanted', 'wanted'] if multiple else ['wanted']
+                    for tag in controls:
+                        self.assertEqual(
+                            pq(tag)('option[selected]').map(
+                                lambda _, elem: elem.get('value')), selected)
+
+    def test_val_mixed_controls_keep_requested_array(self):
+        select = ('<select><option value="zero">zero</option>'
+                  '<option value="wanted">wanted</option></select>')
+        controls = ['<input>', '<textarea></textarea>', select,
+                    ('<select multiple><option value="wanted">wanted</option>'
+                    '<option value="other">other</option></select>')]
+        for offset in range(len(controls)):
+            with self.subTest(offset=offset):
+                ordered = controls[offset:] + controls[:offset]
+                d = pq('<main>' + ''.join(ordered) + '</main>')
+                value = ['wanted', 'other']
+                d('main > *').val(value)
+                self.assertEqual(value, ['wanted', 'other'])
+                self.assertEqual(d('input').val(), 'wanted,other')
+                self.assertEqual(d('textarea').val(), 'wanted,other')
+                self.assertEqual(d('select:not([multiple])').val(), 'wanted')
+                self.assertEqual(d('select[multiple]').val(), ['wanted', 'other'])
+
+    def test_val_select_matches_effective_option_values(self):
+        for multiple in (False, True):
+            for value in ('wanted', ['wanted'], '', []):
+                with self.subTest(multiple=multiple, value=value):
+                    attr = ' multiple' if multiple else ''
+                    d = pq(f'<select{attr}><option>zero</option>'
+                           '<option>wanted</option><option>wanted</option>'
+                           '<option value="">explicit empty</option>'
+                           '<option selected value="old">old</option>'
+                           '</select>')
+                    d.val(value)
+                    selected = d('option[selected]')
+                    if value == []:
+                        self.assertEqual(len(selected), 0)
+                    elif value == '':
+                        self.assertEqual(selected.text(), 'explicit empty')
+                    else:
+                        self.assertEqual(len(selected), 2 if multiple else 1)
+                        self.assertEqual(selected.eq(0).text(), 'wanted')
+
     def test_val_checkbox_no_value_attribute(self):
         d = pq('<input type="checkbox">')
         self.assertEqual(d.val(), 'on')

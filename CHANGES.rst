@@ -1,6 +1,7 @@
 2.1.1 (unreleased)
 ------------------
 
+- Preserve requested values across controls in ``val()`` and match implicit option values (#297).
 - Return an empty selection for empty files with the default and HTML parsers.
 
 

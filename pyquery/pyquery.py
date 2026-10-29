@@ -1055,30 +1055,28 @@ class PyQuery(list):
             for tag in pq:
                 # <select>
                 if tag.tag == 'select':
-                    if not isinstance(value, list):
-                        value = [value]
+                    values = value[:] if isinstance(value, list) else [value]
 
                     def _make_option_selected(_, elem):
                         pq = self._copy(elem)
-                        if pq.attr('value') in value:  # NOQA
+                        if _option_value(pq) in values:  # NOQA
                             pq.attr('selected', 'selected')
                             if 'multiple' not in tag.attrib:  # NOQA
                                 # Ensure it toggles first match
-                                del value[:]  # NOQA
+                                del values[:]  # NOQA
                         else:
                             pq.removeAttr('selected')
 
                     self._copy(tag)('option').each(_make_option_selected)
                     continue
                 # Stringify array
-                if isinstance(value, list):
-                    value = ','.join(value)
+                tag_value = ','.join(value) if isinstance(value, list) else value
                 # <textarea>
                 if tag.tag == 'textarea':
-                    self._copy(tag).text(value)
+                    self._copy(tag).text(tag_value)
                     continue
                 # <input> and everything else.
-                self._copy(tag).attr('value', value)
+                self._copy(tag).attr('value', tag_value)
 
         if value is no_default:
             if len(self):
