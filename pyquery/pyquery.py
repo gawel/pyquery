@@ -448,18 +448,22 @@ class PyQuery(list):
     def prev(self, selector=None):
         return self._filter_only(
             selector,
-            [e.getprevious() for e in self if e.getprevious() is not None])
+            [sibling for e in self
+             for sibling in itertools.islice(
+                 e.itersiblings(tag='*', preceding=True), 1)])
 
     def next(self, selector=None):
         return self._filter_only(
             selector,
-            [e.getnext() for e in self if e.getnext() is not None])
+            [sibling for e in self
+             for sibling in itertools.islice(e.itersiblings(tag='*'), 1)])
 
     def _traverse(self, method):
         for e in self:
             current = getattr(e, method)()
             while current is not None:
-                yield current
+                if isinstance(current.tag, str):
+                    yield current
                 current = getattr(current, method)()
 
     def _traverse_parent_topdown(self):
@@ -563,7 +567,7 @@ class PyQuery(list):
             >>> d.children('.hello')
             [<p.hello>]
         """
-        elements = [child for tag in self for child in tag.getchildren()]
+        elements = [child for tag in self for child in tag.iterchildren(tag='*')]
         return self._filter_only(selector, elements)
 
     def closest(self, selector=None):
@@ -589,7 +593,7 @@ class PyQuery(list):
 
     def contents(self):
         """
-        Return contents (with text nodes):
+        Return contents (including text, comments and processing instructions):
 
             >>> d = PyQuery('hello <b>bold</b>')
             >>> d.contents()  # doctest: +ELLIPSIS
@@ -597,7 +601,7 @@ class PyQuery(list):
         """
         results = []
         for elem in self:
-            results.extend(elem.xpath('child::text()|child::*',
+            results.extend(elem.xpath('child::node()',
                            namespaces=self.namespaces))
         return self._copy(results, parent=self)
 

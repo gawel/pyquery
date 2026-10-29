@@ -330,6 +330,64 @@ class TestTraversal(TestCase):
             d('#NOTHING').next_until('*'), [])
 
 
+class TestTraversalNodeTypes(TestCase):
+
+    def test_element_traversal_skips_non_elements(self):
+        for parser in ('html', 'xml'):
+            with self.subTest(parser=parser):
+                d = pq('<r><!--start--><a/><!--gap--><?pi value?>'
+                       '<b/><!--gap--><c/><!--end--></r>', parser=parser)
+                a, b, c = d('a'), d('b'), d('c')
+                cases = [(d.children(), ['a', 'b', 'c']),
+                         (a.next(), ['b']), (b.prev(), ['a']),
+                         (a.next('b'), ['b']), (b.prev('a'), ['a']),
+                         (a.next('c'), []), (c.prev('a'), []),
+                         (a.next_all(), ['b', 'c']),
+                         (c.prev_all(), ['a', 'b']),
+                         (b.siblings(), ['a', 'c']),
+                         (a.next_until('c'), ['b']),
+                         (a.nextUntil('c', 'b'), ['b']),
+                         (a.next_until('c', 'a'), []),
+                         (a.prev(), []), (c.next(), [])]
+                for index, (result, expected) in enumerate(cases):
+                    with self.subTest(index=index):
+                        self.assertEqual([e.tag for e in result], expected)
+                self.assertIs(a.next().end(), a)
+                self.assertIs(d.children().end(), d)
+                self.assertEqual(len(d[0]), 8)
+
+    def test_traversal_with_namespace_and_explicit_comment(self):
+        d = pq('<r xmlns:x="urn:x"><x:a/><!--gap--><?pi value?>'
+               '<x:b/><x:c/></r>', parser='xml', namespaces={'x': 'urn:x'})
+        self.assertEqual(d.children('x|b'), d('x|b'))
+        self.assertEqual(d('x|a').next('x|b'), d('x|b'))
+        self.assertEqual(d('x|b').prev('x|a'), d('x|a'))
+        self.assertEqual(d('x|a').nextAll('x|c'), d('x|c'))
+        self.assertEqual(d('x|c').prevAll('x|a'), d('x|a'))
+        comment = pq(d[0][1])
+        self.assertEqual(comment.next(), d('x|b'))
+        self.assertEqual(comment.prev(), d('x|a'))
+
+    def test_contents_retains_all_immediate_nodes_in_order(self):
+        for parser in ('html', 'xml'):
+            with self.subTest(parser=parser):
+                d = pq('<r>lead<!--first-->one<a/>two<!--gap-->three'
+                       '<?pi value?>four<b/>five</r>', parser=parser)
+                result = d.contents()
+                expected = ['lead', d[0][0], 'one', d[0][1], 'two',
+                            d[0][2], 'three', d[0][3], 'four', d[0][4], 'five']
+                self.assertEqual(list(result), expected)
+                self.assertIs(result.end(), d)
+                self.assertEqual([e.tag for e in d.children()], ['a', 'b'])
+        d = pq('<r><!--only--><?pi value?></r>', parser='xml')
+        self.assertEqual(list(d.children()), [])
+        self.assertEqual(list(d.contents()), list(d[0]))
+        self.assertEqual(list(pq('<r>text</r>').contents()), ['text'])
+        self.assertEqual(list(pq([]).contents()), [])
+        d = pq('<r><p><!--one--></p><p><!--two--></p></r>', parser='xml')
+        self.assertEqual(list(d('p').contents()), [d[0][0][0], d[0][1][0]])
+
+
 class TestOpener(TestCase):
 
     def test_open_filename(self):

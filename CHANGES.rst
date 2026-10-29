@@ -1,6 +1,7 @@
 2.1.1 (unreleased)
 ------------------
 
+- Distinguish element traversal from all-node ``contents()`` results (#298).
 - Return an empty selection for empty files with the default and HTML parsers.
 
 
