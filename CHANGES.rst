@@ -1,6 +1,7 @@
 2.1.1 (unreleased)
 ------------------
 
+- Append GET request data before URL fragments (#301).
 - Return an empty selection for empty files with the default and HTML parsers.
 
 

@@ -27,11 +27,12 @@ def _query(url, method, kwargs):
 
     if isinstance(method, basestring) and \
        method.lower() == 'get' and data:
+        url, separator, fragment = url.partition('#')
         if '?' not in url:
             url += '?'
         elif url[-1] not in ('?', '&'):
             url += '&'
-        url += data
+        url += data + separator + fragment
         data = None
 
     if data:

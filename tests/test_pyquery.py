@@ -5,13 +5,14 @@ import os
 import sys
 import time
 from unittest import TestCase
+from unittest.mock import patch
 
 import pytest
 from lxml import etree
 from webtest import http
 from webtest.debugapp import debug_app
 
-from pyquery.openers import HAS_REQUEST
+from pyquery.openers import HAS_REQUEST, _query
 from pyquery.pyquery import PyQuery as pq
 from pyquery.pyquery import no_default
 
@@ -328,6 +329,45 @@ class TestTraversal(TestCase):
         # when empty
         self.assertEqual(
             d('#NOTHING').next_until('*'), [])
+
+
+class TestQueryString(TestCase):
+
+    def test_get_data_precedes_fragment(self):
+        base = 'http://example.test/path'
+        cases = [('', '?q=one'), ('?', '?q=one'),
+                 ('?old=1', '?old=1&q=one'),
+                 ('?old=1&', '?old=1&q=one'),
+                 ('#part', '?q=one#part'),
+                 ('#part?x=1&', '?q=one#part?x=1&'),
+                 ('?old=1#part', '?old=1&q=one#part'),
+                 ('?old=1&#part', '?old=1&q=one#part'),
+                 ('?#', '?q=one#'), ('#', '?q=one#')]
+        for suffix, expected in cases:
+            for data in ({'q': 'one'}, [('q', 'one')],
+                         (('q', 'one'),), 'q=one'):
+                with self.subTest(suffix=suffix, data=data):
+                    self.assertEqual(_query(base + suffix, 'GET', {'data': data}),
+                                     (base + expected, None))
+        self.assertEqual(
+            _query(base + '#part', 'get', {'data': {'q': 'é #&'}}),
+            (base + '?q=%C3%A9+%23%26#part', None))
+        self.assertEqual(
+            _query(base + '?q=old#part', 'get',
+                   {'data': [('q', 'one'), ('q', 'two')]}),
+            (base + '?q=old&q=one&q=two#part', None))
+
+    def test_non_get_and_empty_data_keep_original_url(self):
+        url = 'http://example.test/path?old=1#part?x=1'
+        for method in ('post', 'put', None):
+            with self.subTest(method=method):
+                self.assertEqual(_query(url, method, {'data': {'q': 'one'}}),
+                                 (url, b'q=one'))
+        for data in (None, {}, [], (), ''):
+            with self.subTest(data=data):
+                self.assertEqual(_query(url, 'get', {'data': data}),
+                                 (url, '' if data is not None else None))
+        self.assertEqual(_query(url, 'get', {}), (url, None))
 
 
 class TestOpener(TestCase):
@@ -966,6 +1006,21 @@ class TestWebScrapping(TestCase):
         print(d)
         self.assertIn('REQUEST_METHOD: GET', d.text())
         self.assertIn('q=foo', d.text())
+
+    def test_get_data_with_url_fragment(self):
+        for use_requests in (False, True):
+            if use_requests and not HAS_REQUEST:
+                continue
+            for suffix in ('#part', '#part?x=1&', '?old=1#part',
+                           '?old=1&#part', '?#'):
+                with self.subTest(requests=use_requests, suffix=suffix):
+                    with patch('pyquery.openers.HAS_REQUEST', use_requests):
+                        d = pq(url=self.application_url + suffix,
+                               data={'q': 'fragment data'}, method='get')
+                    self.assertIn('REQUEST_METHOD: GET', d.text())
+                    self.assertIn('q=fragment+data', d.text())
+                    if 'old=1' in suffix:
+                        self.assertIn('old=1&q=fragment+data', d.text())
 
     def test_post(self):
         d = pq(url=self.application_url, data={'q': 'foo'},
