@@ -1,6 +1,9 @@
 2.1.1 (unreleased)
 ------------------
 
+- Insert element fragments into every matched target and retain surrounding
+  text in ``append()``, ``prepend()``, ``before()`` and ``after()`` (issue #288).
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 

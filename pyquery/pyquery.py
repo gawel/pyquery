@@ -1244,7 +1244,10 @@ class PyQuery(list):
         """append value to each nodes
         """
         root, root_text = self._get_root(value)
+        root = list(root)
         for i, tag in enumerate(self):
+            if i > 0:
+                root = deepcopy(root)
             if len(tag) > 0:  # if the tag has children
                 last_child = tag[-1]
                 if not last_child.tail:
@@ -1254,8 +1257,6 @@ class PyQuery(list):
                 if not tag.text:
                     tag.text = ''
                 tag.text += root_text
-            if i > 0:
-                root = deepcopy(list(root))
             tag.extend(root)
         return self
 
@@ -1270,18 +1271,19 @@ class PyQuery(list):
         """prepend value to nodes
         """
         root, root_text = self._get_root(value)
+        root = list(root)
+        root_tail = root[-1].tail if root else ''
         for i, tag in enumerate(self):
+            if i > 0:
+                root = deepcopy(root)
             if not tag.text:
                 tag.text = ''
             if len(root) > 0:
-                root[-1].tail = tag.text
+                root[-1].tail = (root_tail or '') + tag.text
                 tag.text = root_text
             else:
                 tag.text = root_text + tag.text
-            if i > 0:
-                root = deepcopy(list(root))
             tag[:0] = root
-            root = tag[:len(root)]
         return self
 
     @with_camel_case_alias
@@ -1295,16 +1297,20 @@ class PyQuery(list):
         """add value after nodes
         """
         root, root_text = self._get_root(value)
+        root = list(root)
+        root_tail = root[-1].tail if root else ''
         for i, tag in enumerate(self):
-            if not tag.tail:
-                tag.tail = ''
-            tag.tail += root_text
             if i > 0:
-                root = deepcopy(list(root))
+                root = deepcopy(root)
+            tail = tag.tail or ''
+            tag.tail = root_text
+            if root:
+                root[-1].tail = (root_tail or '') + tail
+            else:
+                tag.tail += tail
             parent = tag.getparent()
             index = parent.index(tag) + 1
             parent[index:index] = root
-            root = parent[index:len(root)]
         return self
 
     @with_camel_case_alias
@@ -1318,7 +1324,10 @@ class PyQuery(list):
         """insert value before nodes
         """
         root, root_text = self._get_root(value)
+        root = list(root)
         for i, tag in enumerate(self):
+            if i > 0:
+                root = deepcopy(root)
             previous = tag.getprevious()
             if previous is not None:
                 if not previous.tail:
@@ -1329,12 +1338,9 @@ class PyQuery(list):
                 if not parent.text:
                     parent.text = ''
                 parent.text += root_text
-            if i > 0:
-                root = deepcopy(list(root))
             parent = tag.getparent()
             index = parent.index(tag)
             parent[index:index] = root
-            root = parent[index:len(root)]
         return self
 
     @with_camel_case_alias

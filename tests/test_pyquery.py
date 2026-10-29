@@ -544,6 +544,50 @@ Bacon</textarea>
         d.removeClass('xx')
         assert 'class' not in str(d), str(d)
 
+    def test_insert_fragments_into_each_target(self):
+        for parser in ('html', 'xml'):
+            for method in ('append', 'prepend', 'before', 'after'):
+                for kind in ('markup', 'query', 'element'):
+                    with self.subTest(parser=parser, method=method, kind=kind):
+                        d = pq('<div><p>1</p>T1<p>2</p>T2<p>3</p>T3</div>',
+                               parser=parser)
+                        value = '<b>x</b><i>y</i>'
+                        if kind == 'query':
+                            value = pq(value, parser='html_fragments')
+                        elif kind == 'element':
+                            value = pq('<b>x</b>', parser=parser)[0]
+                        selected = d('p')
+                        self.assertIs(getattr(selected, method)(value), selected)
+                        self.assertEqual(len(d('b')), 3)
+                        self.assertEqual(len(d('i')), 0 if kind == 'element' else 3)
+                        self.assertEqual(d.text(squash_space=False).count('x'), 3)
+                        d('b')[0].text = 'changed'
+                        self.assertEqual([node.text for node in d('b')],
+                                         ['changed', 'x', 'x'])
+
+    def test_insert_mixed_text_into_each_target(self):
+        expected = {
+            'append': '<div><p>1lead<b>x</b>trail</p>T1'
+                      '<p>2lead<b>x</b>trail</p>T2</div>',
+            'prepend': '<div><p>lead<b>x</b>trail1</p>T1'
+                       '<p>lead<b>x</b>trail2</p>T2</div>',
+            'before': '<div>lead<b>x</b>trail<p>1</p>T1'
+                      'lead<b>x</b>trail<p>2</p>T2</div>',
+            'after': '<div><p>1</p>lead<b>x</b>trailT1'
+                     '<p>2</p>lead<b>x</b>trailT2</div>',
+        }
+        for method, html in expected.items():
+            with self.subTest(method=method):
+                d = pq('<div><p>1</p>T1<p>2</p>T2</div>')
+                getattr(d('p'), method)('lead<b>x</b>trail')
+                self.assertEqual(str(d), html)
+
+    def test_insert_text_only_into_nested_targets(self):
+        d = pq('<div><section>outer<section>inner</section></section></div>')
+        d('section').append('*')
+        self.assertEqual(str(d), '<div><section>outer<section>inner*</section>'
+                         '*</section></div>')
+
     def test_val_for_inputs(self):
         d = pq(self.html2)
         self.assertIsNone(d('input[name="none"]').val())
