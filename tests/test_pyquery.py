@@ -275,6 +275,27 @@ class TestTraversal(TestCase):
         assert self.klass('div', self.html).is_('.node3')
         assert not self.klass('div', self.html).is_('.foobazbar')
 
+    def test_find_positional_selectors(self):
+        doc = self.klass('<div><div><img id="a"/><img id="b"/></div>'
+                         '<div><img id="c"/><img id="d"/></div></div>')
+        self.assertEqual(doc.find('div:eq(1) > img:eq(1)'), doc('#d'))
+        self.assertEqual(doc.children().find('img:first'), doc('#a, #c'))
+
+    def test_find_preserves_scope(self):
+        doc = self.klass('<div><div class="lead"><img id="a"/><img id="b"/>'
+                         '</div><div><img id="c"/><img id="d"/></div></div>')
+        self.assertEqual(doc.find(':scope > img'), doc('img'))
+        self.assertEqual(doc.find(':scope > div'), [])
+        self.assertEqual(doc.find('img, :scope > img'), doc('img'))
+        self.assertEqual(doc.find(r'.lead:\73 cope > img, img:eq(3)'),
+                         doc('#a, #b, #d'))
+
+    def test_find_position_with_namespaces(self):
+        doc = self.klass('<root xmlns:x="urn:example"><x:entry id="a"/>'
+                         '<x:entry id="b"/></root>',
+                         parser='xml', namespaces={'ns': 'urn:example'})
+        self.assertEqual(doc.find('ns|entry:eq(1)'), doc('#b'))
+
     def test_find(self):
         assert len(self.klass('#node1', self.html).find('span')) == 1
         assert len(self.klass('#node2', self.html).find('span')) == 2

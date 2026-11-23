@@ -672,14 +672,17 @@ class PyQuery(list):
             >>> d('p').eq(1).find('em')
             [<em>]
         """
-        xpath = self._css_to_xpath(selector)
-        results = [child.xpath(xpath, namespaces=self.namespaces)
-                   for tag in self
-                   for child in tag.getchildren()]
-        # Flatten the results
-        elements = []
-        for r in results:
-            elements.extend(r)
+        if type(self._translator) is JQueryTranslator:
+            xpath, whole_context = self._translator.find_xpath(
+                selector.replace('[@', '['))
+        else:
+            # Custom translators keep their original child-rooted searches.
+            xpath = self._css_to_xpath(selector)
+            whole_context = False
+        contexts = (self if whole_context
+                    else (child for tag in self for child in tag.getchildren()))
+        elements = [node for tag in contexts
+                    for node in tag.xpath(xpath, namespaces=self.namespaces)]
         return self._copy(elements, parent=self)
 
     def eq(self, index):
