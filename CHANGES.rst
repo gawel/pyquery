@@ -1,6 +1,9 @@
 2.1.1 (unreleased)
 ------------------
 
+- Fix ``find()`` restarting positional selectors such as ``:eq()`` at each
+  immediate child of the search context.
+
 - Return an empty selection for empty files with the default and HTML parsers.
 
 

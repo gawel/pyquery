@@ -1,7 +1,9 @@
 # Copyright (C) 2008 - Olivier Lauzanne <olauzanne@gmail.com>
 #
 # Distributed under the BSD license, see LICENSE.txt
+from cssselect import parse
 from cssselect import xpath as cssselect_xpath
+from cssselect.parser import Function, Pseudo
 from cssselect.xpath import ExpressionError
 
 XPathExprOrig = cssselect_xpath.XPathExpr
@@ -36,6 +38,20 @@ class XPathExpr(XPathExprOrig):
 # keep cssselect < 0.8 compat for now
 
 
+def _starts_with_position(selector):
+    """Check the leftmost compound selector for a jQuery position filter."""
+    positional = False
+    while hasattr(selector, 'selector'):
+        if isinstance(selector, Pseudo):
+            if selector.ident == 'scope':
+                return False
+            positional |= selector.ident in ('first', 'last', 'even', 'odd')
+        elif isinstance(selector, Function):
+            positional |= selector.name in ('eq', 'gt', 'lt')
+        selector = selector.selector
+    return positional
+
+
 class JQueryTranslator(cssselect_xpath.HTMLTranslator):
     """This class is used to implement the css pseudo classes
     (:first, :last, ...) that are not defined in the css standard,
@@ -43,6 +59,23 @@ class JQueryTranslator(cssselect_xpath.HTMLTranslator):
     """
 
     xpathexpr_cls = XPathExpr
+
+    def find_xpath(self, css):
+        selectors = [(s, _starts_with_position(s.parsed_tree))
+                     for s in parse(css)]
+        whole_context = any(positional for _, positional in selectors)
+        paths = []
+        for selector, positional in selectors:
+            prefix = 'descendant-or-self::'
+            if positional:
+                prefix = 'descendant::'
+            elif whole_context:
+                # Keep the same child-rooted search for the other group
+                # members, notably :scope, when there is a positional member.
+                prefix = '*/' + prefix
+            paths.append(self.selector_to_xpath(
+                selector, prefix, translate_pseudo_elements=True))
+        return ' | '.join(paths), whole_context
 
     def xpath_first_pseudo(self, xpath):
         """Matches the first selected element::
