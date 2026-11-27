@@ -694,6 +694,19 @@ Bacon</textarea>
         d = pq(html)
         self.assertEqual(d.html(), inner_html)
 
+    def test_html_invalid_value_type(self):
+        # The html() setter must reject an unsupported value type the same
+        # way the other content setters do (see PyQuery._get_root): a
+        # TypeError carrying a readable message with the offending value.
+        d = pq('<div><span>Replace Me</span></div>')
+        with self.assertRaises(TypeError) as ctx:
+            d.html(42)
+        message = str(ctx.exception)
+        self.assertIn('42', message)
+        self.assertIn('string', message)
+        # a rejected value must not touch the selection
+        self.assertEqual(str(d), '<div><span>Replace Me</span></div>')
+
 
 class TestAjax(TestCase):
 

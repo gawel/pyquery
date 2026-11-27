@@ -3,6 +3,9 @@
 
 - Return an empty selection for empty files with the default and HTML parsers.
 
+- Raise a ``TypeError`` with a readable message when ``html()`` is given an
+  unsupported value type, like the other content setters.
+
 
 2.1.0 (2026-07-27)
 ------------------
