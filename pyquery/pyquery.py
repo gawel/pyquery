@@ -1134,7 +1134,8 @@ class PyQuery(list):
             elif not value:
                 new_html = ''
             else:
-                raise ValueError(type(value))
+                raise TypeError(
+                    f'Value must be string or PyQuery. Got {value!r}')
 
             for tag in self:
                 for child in tag.getchildren():
